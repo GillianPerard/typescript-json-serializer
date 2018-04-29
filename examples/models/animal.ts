@@ -1,5 +1,4 @@
 import { Serializable, JsonProperty } from './../../src';
-import { Gender } from './gender';
 
 @Serializable()
 export class Animal {
