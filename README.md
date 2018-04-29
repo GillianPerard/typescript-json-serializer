@@ -1,1 +1,313 @@
 # typescript-json-serializer
+
+A typescript library to deserialize json into typescript classes and serialize classes into json.
+
+## Installation
+
+```sh
+npm install typescript-json-serializer --save
+```
+
+You also need to set **experimentalDecorators** and **emitDecoratorMetadata** to true into the tsconfig.json file.
+
+For example:
+
+```json
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "outDir": "./dist",
+        "sourceMap": false,
+        "declaration": false,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "target": "es5",
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "lib": [
+            "es2015",
+            "dom"
+        ]
+    }
+}
+```
+
+## Import
+
+There are two decorators and two functions that you can import inside a typescript file.
+
+```typescript
+import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-json-serializer';
+```
+
+## Library
+
+### Decorators
+
+```typescript
+// Serializable decorator set a class as serializable.
+// It can take an optionnal parameter that specifies
+// the name of the class extended.
+
+@Serializable(parentClass?: string)
+```
+
+```typescript
+// JsonProperty decorator set metadata to the property.
+// It can take some optionnal parameters like the name of json property
+// or the type of the property (if needed).
+
+@JsonProperty(args?: string | { name?: string, type: Function })
+```
+
+### Functions
+
+```typescript
+// serialize function transform typescript class into json.
+// It take two parameters:
+// - a instance of the class to serialize
+// - a boolean to remove undefined property (default true)
+
+serialize(instance: any, removeUndefined: boolean = true)
+```
+
+```typescript
+// deserialize function transform json into typescript class.
+// It take two parameters:
+// - json data
+// - the class you want to deserialize into
+
+deserialize(json: any, type: any)
+```
+
+## Example
+
+### Classes
+
+```typescript
+// zoo.ts
+
+// Import decorators from library
+import { Serializable, JsonProperty } from './../../src';
+
+
+// Create a serializable class: Employee
+
+// Serializable decorator
+@Serializable()
+export class Employee {
+
+    @JsonProperty()
+    public id: number;
+    @JsonProperty()
+    public name: string;
+    @JsonProperty()
+    public birthdate: Date;
+    @JsonProperty()
+    public email: string;
+    @JsonProperty()
+    public gender: string;
+
+    public constructor() { }
+
+}
+
+
+// Create a serializable class: Animal
+
+@Serializable()
+export class Animal {
+
+    @JsonProperty()
+    public id: number;
+    @JsonProperty()
+    public name: string;
+    @JsonProperty()
+    public birthdate: Date;
+    @JsonProperty()
+    public numberOfPaws: number;
+    @JsonProperty()
+    public gender: string;
+
+    // Specify the property name of json property if needed
+    @JsonProperty('childrenIdentifiers')
+    public childrenIds: Array<number>;
+
+    public constructor() { }
+
+}
+
+
+// Create a serializable class that extends Animal: Panther
+
+// Serializable decorator where you need
+// to specify if the class extends another
+@Serializable('Animal')
+export class Panther extends Animal {
+
+    @JsonProperty()
+    public color: string;
+    @JsonProperty()
+    public isSpeckled: boolean;
+
+    public constructor() {
+        super();
+    }
+
+}
+
+
+// Create a serializable class: Zoo
+
+@Serializable()
+export class Zoo {
+
+    // Here you do not need to specify the type
+    // inside the decorator
+    @JsonProperty()
+    public boss: Employee;
+
+    @JsonProperty()
+    public city: string;
+    @JsonProperty()
+    public country: string;
+
+    // Array of none-basic type elements
+    @JsonProperty({ type: Employee })
+    public employees: Array<Employee>;
+
+    @JsonProperty()
+    public id: number;
+    @JsonProperty()
+    public name: string;
+
+    // Array of none-basic type elements where you need to
+    // specify the name of the json property
+    @JsonProperty({ name: 'Panthers', type: Panther })
+    public panthers: Array<Panther>;
+
+    // Property which will be not serialized and deserialized
+    // but event accessible and editable from Zoo class.
+    public isFree: boolean = true;
+
+    public constructor() { }
+
+}
+```
+
+### Json data
+
+```typescript
+// data.ts
+export const json: any = {
+    'id': 15,
+    'name': 'The Greatest Zoo',
+    'city': 'Bordeaux',
+    'country': 'France',
+    'boss': {
+        'id': 1,
+        'name': 'Bob Razowsky',
+        'birthdate': '1984-04-03T22:00:00.000Z',
+        'email': 'bob.razowsky@tgzoo.fr',
+        'gender': 'male'
+    },
+    'employees': [
+        {
+            'id': 1,
+            'name': 'Bob Razowsky',
+            'birthdate': '1984-04-03T22:00:00.000Z',
+            'email': 'bob.razowsky@tgzoo.fr',
+            'gender': 'male'
+        },
+        {
+            'id': 2,
+            'name': 'Mikasa Ackerman',
+            'birthdate': '1984-01-11T22:00:00.000Z',
+            'email': 'mikasa.ackerman@tgzoo.fr',
+            'gender': 'female'
+        },
+        {
+            'id': 3,
+            'name': 'Red Redington',
+            'birthdate': '1970-12-04T22:00:00.000Z',
+            'email': 'red.redington@tgzoo.fr',
+            'gender': 'male'
+        },
+        {
+            'id': 4,
+            'name': 'Fried Richter',
+            'birthdate': '1994-04-01T22:00:00.000Z',
+            'email': 'fried.richter@tgzoo.fr',
+            'gender': 'male'
+        }
+    ],
+    'Panthers': [
+        {
+            'id': 1,
+            'name': 'Bagheera',
+            'birthdate': '2010-01-11T22:00:00.000Z',
+            'numberOfPaws': 4,
+            'gender': 'male',
+            'childrenIdentifiers': [
+                2,
+                3
+            ],
+            'color': 'black',
+            'isSpeckled': false
+        },
+        {
+            'id': 2,
+            'name': 'Jolene',
+            'birthdate': '2017-03-10T22:00:00.000Z',
+            'numberOfPaws': 4,
+            'gender': 'female',
+            'color': 'blond',
+            'isSpeckled': true
+        },
+        {
+            'id': 3,
+            'name': 'Chatchat',
+            'birthdate': '2015-03-05T22:00:00.000Z',
+            'numberOfPaws': 4,
+            'gender': 'female',
+            'color': 'brown',
+            'isSpeckled': false
+        }
+    ]
+};
+```
+
+### Serialize & Deserialize
+
+```typescript
+// Import functions from library
+import { deserialize, serialize } from 'typescript-json-serializer';
+
+import { json } from '../json/data';
+import { Zoo } from '../models/zoo';
+
+// deserialize
+const zoo: Zoo = deserialize(json, Zoo);
+
+// serialize
+const data: any = serialize(zoo);
+// or
+const data: any = serialize(zoo, false);
+
+```
+
+## Test
+
+```sh
+npm run test
+```
+
+## TODO
+
+- Enum
+- Mixed types
+- Parent type
+- Array of mixed types
+- Array parent type
