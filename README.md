@@ -1,4 +1,5 @@
 # typescript-json-serializer
+[![Build Status](https://travis-ci.org/GillianPerard/typescript-json-serializer.svg?branch=master)](https://travis-ci.org/GillianPerard/typescript-json-serializer)
 
 A typescript library to deserialize json into typescript classes and serialize classes into json.
 
@@ -66,7 +67,7 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
 
 ```typescript
 // serialize function transform typescript class into json.
-// It take two parameters:
+// It takes two parameters:
 // - a instance of the class to serialize
 // - a boolean to remove undefined property (default true)
 
@@ -75,7 +76,7 @@ serialize(instance: any, removeUndefined: boolean = true)
 
 ```typescript
 // deserialize function transform json into typescript class.
-// It take two parameters:
+// It takes two parameters:
 // - json data
 // - the class you want to deserialize into
 
