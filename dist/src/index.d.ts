@@ -9,7 +9,7 @@ export declare function JsonProperty(args?: string | {
 /**
  * Decorator Serializable
  */
-export declare function Serializable(parentType?: string): Function;
+export declare function Serializable(baseClassName?: string): Function;
 /**
  * Function to deserialize json into a class
  */

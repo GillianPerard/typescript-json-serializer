@@ -22,9 +22,9 @@ export function JsonProperty(args?: string | { name?: string, type: Function }):
 /**
  * Decorator Serializable
  */
-export function Serializable(parentType?: string): Function {
+export function Serializable(baseClassName?: string): Function {
     return (target: Object): void => {
-        Reflect.defineMetadata('api:map:serializable', parentType, target);
+        Reflect.defineMetadata('api:map:serializable', baseClassName, target);
     };
 }
 
@@ -35,15 +35,15 @@ export function deserialize(json: any, type: any): any {
 
     const instance: any = new type();
     const instanceName: string = instance.constructor.name;
-    const parentTypeName: string = Reflect.getMetadata('api:map:serializable', type);
+    const baseClassName: string = Reflect.getMetadata('api:map:serializable', type);
     let instanceMap: { [id: string]: { name: string, type: Function }; } = {};
 
     if (Reflect.hasMetadata('api:map:' + instanceName, instance)) {
         instanceMap = Reflect.getMetadata('api:map:' + instanceName, instance);
 
-        if (parentTypeName) {
-            const parentTypeMap: { [id: string]: any; } = Reflect.getMetadata('api:map:' + parentTypeName, instance);
-            instanceMap = _.merge(instanceMap, parentTypeMap);
+        if (baseClassName) {
+            const baseClassMap: { [id: string]: any; } = Reflect.getMetadata('api:map:' + baseClassName, instance);
+            instanceMap = _.merge(instanceMap, baseClassMap);
         }
 
         const keys: Array<string> = _.keys(instanceMap);
@@ -64,15 +64,15 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
 
     const json: any = {};
     const instanceName: string = instance.constructor.name;
-    const parentTypeName: string = Reflect.getMetadata('api:map:serializable', instance.constructor);
+    const baseClassName: string = Reflect.getMetadata('api:map:serializable', instance.constructor);
     let instanceMap: { [id: string]: { name: string, type: Function }; } = {};
 
     if (Reflect.hasMetadata('api:map:' + instanceName, instance)) {
         instanceMap = Reflect.getMetadata('api:map:' + instanceName, instance);
 
-        if (parentTypeName !== undefined) {
-            const parentTypeMap: { [id: string]: any; } = Reflect.getMetadata('api:map:' + parentTypeName, instance);
-            instanceMap = _.merge(instanceMap, parentTypeMap);
+        if (baseClassName !== undefined) {
+            const baseClassMap: { [id: string]: any; } = Reflect.getMetadata('api:map:' + baseClassName, instance);
+            instanceMap = _.merge(instanceMap, baseClassMap);
         }
 
         Object.keys(instanceMap).forEach((key: string) => {
