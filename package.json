@@ -5,7 +5,8 @@
     "main": "src/index.ts",
     "scripts": {
         "build": "tsc",
-        "test": "npm run build && mocha -r ts-node/register dist/spec/**/*.spec.js"
+        "test": "npm run build && mocha -r ts-node/register dist/spec/**/*.spec.js",
+        "cover": "npm run build && istanbul cover node_modules/mocha/bin/_mocha dist/spec/**/*.spec.js -- -R spec"
     },
     "repository": {
         "type": "git",
