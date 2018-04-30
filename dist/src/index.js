@@ -20,9 +20,9 @@ exports.JsonProperty = JsonProperty;
 /**
  * Decorator Serializable
  */
-function Serializable(parentType) {
+function Serializable(baseClassName) {
     return function (target) {
-        Reflect.defineMetadata('api:map:serializable', parentType, target);
+        Reflect.defineMetadata('api:map:serializable', baseClassName, target);
     };
 }
 exports.Serializable = Serializable;
@@ -32,13 +32,13 @@ exports.Serializable = Serializable;
 function deserialize(json, type) {
     var instance = new type();
     var instanceName = instance.constructor.name;
-    var parentTypeName = Reflect.getMetadata('api:map:serializable', type);
+    var baseClassName = Reflect.getMetadata('api:map:serializable', type);
     var instanceMap = {};
     if (Reflect.hasMetadata('api:map:' + instanceName, instance)) {
         instanceMap = Reflect.getMetadata('api:map:' + instanceName, instance);
-        if (parentTypeName) {
-            var parentTypeMap = Reflect.getMetadata('api:map:' + parentTypeName, instance);
-            instanceMap = _.merge(instanceMap, parentTypeMap);
+        if (baseClassName) {
+            var baseClassMap = Reflect.getMetadata('api:map:' + baseClassName, instance);
+            instanceMap = _.merge(instanceMap, baseClassMap);
         }
         var keys = _.keys(instanceMap);
         _.forEach(keys, function (key) {
@@ -57,13 +57,13 @@ function serialize(instance, removeUndefined) {
     if (removeUndefined === void 0) { removeUndefined = true; }
     var json = {};
     var instanceName = instance.constructor.name;
-    var parentTypeName = Reflect.getMetadata('api:map:serializable', instance.constructor);
+    var baseClassName = Reflect.getMetadata('api:map:serializable', instance.constructor);
     var instanceMap = {};
     if (Reflect.hasMetadata('api:map:' + instanceName, instance)) {
         instanceMap = Reflect.getMetadata('api:map:' + instanceName, instance);
-        if (parentTypeName !== undefined) {
-            var parentTypeMap = Reflect.getMetadata('api:map:' + parentTypeName, instance);
-            instanceMap = _.merge(instanceMap, parentTypeMap);
+        if (baseClassName !== undefined) {
+            var baseClassMap = Reflect.getMetadata('api:map:' + baseClassName, instance);
+            instanceMap = _.merge(instanceMap, baseClassMap);
         }
         Object.keys(instanceMap).forEach(function (key) {
             var data = convertPropertyToData(instance, key, instanceMap[key], removeUndefined);

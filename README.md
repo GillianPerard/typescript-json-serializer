@@ -53,7 +53,7 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
 // It can take an optionnal parameter that specifies
 // the name of the class extended.
 
-@Serializable(parentClass?: string)
+@Serializable(baseClassName?: string)
 ```
 
 ```typescript
@@ -305,11 +305,3 @@ const data: any = serialize(zoo, false);
 ```sh
 npm run test
 ```
-
-## TODO
-
-- Enum
-- Mixed types
-- Parent type
-- Array of mixed types
-- Array parent type
