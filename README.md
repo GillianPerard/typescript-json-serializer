@@ -1,5 +1,6 @@
 # typescript-json-serializer
 [![Build Status](https://travis-ci.org/GillianPerard/typescript-json-serializer.svg?branch=master)](https://travis-ci.org/GillianPerard/typescript-json-serializer)
+[![Coverage Status](https://coveralls.io/repos/github/GillianPerard/typescript-json-serializer/badge.svg)](https://coveralls.io/github/GillianPerard/typescript-json-serializer)
 
 A typescript library to deserialize json into typescript classes and serialize classes into json.
 
