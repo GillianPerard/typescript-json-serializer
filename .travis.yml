@@ -5,6 +5,10 @@ install:
  - npm i
 script:
  - npm run cover
+notifications:
+ email:
+  on_success: never
+  on_failure: always
 
 # Send coverage data to Coveralls
 after_script: "cat coverage/lcov.info | node_modules/coveralls/bin/coveralls.js"
