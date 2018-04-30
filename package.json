@@ -1,8 +1,9 @@
 {
     "name": "typescript-json-serializer",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Typescript library to serialize classes into json and deserialize json into classes.",
-    "main": "src/index.ts",
+    "main": "dist/src/index.js",
+    "types": "dist/src/index.d.ts",
     "scripts": {
         "build": "tsc",
         "test": "npm run build && mocha -r ts-node/register dist/spec/**/*.spec.js",
@@ -18,6 +19,14 @@
         "url": "https://github.com/GillianPerard/typescript-json-serializer/issues"
     },
     "homepage": "https://github.com/GillianPerard/typescript-json-serializer#readme",
+    "keywords": [
+        "json",
+        "typescript",
+        "serializer",
+        "deserializer",
+        "decorator",
+        "metadata"
+    ],
     "dependencies": {
         "lodash": "^4.17.5",
         "reflect-metadata": "^0.1.12"
