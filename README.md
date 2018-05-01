@@ -1,6 +1,7 @@
 # typescript-json-serializer
 [![Build Status](https://travis-ci.org/GillianPerard/typescript-json-serializer.svg?branch=master)](https://travis-ci.org/GillianPerard/typescript-json-serializer)
 [![Coverage Status](https://coveralls.io/repos/github/GillianPerard/typescript-json-serializer/badge.svg)](https://coveralls.io/github/GillianPerard/typescript-json-serializer)
+[![Known Vulnerabilities](https://snyk.io/test/github/gillianperard/typescript-json-serializer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/gillianperard/typescript-json-serializer?targetFile=package.json)
 
 A typescript library to deserialize json into typescript classes and serialize classes into json.
 
@@ -20,7 +21,7 @@ For example:
     "compilerOptions": {
         "outDir": "./dist",
         "sourceMap": false,
-        "declaration": false,
+        "declaration": true,
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
