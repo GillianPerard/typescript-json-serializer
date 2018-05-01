@@ -2,19 +2,18 @@ import { expect } from 'chai';
 
 import { JsonProperty, Serializable, serialize, deserialize } from '../src/index';
 
+import { Employee } from '../examples/models/employee';
+import { Panther } from '../examples/models/panther';
 import { Snake } from '../examples/models/snake';
 import { Zoo } from '../examples/models/zoo';
-import { Panther } from '../examples/models/panther';
 import { data, deserializedData } from '../examples/json/data';
 
 import 'reflect-metadata';
 import * as _ from 'lodash';
+const rewire: any = require('rewire');
+const tjs: any = rewire('../src/index');
 
 describe('Serializable', () => {
-
-    const zoo: Zoo = new Zoo();
-    const panther: Panther = new Panther();
-    const snake: Snake = new Snake();
 
     it('should return false', () => {
         const hasMetadata: boolean = Reflect.hasOwnMetadata('api:map:serializable', Snake);
@@ -38,9 +37,7 @@ describe('Serializable', () => {
 
 describe('serialize', () => {
     it('should return true', () => {
-        const result: any = serialize(deserializedData);
-        const isEqual: boolean = _.isEqual(result, data);
-        expect(isEqual).to.equal(true);
+        expect(serialize(deserializedData)).to.deep.equal(data);
     });
 
     it('should return 3', () => {
@@ -57,9 +54,92 @@ describe('serialize', () => {
 
 describe('deserialize', () => {
     it('should return true', () => {
-        const result: Zoo = deserialize(data, Zoo);
-        const isEqual: boolean = _.isEqual(result, deserializedData);
-        expect(isEqual).to.equal(true);
+        expect(deserialize(data, Zoo)).to.deep.equal(deserializedData);
     });
 });
 
+describe('castSimpleData', () => {
+    const castSimpleData: Function = tjs.__get__('castSimpleData');
+    it('should return hello', () => {
+        expect(castSimpleData('string', 'hello')).to.equal('hello');
+    });
+
+    it('should return 4', () => {
+        expect(castSimpleData('number', 4)).to.equal(4);
+    });
+
+    it('should return false', () => {
+        expect(castSimpleData('boolean', false)).to.equal(false);
+    });
+
+    it('should return 4 as string', () => {
+        expect(castSimpleData('string', 4)).to.equal('4');
+    });
+
+    it('should return true as string', () => {
+        expect(castSimpleData('string', true)).to.equal('true');
+    });
+
+    it('should return 4', () => {
+        expect(castSimpleData('number', '4')).to.equal(4);
+    });
+
+    it('should return undefined', () => {
+        expect(castSimpleData('number', 'hello')).to.equal(undefined);
+    });
+
+    it('should return undefined', () => {
+        expect(castSimpleData('boolean', 'hello')).to.equal(undefined);
+    });
+
+    it('should return undefined', () => {
+        expect(castSimpleData('boolean', 4)).to.equal(undefined);
+    });
+
+    it('should return undefined', () => {
+        expect(castSimpleData('date', 'hello')).to.equal(undefined);
+    });
+
+    it('should return undefined', () => {
+        expect(castSimpleData('date', true)).to.equal(undefined);
+    });
+
+    it('should return a date', () => {
+        expect(castSimpleData('date', 4)).to.deep.equal(new Date(4));
+    });
+
+    it('should return 2018-05-01T12:50:59.534Z', () => {
+        expect(castSimpleData('date', '2018-05-01T12:50:59.534Z')).to.deep.equal(new Date('2018-05-01T12:50:59.534Z'));
+    });
+
+});
+
+describe('isSerializable', () => {
+    const isSerializable: Function = tjs.__get__('isSerializable');
+    it('should return true', () => {
+        expect(isSerializable(Zoo)).to.equal(true);
+    });
+
+    it('should return false', () => {
+        expect(isSerializable(Snake)).to.equal(false);
+    });
+});
+
+describe('getJsonPropertyValue', () => {
+    const getJsonPropertyValue: Function = tjs.__get__('getJsonPropertyValue');
+    it('should return name equals to key and type equals undefined', () => {
+        expect(getJsonPropertyValue('hello', undefined)).to.deep.equal({ name: 'hello', type: undefined });
+    });
+
+    it('should return name equals to args and type equals undefined', () => {
+        expect(getJsonPropertyValue('hello', 'Hello')).to.deep.equal({ name: 'Hello', type: undefined });
+    });
+
+    it('should return name equals to key and type equals args["type"]', () => {
+        expect(getJsonPropertyValue('zoo', { type: Zoo })).to.deep.equal({ name: 'zoo', type: Zoo });
+    });
+
+    it('should return name equals to args["name"] and type equals args["type"]', () => {
+        expect(getJsonPropertyValue('zoo', { name: 'myZoo', type: Zoo })).to.deep.equal({ name: 'myZoo', type: Zoo });
+    });
+});
