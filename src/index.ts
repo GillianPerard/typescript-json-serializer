@@ -146,7 +146,7 @@ function convertDataToProperty(instance: Function, key: string, value: { name: s
  * Function to test if a class has the serializable decorator (metadata)
  */
 function isSerializable(type: any): boolean {
-    return Reflect.hasMetadata('api:map:serializable', type);
+    return Reflect.hasOwnMetadata('api:map:serializable', type);
 }
 
 /**
@@ -172,26 +172,27 @@ function getJsonPropertyValue(key: string, args: string | { name?: string, type:
 function castSimpleData(type: string, data: any): any {
     type = type.toLowerCase();
 
-    if ((typeof data).toLowerCase() === type.toLowerCase()) {
+    if ((typeof data).toLowerCase() === type) {
         return data;
     } else {
         if (type === 'string') {
             return data.toString();
         } else if (type === 'number') {
             const n: number = +data;
-
             if (isNaN(n)) {
-                throw new Error(`${data}: Type ${typeof data} is not assignable to type ${type}.`);
+                console.error(`${data}: Type ${typeof data} is not assignable to type ${type}.`);
+                return undefined;
             } else {
                 return n;
             }
         } else if (type === 'boolean') {
-            throw new Error(`${data}: Type ${typeof data} is not assignable to type ${type}.`);
+            console.error(`${data}: Type ${typeof data} is not assignable to type ${type}.`);
+            return undefined;
         } else if (type === 'date') {
             const n: number = Date.parse(data);
-
             if (isNaN(n)) {
-                throw new Error(`${data}: Type ${typeof data} is not assignable to type ${type}.`);
+                console.error(`${data}: Type ${typeof data} is not assignable to type ${type}.`);
+                return undefined;
             } else {
                 return new Date(data);
             }
