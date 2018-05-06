@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var src_1 = require("./../../src");
+var gender_1 = require("./gender");
 var Employee = /** @class */ (function () {
     function Employee() {
     }
@@ -31,7 +32,7 @@ var Employee = /** @class */ (function () {
     ], Employee.prototype, "email", void 0);
     __decorate([
         src_1.JsonProperty(),
-        __metadata("design:type", String)
+        __metadata("design:type", Number)
     ], Employee.prototype, "gender", void 0);
     Employee = __decorate([
         src_1.Serializable(),

@@ -1,5 +1,7 @@
 import { Serializable, JsonProperty } from './../../src';
 
+import { Gender } from './gender';
+
 @Serializable()
 export class Employee {
 
@@ -12,7 +14,7 @@ export class Employee {
     @JsonProperty()
     public email: string;
     @JsonProperty()
-    public gender: string;
+    public gender: Gender;
 
     public constructor() { }
 

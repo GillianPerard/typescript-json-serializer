@@ -10,11 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var src_1 = require("./../../src");
-<<<<<<< HEAD
-=======
 var gender_1 = require("./gender");
 var status_1 = require("./status");
->>>>>>> dce7e62... status enum added
 var Animal = /** @class */ (function () {
     function Animal() {
     }
@@ -36,7 +33,7 @@ var Animal = /** @class */ (function () {
     ], Animal.prototype, "numberOfPaws", void 0);
     __decorate([
         src_1.JsonProperty(),
-        __metadata("design:type", String)
+        __metadata("design:type", Number)
     ], Animal.prototype, "gender", void 0);
     __decorate([
         src_1.JsonProperty('childrenIdentifiers'),

@@ -15,7 +15,7 @@ export class Animal {
     @JsonProperty()
     public numberOfPaws: number;
     @JsonProperty()
-    public gender: string;
+    public gender: Gender;
     @JsonProperty('childrenIdentifiers')
     public childrenIds: Array<number>;
     @JsonProperty()
