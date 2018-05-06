@@ -2,8 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var zoo_1 = require("../models/zoo");
 var employee_1 = require("../models/employee");
-var gender_1 = require("../models/gender");
 var panther_1 = require("../models/panther");
+var gender_1 = require("../models/gender");
+var status_1 = require("../models/status");
 exports.data = {
     'id': 15,
     'name': 'The Greatest Zoo',
@@ -58,7 +59,8 @@ exports.data = {
                 3
             ],
             'color': 'black',
-            'isSpeckled': false
+            'isSpeckled': false,
+            'status': 'Sick'
         },
         {
             'id': 2,
@@ -67,16 +69,18 @@ exports.data = {
             'numberOfPaws': 4,
             'gender': 0,
             'color': 'blond',
-            'isSpeckled': true
+            'isSpeckled': true,
+            'status': 'Alive'
         },
         {
             'id': 3,
-            'name': 'Chatchat',
+            'name': 'Schrodinger',
             'birthdate': '2015-03-05T22:00:00.000Z',
             'numberOfPaws': 4,
-            'gender': 0,
+            'gender': 1,
             'color': 'brown',
-            'isSpeckled': false
+            'isSpeckled': false,
+            'status': 'Dead and alive'
         }
     ]
 };
@@ -113,6 +117,7 @@ bagheera.childrenIds = exports.data.Panthers[0].childrenIdentifiers;
 bagheera.gender = gender_1.Gender.male;
 bagheera.color = exports.data.Panthers[0].color;
 bagheera.isSpeckled = exports.data.Panthers[0].isSpeckled;
+bagheera.status = status_1.Status.sick;
 var jolene = new panther_1.Panther();
 jolene.id = exports.data.Panthers[1].id;
 jolene.name = exports.data.Panthers[1].name;
@@ -121,14 +126,16 @@ jolene.numberOfPaws = exports.data.Panthers[1].numberOfPaws;
 jolene.gender = gender_1.Gender.female;
 jolene.color = exports.data.Panthers[1].color;
 jolene.isSpeckled = exports.data.Panthers[1].isSpeckled;
-var chatchat = new panther_1.Panther();
-chatchat.id = exports.data.Panthers[2].id;
-chatchat.name = exports.data.Panthers[2].name;
-chatchat.birthdate = new Date(exports.data.Panthers[2].birthdate);
-chatchat.numberOfPaws = exports.data.Panthers[2].numberOfPaws;
-chatchat.gender = gender_1.Gender.female;
-chatchat.color = exports.data.Panthers[2].color;
-chatchat.isSpeckled = exports.data.Panthers[2].isSpeckled;
+jolene.status = status_1.Status.alive;
+var schrodinger = new panther_1.Panther();
+schrodinger.id = exports.data.Panthers[2].id;
+schrodinger.name = exports.data.Panthers[2].name;
+schrodinger.birthdate = new Date(exports.data.Panthers[2].birthdate);
+schrodinger.numberOfPaws = exports.data.Panthers[2].numberOfPaws;
+schrodinger.gender = gender_1.Gender.male;
+schrodinger.color = exports.data.Panthers[2].color;
+schrodinger.isSpeckled = exports.data.Panthers[2].isSpeckled;
+schrodinger.status = status_1.Status.deadAndAlive;
 var zoo = new zoo_1.Zoo();
 zoo.id = exports.data.id;
 zoo.name = exports.data.name;
@@ -136,5 +143,5 @@ zoo.country = exports.data.country;
 zoo.city = exports.data.city;
 zoo.boss = boss;
 zoo.employees = [boss, mikasa, red, fried];
-zoo.panthers = [bagheera, jolene, chatchat];
+zoo.panthers = [bagheera, jolene, schrodinger];
 exports.deserializedData = zoo;

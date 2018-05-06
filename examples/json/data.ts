@@ -1,7 +1,9 @@
 import { Zoo } from '../models/zoo';
 import { Employee } from '../models/employee';
-import { Gender } from '../models/gender';
 import { Panther } from '../models/panther';
+
+import { Gender } from '../models/gender';
+import { Status } from '../models/status';
 
 export const data: any = {
     'id': 15,
@@ -57,7 +59,8 @@ export const data: any = {
                 3
             ],
             'color': 'black',
-            'isSpeckled': false
+            'isSpeckled': false,
+            'status': 'Sick'
         },
         {
             'id': 2,
@@ -66,16 +69,18 @@ export const data: any = {
             'numberOfPaws': 4,
             'gender': 0,
             'color': 'blond',
-            'isSpeckled': true
+            'isSpeckled': true,
+            'status': 'Alive'
         },
         {
             'id': 3,
-            'name': 'Chatchat',
+            'name': 'Schrodinger',
             'birthdate': '2015-03-05T22:00:00.000Z',
             'numberOfPaws': 4,
-            'gender': 0,
+            'gender': 1,
             'color': 'brown',
-            'isSpeckled': false
+            'isSpeckled': false,
+            'status': 'Dead and alive'
         }
     ]
 };
@@ -117,6 +122,7 @@ bagheera.childrenIds = data.Panthers[0].childrenIdentifiers;
 bagheera.gender = Gender.male;
 bagheera.color = data.Panthers[0].color;
 bagheera.isSpeckled = data.Panthers[0].isSpeckled;
+bagheera.status = Status.sick;
 
 const jolene: Panther = new Panther();
 jolene.id = data.Panthers[1].id;
@@ -126,15 +132,17 @@ jolene.numberOfPaws = data.Panthers[1].numberOfPaws;
 jolene.gender = Gender.female;
 jolene.color = data.Panthers[1].color;
 jolene.isSpeckled = data.Panthers[1].isSpeckled;
+jolene.status = Status.alive;
 
-const chatchat: Panther = new Panther();
-chatchat.id = data.Panthers[2].id;
-chatchat.name = data.Panthers[2].name;
-chatchat.birthdate = new Date(data.Panthers[2].birthdate);
-chatchat.numberOfPaws = data.Panthers[2].numberOfPaws;
-chatchat.gender = Gender.female;
-chatchat.color = data.Panthers[2].color;
-chatchat.isSpeckled = data.Panthers[2].isSpeckled;
+const schrodinger: Panther = new Panther();
+schrodinger.id = data.Panthers[2].id;
+schrodinger.name = data.Panthers[2].name;
+schrodinger.birthdate = new Date(data.Panthers[2].birthdate);
+schrodinger.numberOfPaws = data.Panthers[2].numberOfPaws;
+schrodinger.gender = Gender.male;
+schrodinger.color = data.Panthers[2].color;
+schrodinger.isSpeckled = data.Panthers[2].isSpeckled;
+schrodinger.status = Status.deadAndAlive;
 
 const zoo: Zoo = new Zoo();
 zoo.id = data.id;
@@ -143,6 +151,6 @@ zoo.country = data.country;
 zoo.city = data.city;
 zoo.boss = boss;
 zoo.employees = [boss, mikasa, red, fried];
-zoo.panthers = [bagheera, jolene, chatchat];
+zoo.panthers = [bagheera, jolene, schrodinger];
 
 export const deserializedData: Zoo = zoo;
