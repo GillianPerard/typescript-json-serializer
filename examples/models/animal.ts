@@ -1,5 +1,8 @@
 import { Serializable, JsonProperty } from './../../src';
 
+import { Gender } from './gender';
+import { Status } from './status';
+
 @Serializable()
 export class Animal {
 
@@ -12,9 +15,11 @@ export class Animal {
     @JsonProperty()
     public numberOfPaws: number;
     @JsonProperty()
-    public gender: string;
+    public gender: Gender;
     @JsonProperty('childrenIdentifiers')
     public childrenIds: Array<number>;
+    @JsonProperty()
+    public status: Status;
 
     public constructor() { }
 
