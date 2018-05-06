@@ -96,6 +96,20 @@ deserialize(json: any, type: any)
 // Import decorators from library
 import { Serializable, JsonProperty } from './../../src';
 
+// Enums
+export enum Gender {
+    female,
+    male,
+    other
+}
+
+export enum Status {
+    alive = 'Alive',
+    sick = 'Sick',
+    deadAndAlive = 'Dead and alive',
+    dead = 'Dead'
+}
+
 
 // Create a serializable class: Employee
 
@@ -111,8 +125,10 @@ export class Employee {
     public birthdate: Date;
     @JsonProperty()
     public email: string;
+
+    // Enum value (number)
     @JsonProperty()
-    public gender: string;
+    public gender: Gender;
 
     public constructor() { }
 
@@ -133,7 +149,11 @@ export class Animal {
     @JsonProperty()
     public numberOfPaws: number;
     @JsonProperty()
-    public gender: string;
+    public gender: Gender;
+
+    // Enum value (string)
+    @JsonProperty()
+    public status: Status;
 
     // Specify the property name of json property if needed
     @JsonProperty('childrenIdentifiers')
@@ -205,7 +225,7 @@ export class Zoo {
 
 ```typescript
 // data.ts
-export const json: any = {
+export const data: any = {
     'id': 15,
     'name': 'The Greatest Zoo',
     'city': 'Bordeaux',
@@ -215,7 +235,7 @@ export const json: any = {
         'name': 'Bob Razowsky',
         'birthdate': '1984-04-03T22:00:00.000Z',
         'email': 'bob.razowsky@tgzoo.fr',
-        'gender': 'male'
+        'gender': 1
     },
     'employees': [
         {
@@ -223,28 +243,28 @@ export const json: any = {
             'name': 'Bob Razowsky',
             'birthdate': '1984-04-03T22:00:00.000Z',
             'email': 'bob.razowsky@tgzoo.fr',
-            'gender': 'male'
+            'gender': 1
         },
         {
             'id': 2,
             'name': 'Mikasa Ackerman',
             'birthdate': '1984-01-11T22:00:00.000Z',
             'email': 'mikasa.ackerman@tgzoo.fr',
-            'gender': 'female'
+            'gender': 0
         },
         {
             'id': 3,
             'name': 'Red Redington',
             'birthdate': '1970-12-04T22:00:00.000Z',
             'email': 'red.redington@tgzoo.fr',
-            'gender': 'male'
+            'gender': 1
         },
         {
             'id': 4,
             'name': 'Fried Richter',
             'birthdate': '1994-04-01T22:00:00.000Z',
             'email': 'fried.richter@tgzoo.fr',
-            'gender': 'male'
+            'gender': 1
         }
     ],
     'Panthers': [
@@ -253,31 +273,34 @@ export const json: any = {
             'name': 'Bagheera',
             'birthdate': '2010-01-11T22:00:00.000Z',
             'numberOfPaws': 4,
-            'gender': 'male',
+            'gender': 1,
             'childrenIdentifiers': [
                 2,
                 3
             ],
             'color': 'black',
-            'isSpeckled': false
+            'isSpeckled': false,
+            'status': 'Sick'
         },
         {
             'id': 2,
             'name': 'Jolene',
             'birthdate': '2017-03-10T22:00:00.000Z',
             'numberOfPaws': 4,
-            'gender': 'female',
+            'gender': 0,
             'color': 'blond',
-            'isSpeckled': true
+            'isSpeckled': true,
+            'status': 'Alive'
         },
         {
             'id': 3,
-            'name': 'Chatchat',
+            'name': 'Schrodinger',
             'birthdate': '2015-03-05T22:00:00.000Z',
             'numberOfPaws': 4,
-            'gender': 'female',
+            'gender': 1,
             'color': 'brown',
-            'isSpeckled': false
+            'isSpeckled': false,
+            'status': 'Dead and alive'
         }
     ]
 };
