@@ -28,7 +28,7 @@
         "metadata"
     ],
     "dependencies": {
-        "lodash": "^4.17.10",
+        "lodash": "^4.17.11",
         "reflect-metadata": "^0.1.12"
     },
     "devDependencies": {
