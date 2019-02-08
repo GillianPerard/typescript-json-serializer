@@ -1,38 +1,42 @@
 const gulp = require('gulp');
-const gulpTs = require('gulp-typescript');
-const gulpTslint = require('gulp-tslint');
+const ts = require('gulp-typescript');
+const tsLint = require('gulp-tslint');
 const del = require('del');
 const runSequence = require('run-sequence');
 
-const tsProject = gulpTs.createProject('./tsconfig.json');
+const project = ts.createProject('./tsconfig.json');
 
-gulp.task('clean', () => {
-    return del('./dist/');
-});
+const destinationFolder = './dist/';
 
-gulp.task('tslint', () => {
-    return gulp.src(['./src/**/*.ts', './spec/**/*.spec.ts', './examples/**/*.ts'])
-        .pipe(gulpTslint({
-            formatter: 'verbose'
-        }))
-        .pipe(gulpTslint.report());
-});
+const clean = () => del(destinationFolder);
 
-gulp.task('ts', () => {
-    return tsResult = tsProject.src()
-        .pipe(tsProject())
+const lint = () => {
+    return project
+        .src()
+        .pipe(tsLint({ configuration: "./tslint.json", formatter: "verbose" }))
+        .pipe(tsLint.report())
+}
+
+const transpile = () => {
+    return project
+        .src()
+        .pipe(project())
         .js
-        .pipe(gulp.dest('./dist/'));
-});
+        .pipe(gulp.dest(destinationFolder))
+}
 
-gulp.task('declaration', () => {
-    return tsResult = gulp.src('src/**/*.ts')
-        .pipe(tsProject())
+const declare = () => {
+    return tsResult = gulp
+        .src('src/**/*.ts')
+        .pipe(project())
         .dts
-        .pipe(gulp.dest('./dist/src/'));
-});
+        .pipe(gulp.dest(`${destinationFolder}/src/`));
+}
 
-gulp.task('default', () => {
-    const tasks = ['tslint', 'clean', 'ts', 'declaration'];
-    runSequence.apply(runSequence, tasks);
+const build = (done) => gulp.series(lint, clean, transpile, declare)(done)
+
+const tasks = [clean, lint, transpile, declare, build]
+
+tasks.forEach(t => {
+    gulp.task(t);
 });

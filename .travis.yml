@@ -2,9 +2,9 @@ language : node_js
 node_js :
  - stable
 install:
- - npm i
+ - yarn
 script:
- - npm run cover
+ - yarn cover
 notifications:
  email:
   on_success: never
