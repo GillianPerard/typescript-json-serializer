@@ -1,6 +1,16 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var _ = require("lodash");
 require("reflect-metadata");
 /**
  * Decorator JsonProperty
@@ -38,10 +48,9 @@ function deserialize(json, type) {
         instanceMap = Reflect.getMetadata('api:map:' + instanceName, instance);
         if (baseClassName) {
             var baseClassMap = Reflect.getMetadata('api:map:' + baseClassName, instance);
-            instanceMap = _.merge(instanceMap, baseClassMap);
+            instanceMap = __assign({}, instanceMap, baseClassMap);
         }
-        var keys = _.keys(instanceMap);
-        _.forEach(keys, function (key) {
+        Object.keys(instanceMap).forEach(function (key) {
             if (json[instanceMap[key].name] !== undefined) {
                 instance[key] = convertDataToProperty(instance, key, instanceMap[key], json[instanceMap[key].name]);
             }
@@ -63,7 +72,7 @@ function serialize(instance, removeUndefined) {
         instanceMap = Reflect.getMetadata('api:map:' + instanceName, instance);
         if (baseClassName !== undefined) {
             var baseClassMap = Reflect.getMetadata('api:map:' + baseClassName, instance);
-            instanceMap = _.merge(instanceMap, baseClassMap);
+            instanceMap = __assign({}, instanceMap, baseClassMap);
         }
         Object.keys(instanceMap).forEach(function (key) {
             var data = convertPropertyToData(instance, key, instanceMap[key], removeUndefined);
