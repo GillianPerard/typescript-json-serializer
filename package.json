@@ -1,6 +1,6 @@
 {
     "name": "typescript-json-serializer",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "Typescript library to serialize classes into json and deserialize json into classes.",
     "main": "dist/src/index.js",
     "types": "dist/src/index.d.ts",
@@ -28,25 +28,22 @@
         "metadata"
     ],
     "dependencies": {
-        "lodash": "^4.17.11",
         "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
-        "@types/lodash": "^4.14.120",
-        "@types/mocha": "^5.2.5",
-        "@types/node": "^10.12.23",
+        "@types/mocha": "^5.2.6",
+        "@types/node": "^11.12.1",
         "chai": "^4.2.0",
-        "coveralls": "^3.0.2",
-        "del": "^3.0.0",
+        "coveralls": "^3.0.3",
+        "del": "^4.0.0",
         "gulp": "^4.0.0",
-        "gulp-tslint": "^8.1.3",
-        "gulp-typescript": "^5.0.0",
+        "gulp-tslint": "^8.1.4",
+        "gulp-typescript": "^5.0.1",
         "istanbul": "^0.4.5",
-        "mocha": "^5.2.0",
+        "mocha": "^6.0.2",
         "rewire": "^4.0.1",
-        "run-sequence": "^2.2.1",
-        "ts-node": "^8.0.2",
-        "tslint": "^5.12.1",
-        "typescript": "^3.3.3"
+        "ts-node": "^8.0.3",
+        "tslint": "^5.14.0",
+        "typescript": "^3.3.4000"
     }
 }
