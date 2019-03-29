@@ -2,7 +2,6 @@ const gulp = require('gulp');
 const ts = require('gulp-typescript');
 const tsLint = require('gulp-tslint');
 const del = require('del');
-const runSequence = require('run-sequence');
 
 const project = ts.createProject('./tsconfig.json');
 
