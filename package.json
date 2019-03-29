@@ -1,6 +1,6 @@
 {
     "name": "typescript-json-serializer",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "Typescript library to serialize classes into json and deserialize json into classes.",
     "main": "dist/src/index.js",
     "types": "dist/src/index.d.ts",
