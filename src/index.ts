@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import 'reflect-metadata';
 
 /**
@@ -43,11 +42,11 @@ export function deserialize(json: any, type: any): any {
 
         if (baseClassName) {
             const baseClassMap: { [id: string]: any; } = Reflect.getMetadata('api:map:' + baseClassName, instance);
-            instanceMap = _.merge(instanceMap, baseClassMap);
+            instanceMap = {...instanceMap, ...baseClassMap};
         }
 
-        const keys: Array<string> = _.keys(instanceMap);
-        _.forEach(keys, (key: string) => {
+        const keys: Array<string> = Object.keys(instanceMap);
+        keys.forEach((key: string) => {
             if (json[instanceMap[key].name] !== undefined) {
                 instance[key] = convertDataToProperty(instance, key, instanceMap[key], json[instanceMap[key].name]);
             }
@@ -72,7 +71,7 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
 
         if (baseClassName !== undefined) {
             const baseClassMap: { [id: string]: any; } = Reflect.getMetadata('api:map:' + baseClassName, instance);
-            instanceMap = _.merge(instanceMap, baseClassMap);
+            instanceMap = {...instanceMap, ...baseClassMap};
         }
 
         Object.keys(instanceMap).forEach((key: string) => {
