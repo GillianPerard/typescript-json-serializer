@@ -10,6 +10,8 @@ A typescript library to deserialize json into typescript classes and serialize c
 
 ```sh
 npm install typescript-json-serializer --save
+# or
+yarn add typescript-json-serializer
 ```
 
 You also need to set **experimentalDecorators** and **emitDecoratorMetadata** to true into the tsconfig.json file.
@@ -329,4 +331,6 @@ const data: any = serialize(zoo, false);
 
 ```sh
 npm run test
+# or
+yarn test
 ```
