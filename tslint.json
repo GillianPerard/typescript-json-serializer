@@ -132,7 +132,6 @@
             "check-separator",
             "check-type"
         ],
-        "no-unused-variable": true,
         "no-duplicate-imports": true,
         "prefer-readonly": true,
         "trailing-comma": [

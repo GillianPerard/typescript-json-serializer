@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 
-import { JsonProperty, Serializable, serialize, deserialize } from '../src/index';
+import { serialize, deserialize } from '../src/index';
 
-import { Employee } from '../examples/models/employee';
 import { Panther } from '../examples/models/panther';
 import { Snake } from '../examples/models/snake';
 import { Zoo } from '../examples/models/zoo';
+
 import { data, deserializedData } from '../examples/json/data';
 
 import 'reflect-metadata';

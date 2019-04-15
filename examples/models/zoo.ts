@@ -1,5 +1,5 @@
 import { Serializable, JsonProperty } from './../../src';
-import { Animal } from './animal';
+
 import { Employee } from './employee';
 import { Panther } from './panther';
 
