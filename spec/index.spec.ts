@@ -1,4 +1,6 @@
 import { expect } from 'chai';
+import 'reflect-metadata';
+import * as rewire from 'rewire';
 
 import { serialize, deserialize } from '../src/index';
 
@@ -8,9 +10,6 @@ import { Zoo } from '../examples/models/zoo';
 
 import { data, deserializedData } from '../examples/json/data';
 
-import 'reflect-metadata';
-import * as _ from 'lodash';
-const rewire: any = require('rewire');
 const tjs: any = rewire('../src/index');
 
 describe('Serializable', () => {
@@ -43,7 +42,7 @@ describe('serialize', () => {
     it('should return 3', () => {
         const result: any = serialize(deserializedData, false);
         let count: number = 0;
-        _.forEach(result.Panthers, (panther: any) => {
+        result.Panthers.forEach((panther: any) => {
             if (panther.hasOwnProperty('childrenIdentifiers')) {
                 count++;
             }

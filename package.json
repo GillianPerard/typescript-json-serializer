@@ -7,7 +7,8 @@
     "scripts": {
         "build": "gulp build",
         "test": "yarn build && mocha -r ts-node/register dist/spec/**/*.spec.js",
-        "cover": "yarn build && istanbul cover node_modules/mocha/bin/_mocha dist/spec/**/*.spec.js -- -R spec"
+        "cover": "yarn build && istanbul cover node_modules/mocha/bin/_mocha dist/spec/**/*.spec.js -- -R spec",
+        "lint": "./node_modules/tslint/bin/tslint -p tsconfig.json"
     },
     "repository": {
         "type": "git",
@@ -31,6 +32,7 @@
         "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
+        "@types/chai": "^4.1.7",
         "@types/mocha": "^5.2.6",
         "@types/node": "^11.13.4",
         "chai": "^4.2.0",
