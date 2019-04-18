@@ -9,3 +9,4 @@ tslint.json
 yarn.lock
 dist/examples
 dist/spec
+.vscode/
