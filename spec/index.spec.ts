@@ -4,8 +4,8 @@ import * as rewire from 'rewire';
 
 import { serialize, deserialize } from '../src/index';
 
+import { Dummy } from '../examples/models/dummy';
 import { Panther } from '../examples/models/panther';
-import { Snake } from '../examples/models/snake';
 import { Zoo } from '../examples/models/zoo';
 
 import { data, deserializedData } from '../examples/json/data';
@@ -15,7 +15,7 @@ const tjs: any = rewire('../src/index');
 describe('Serializable', () => {
 
     it('should return false', () => {
-        const hasMetadata: boolean = Reflect.hasOwnMetadata('api:map:serializable', Snake);
+        const hasMetadata: boolean = Reflect.hasOwnMetadata('api:map:serializable', Dummy);
         expect(hasMetadata).to.equal(false);
     });
 
@@ -47,13 +47,48 @@ describe('serialize', () => {
                 count++;
             }
         });
-        expect(count).to.equal(3);
+        expect(count).to.equal(1);
+    });
+
+    it('empty zoo should return an empty object', () => {
+        const zoo: Zoo = new Zoo();
+        expect(serialize(zoo)).to.deep.equal({});
+    });
+
+    it('{} should return an empty object', () => {
+        expect(serialize({})).to.deep.equal({});
+    });
+
+    const zooWithUndefinedValue: Zoo = new Zoo();
+    zooWithUndefinedValue.id = 4;
+    zooWithUndefinedValue.name = undefined;
+
+    it('zooWithUndefinedValue should return an object with undefined value', () => {
+        expect(serialize(zooWithUndefinedValue, false)).to.deep.equal({ id: 4, name: undefined });
+    });
+
+    it('zooWithUndefinedValue should return an object without undefined value', () => {
+        expect(serialize(zooWithUndefinedValue)).to.deep.equal({ id: 4 });
     });
 });
 
 describe('deserialize', () => {
     it('should return true', () => {
         expect(deserialize(data, Zoo)).to.deep.equal(deserializedData);
+    });
+
+    it('should return true even if there are fake data included', () => {
+        const alteredData: any = { ...data };
+        alteredData['fake'] = 'fake';
+        alteredData['Panthers'][0]['fake'] = 'fake';
+        expect(deserialize(alteredData, Zoo)).to.deep.equal(deserializedData);
+    });
+
+    it('should return an empty zoo (except for the isOpen property)', () => {
+        const badData: any = {
+            fake: 'fake'
+        };
+        expect(deserialize(badData, Zoo)).to.deep.equal({ isOpen: true });
     });
 });
 
@@ -120,7 +155,7 @@ describe('isSerializable', () => {
     });
 
     it('should return false', () => {
-        expect(isSerializable(Snake)).to.equal(false);
+        expect(isSerializable(Dummy)).to.equal(false);
     });
 });
 

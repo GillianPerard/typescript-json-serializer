@@ -4,6 +4,7 @@ import { Panther } from '../models/panther';
 
 import { Gender } from '../models/gender';
 import { Status } from '../models/status';
+import { Snake } from '../models/snake';
 
 export const data: any = {
     'id': 15,
@@ -82,6 +83,17 @@ export const data: any = {
             'isSpeckled': false,
             'status': 'Dead and alive'
         }
+    ],
+    'snakes': [
+        {
+            'id': 1,
+            'name': 'Ka',
+            'birthdate': '2018-09-09T00:00:00.000Z',
+            'numberOfPaws': 0,
+            'gender': 1,
+            'isPoisonous': true,
+            'status': 'Alive'
+        }
     ]
 };
 
@@ -144,6 +156,15 @@ schrodinger.color = data.Panthers[2].color;
 schrodinger.isSpeckled = data.Panthers[2].isSpeckled;
 schrodinger.status = Status.deadAndAlive;
 
+const ka: Snake = new Snake();
+ka.id = data.snakes[0].id;
+ka.name = data.snakes[0].name;
+ka.birthdate = new Date(data.snakes[0].birthdate);
+ka.numberOfPaws = data.snakes[0].numberOfPaws;
+ka.gender = Gender.male;
+ka.isPoisonous = data.snakes[0].isPoisonous;
+ka.status = Status.alive;
+
 const zoo: Zoo = new Zoo();
 zoo.id = data.id;
 zoo.name = data.name;
@@ -152,5 +173,6 @@ zoo.city = data.city;
 zoo.boss = boss;
 zoo.employees = [boss, mikasa, red, fried];
 zoo.panthers = [bagheera, jolene, schrodinger];
+zoo.snakes = [ka];
 
 export const deserializedData: Zoo = zoo;
