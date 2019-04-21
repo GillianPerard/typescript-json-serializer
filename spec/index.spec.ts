@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import 'reflect-metadata';
 import * as rewire from 'rewire';
 
-import { serialize, deserialize } from '../src/index';
+import { deserialize, serialize } from '../src/index';
 
 import { Dummy } from '../examples/models/dummy';
 import { Panther } from '../examples/models/panther';
@@ -39,14 +39,11 @@ describe('serialize', () => {
         expect(serialize(deserializedData)).to.deep.equal(data);
     });
 
-    it('should return 3', () => {
+    it('should return 1 childrenIdentifiers', () => {
         const result: any = serialize(deserializedData, false);
-        let count: number = 0;
-        result.Panthers.forEach((panther: any) => {
-            if (panther.hasOwnProperty('childrenIdentifiers')) {
-                count++;
-            }
-        });
+        const count: number = result.Animals.filter((animal: any) => {
+            return (animal.hasOwnProperty('childrenIdentifiers'));
+        }).length;
         expect(count).to.equal(1);
     });
 
@@ -80,7 +77,7 @@ describe('deserialize', () => {
     it('should return true even if there are fake data included', () => {
         const alteredData: any = { ...data };
         alteredData['fake'] = 'fake';
-        alteredData['Panthers'][0]['fake'] = 'fake';
+        alteredData['Animals'][0]['fake'] = 'fake';
         expect(deserialize(alteredData, Zoo)).to.deep.equal(deserializedData);
     });
 
