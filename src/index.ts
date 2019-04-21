@@ -10,7 +10,7 @@ const designType: string = 'design:type';
 /**
  * Decorator JsonProperty
  */
-export function JsonProperty(args?: string | { name?: string, type: Function }): Function {
+export function JsonProperty(args?: string | { name?: string, type: Function } | { name?: string, predicate: Function }): Function {
     return (target: Object, key: string): void => {
 
         let map: { [id: string]: Metadata; } = {};
@@ -39,7 +39,6 @@ export function Serializable(baseClassName?: string): Function {
  * Function to deserialize json into a class
  */
 export function deserialize(json: any, type: any): any {
-
     const instance: any = new type();
     const instanceName: string = instance.constructor.name;
     const baseClassName: string = Reflect.getMetadata(apiMapSerializable, type);
@@ -54,7 +53,7 @@ export function deserialize(json: any, type: any): any {
     instanceMap = Reflect.getMetadata(apiMapInstanceName, instance);
 
     if (baseClassName) {
-        const baseClassMap: { [id: string]: any; } = Reflect.getMetadata(`${apiMap}${baseClassName}`, instance);
+        const baseClassMap: { [id: string]: Metadata; } = Reflect.getMetadata(`${apiMap}${baseClassName}`, instance);
         instanceMap = { ...instanceMap, ...baseClassMap };
     }
 
@@ -78,7 +77,7 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
     const baseClassName: string = Reflect.getMetadata(apiMapSerializable, instance.constructor);
     const apiMapInstanceName: string = `${apiMap}${instanceName}`;
     const hasMap: boolean = Reflect.hasMetadata(apiMapInstanceName, instance);
-    let instanceMap: { [id: string]: Metadata; } = {};
+    let instanceMap: { [id: string]: Metadata } = {};
 
     if (!hasMap) {
         return json;
@@ -113,10 +112,11 @@ function convertPropertyToData(instance: Function, key: string, value: Metadata,
     const property: any = instance[key];
     const type: Metadata = Reflect.getMetadata(designType, instance, key);
     const isArray: boolean = type.name.toLocaleLowerCase() === Type.Array;
-    const propertyType: any = value.type || type;
+    const predicate: Function = value['predicate'];
+    const propertyType: any = value['type'] || type;
     const isSerializableProperty: boolean = isSerializable(propertyType);
 
-    if (isSerializableProperty) {
+    if (isSerializableProperty || predicate) {
         if (isArray) {
             const array: Array<any> = [];
             property.forEach((d: any) => {
@@ -143,22 +143,27 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
 
     const type: Metadata = Reflect.getMetadata(designType, instance, key);
     const isArray: boolean = type.name.toLowerCase() === Type.Array;
-    const propertyType: any = value.type || type;
+    const predicate: Function = value['predicate'];
+    let propertyType: any = value['type'] || type;
     const isSerializableProperty: boolean = isSerializable(propertyType);
 
-    if (!isSerializableProperty) {
+    if (!isSerializableProperty && !predicate) {
         return castSimpleData(propertyType.name, data);
     }
 
     if (isArray) {
         const array: Array<any> = [];
         data.forEach((d: any) => {
+            if (predicate) {
+                propertyType = predicate(d);
+            }
             array.push(deserialize(d, propertyType));
         });
 
         return array;
     }
 
+    propertyType = predicate ? predicate(data) : propertyType;
     return deserialize(data, propertyType);
 }
 
@@ -172,7 +177,7 @@ function isSerializable(type: any): boolean {
 /**
  * Function to transform the JsonProperty value into an object like {name: string, type: Function}
  */
-function getJsonPropertyValue(key: string, args: string | { name?: string, type: Function }): Metadata {
+function getJsonPropertyValue(key: string, args: string | { name?: string, type: Function } | { name?: string, predicate: Function }): Metadata {
     if (!args) {
         return {
             name: key.toString(),
@@ -180,10 +185,8 @@ function getJsonPropertyValue(key: string, args: string | { name?: string, type:
         };
     }
 
-    return {
-        name: typeof args === Type.String ? args : args['name'] ? args['name'] : key.toString(),
-        type: args['type']
-    };
+    const name: string = typeof args === Type.String ? args : args['name'] ? args['name'] : key.toString();
+    return args['predicate'] ? { name, predicate: args['predicate'] } : { name, type: args['type'] };
 }
 
 /**

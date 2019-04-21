@@ -56,7 +56,7 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
 
 ```typescript
 // Serializable decorator set a class as serializable.
-// It can take an optionnal parameter that specifies
+// It can take an optional parameter that specifies
 // the name of the class extended.
 
 @Serializable(baseClassName?: string)
@@ -64,10 +64,12 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
 
 ```typescript
 // JsonProperty decorator set metadata to the property.
-// It can take some optionnal parameters like the name of json property
-// or the type of the property (if needed).
+// It can take some optional parameters like:
+// - the name of json property
+// - the type of the property (if needed)
+// - a predicate function that return a type (if needed)
 
-@JsonProperty(args?: string | { name?: string, type: Function })
+@JsonProperty(args?: string | { name?: string, type: Function } | { name?: string, predicate: Function })
 ```
 
 ### Functions
@@ -102,16 +104,16 @@ import { Serializable, JsonProperty } from './../../src';
 
 // Enums
 export enum Gender {
-    female,
-    male,
-    other
+    Female,
+    Male,
+    Other
 }
 
 export enum Status {
-    alive = 'Alive',
-    sick = 'Sick',
-    deadAndAlive = 'Dead and alive',
-    dead = 'Dead'
+    Alive = 'Alive',
+    Sick = 'Sick',
+    DeadAndAlive = 'Dead and alive',
+    Dead = 'Dead'
 }
 
 
@@ -187,7 +189,28 @@ export class Panther extends Animal {
 }
 
 
+// Create a serializable class that extends Animal: Snake
+
+@Serializable('Animal')
+export class Snake extends Animal {
+
+    @JsonProperty()
+    public isPoisonous: boolean;
+
+    public constructor() {
+        super();
+    }
+
+}
+
+
 // Create a serializable class: Zoo
+
+// A predicate function use to determine what is the
+// right type of the data (Snake or Panther)
+const predicate: Function = (animal: any): Function => {
+    return animal['isPoisonous'] !== undefined ? Snake : Panther;
+};
 
 @Serializable()
 export class Zoo {
@@ -213,8 +236,15 @@ export class Zoo {
 
     // Array of none-basic type elements where you need to
     // specify the name of the json property
-    @JsonProperty({ name: 'Panthers', type: Panther })
-    public panthers: Array<Panther>;
+    // and use the predicate function to cast the deserialized
+    // object into the correct child class
+    @JsonProperty({ name: 'Animals', predicate })
+    public animals: Array<Animal>;
+
+    // Property that can be Panther or Snake type
+    // Use again the predicate function
+    @JsonProperty({ predicate })
+    public mascot: Panther | Snake;
 
     // Property which will be not serialized and deserialized
     // but event accessible and editable from Zoo class.
@@ -271,7 +301,7 @@ export const data: any = {
             'gender': 1
         }
     ],
-    'Panthers': [
+    'Animals': [
         {
             'id': 1,
             'name': 'Bagheera',
@@ -298,6 +328,15 @@ export const data: any = {
         },
         {
             'id': 3,
+            'name': 'Ka',
+            'birthdate': '2018-09-09T00:00:00.000Z',
+            'numberOfPaws': 0,
+            'gender': 1,
+            'isPoisonous': true,
+            'status': 'Alive'
+        },
+        {
+            'id': 4,
             'name': 'Schrodinger',
             'birthdate': '2015-03-05T22:00:00.000Z',
             'numberOfPaws': 4,
@@ -306,7 +345,21 @@ export const data: any = {
             'isSpeckled': false,
             'status': 'Dead and alive'
         }
-    ]
+    ],
+    'mascot': {
+        'id': 1,
+        'name': 'Bagheera',
+        'birthdate': '2010-01-11T22:00:00.000Z',
+        'numberOfPaws': 4,
+        'gender': 1,
+        'childrenIdentifiers': [
+            2,
+            3
+        ],
+        'color': 'black',
+        'isSpeckled': false,
+        'status': 'Sick'
+    }
 };
 ```
 
