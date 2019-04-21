@@ -1,7 +1,8 @@
 import { Serializable, JsonProperty } from './../../src';
-import { Animal } from './animal';
+
 import { Employee } from './employee';
 import { Panther } from './panther';
+import { Snake } from './snake';
 
 @Serializable()
 export class Zoo {
@@ -20,6 +21,8 @@ export class Zoo {
     public name: string;
     @JsonProperty({ name: 'Panthers', type: Panther })
     public panthers: Array<Panther>;
+    @JsonProperty({ type: Snake })
+    public snakes: Array<Snake>;
 
     public isOpen: boolean = true;
 

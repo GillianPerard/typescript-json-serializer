@@ -1,20 +1,28 @@
 import 'reflect-metadata';
 
+import Metadata from './metadata';
+import Type from './type';
+
+const apiMap: string = 'api:map:';
+const apiMapSerializable: string = `${apiMap}serializable`;
+const designType: string = 'design:type';
+
 /**
  * Decorator JsonProperty
  */
 export function JsonProperty(args?: string | { name?: string, type: Function }): Function {
     return (target: Object, key: string): void => {
 
-        let map: { [id: string]: { name: string, type: Function }; } = {};
+        let map: { [id: string]: Metadata; } = {};
         const targetName: string = target.constructor.name;
+        const ApiMapTargetName: string = `${apiMap}${targetName}`;
 
-        if (Reflect.hasMetadata('api:map:' + targetName, target)) {
-            map = Reflect.getMetadata('api:map:' + targetName, target);
+        if (Reflect.hasMetadata(ApiMapTargetName, target)) {
+            map = Reflect.getMetadata(ApiMapTargetName, target);
         }
 
         map[key] = getJsonPropertyValue(key, args);
-        Reflect.defineMetadata('api:map:' + targetName, map, target);
+        Reflect.defineMetadata(ApiMapTargetName, map, target);
     };
 }
 
@@ -23,7 +31,7 @@ export function JsonProperty(args?: string | { name?: string, type: Function }):
  */
 export function Serializable(baseClassName?: string): Function {
     return (target: Object): void => {
-        Reflect.defineMetadata('api:map:serializable', baseClassName, target);
+        Reflect.defineMetadata(apiMapSerializable, baseClassName, target);
     };
 }
 
@@ -34,24 +42,28 @@ export function deserialize(json: any, type: any): any {
 
     const instance: any = new type();
     const instanceName: string = instance.constructor.name;
-    const baseClassName: string = Reflect.getMetadata('api:map:serializable', type);
-    let instanceMap: { [id: string]: { name: string, type: Function }; } = {};
+    const baseClassName: string = Reflect.getMetadata(apiMapSerializable, type);
+    const apiMapInstanceName: string = `${apiMap}${instanceName}`;
+    const hasMap: boolean = Reflect.hasMetadata(apiMapInstanceName, instance);
+    let instanceMap: { [id: string]: Metadata; } = {};
 
-    if (Reflect.hasMetadata('api:map:' + instanceName, instance)) {
-        instanceMap = Reflect.getMetadata('api:map:' + instanceName, instance);
-
-        if (baseClassName) {
-            const baseClassMap: { [id: string]: any; } = Reflect.getMetadata('api:map:' + baseClassName, instance);
-            instanceMap = {...instanceMap, ...baseClassMap};
-        }
-
-        const keys: Array<string> = Object.keys(instanceMap);
-        keys.forEach((key: string) => {
-            if (json[instanceMap[key].name] !== undefined) {
-                instance[key] = convertDataToProperty(instance, key, instanceMap[key], json[instanceMap[key].name]);
-            }
-        });
+    if (!hasMap) {
+        return instance;
     }
+
+    instanceMap = Reflect.getMetadata(apiMapInstanceName, instance);
+
+    if (baseClassName) {
+        const baseClassMap: { [id: string]: any; } = Reflect.getMetadata(`${apiMap}${baseClassName}`, instance);
+        instanceMap = { ...instanceMap, ...baseClassMap };
+    }
+
+    const keys: Array<string> = Object.keys(instanceMap);
+    keys.forEach((key: string) => {
+        if (json[instanceMap[key].name] !== undefined) {
+            instance[key] = convertDataToProperty(instance, key, instanceMap[key], json[instanceMap[key].name]);
+        }
+    });
 
     return instance;
 }
@@ -63,25 +75,32 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
 
     const json: any = {};
     const instanceName: string = instance.constructor.name;
-    const baseClassName: string = Reflect.getMetadata('api:map:serializable', instance.constructor);
-    let instanceMap: { [id: string]: { name: string, type: Function }; } = {};
+    const baseClassName: string = Reflect.getMetadata(apiMapSerializable, instance.constructor);
+    const apiMapInstanceName: string = `${apiMap}${instanceName}`;
+    const hasMap: boolean = Reflect.hasMetadata(apiMapInstanceName, instance);
+    let instanceMap: { [id: string]: Metadata; } = {};
 
-    if (Reflect.hasMetadata('api:map:' + instanceName, instance)) {
-        instanceMap = Reflect.getMetadata('api:map:' + instanceName, instance);
-
-        if (baseClassName !== undefined) {
-            const baseClassMap: { [id: string]: any; } = Reflect.getMetadata('api:map:' + baseClassName, instance);
-            instanceMap = {...instanceMap, ...baseClassMap};
-        }
-
-        Object.keys(instanceMap).forEach((key: string) => {
-            const data: any = convertPropertyToData(instance, key, instanceMap[key], removeUndefined);
-
-            if (!removeUndefined || removeUndefined && data !== undefined) {
-                json[instanceMap[key].name] = data;
-            }
-        });
+    if (!hasMap) {
+        return json;
     }
+
+    instanceMap = Reflect.getMetadata(apiMapInstanceName, instance);
+
+    if (baseClassName !== undefined) {
+        const baseClassMap: { [id: string]: any; } = Reflect.getMetadata(`${apiMap}${baseClassName}`, instance);
+        instanceMap = { ...instanceMap, ...baseClassMap };
+    }
+
+    const instanceKeys: Array<string> = Object.keys(instance);
+    Object.keys(instanceMap).forEach((key: string) => {
+        if (!instanceKeys.includes(key)) {
+            return;
+        }
+        const data: any = convertPropertyToData(instance, key, instanceMap[key], removeUndefined);
+        if (!removeUndefined || removeUndefined && data !== undefined) {
+            json[instanceMap[key].name] = data;
+        }
+    });
 
     return json;
 }
@@ -89,11 +108,12 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
 /**
  * Function to convert json data to the class property
  */
-function convertPropertyToData(instance: Function, key: string, value: { name: string, type: Function }, removeUndefined: boolean): any {
+function convertPropertyToData(instance: Function, key: string, value: Metadata, removeUndefined: boolean): any {
 
     const property: any = instance[key];
-    const isArray: boolean = Reflect.getMetadata('design:type', instance, key).name === 'Array';
-    const propertyType: any = value.type || Reflect.getMetadata('design:type', instance, key);
+    const type: Metadata = Reflect.getMetadata(designType, instance, key);
+    const isArray: boolean = type.name.toLocaleLowerCase() === Type.Array;
+    const propertyType: any = value.type || type;
     const isSerializableProperty: boolean = isSerializable(propertyType);
 
     if (isSerializableProperty) {
@@ -107,62 +127,63 @@ function convertPropertyToData(instance: Function, key: string, value: { name: s
         }
 
         return serialize(property, removeUndefined);
-    } else {
-        if (propertyType.name === 'Date') {
-            return property.toISOString();
-        }
-
-        return property;
     }
+
+    if (propertyType.name.toLocaleLowerCase() === Type.Date) {
+        return property.toISOString();
+    }
+
+    return property;
 }
 
 /**
  * Function to convert json data to the class property
  */
-function convertDataToProperty(instance: Function, key: string, value: { name: string, type: Function }, data: any): any {
+function convertDataToProperty(instance: Function, key: string, value: Metadata, data: any): any {
 
-    const isArray: boolean = Reflect.getMetadata('design:type', instance, key).name === 'Array';
-    const propertyType: any = value.type || Reflect.getMetadata('design:type', instance, key);
+    const type: Metadata = Reflect.getMetadata(designType, instance, key);
+    const isArray: boolean = type.name.toLowerCase() === Type.Array;
+    const propertyType: any = value.type || type;
     const isSerializableProperty: boolean = isSerializable(propertyType);
 
-    if (isSerializableProperty) {
-        if (isArray) {
-            const array: Array<any> = [];
-            data.forEach((d: any) => {
-                array.push(deserialize(d, propertyType));
-            });
-
-            return array;
-        } else {
-            return deserialize(data, propertyType);
-        }
-    } else {
+    if (!isSerializableProperty) {
         return castSimpleData(propertyType.name, data);
     }
+
+    if (isArray) {
+        const array: Array<any> = [];
+        data.forEach((d: any) => {
+            array.push(deserialize(d, propertyType));
+        });
+
+        return array;
+    }
+
+    return deserialize(data, propertyType);
 }
 
 /**
  * Function to test if a class has the serializable decorator (metadata)
  */
 function isSerializable(type: any): boolean {
-    return Reflect.hasOwnMetadata('api:map:serializable', type);
+    return Reflect.hasOwnMetadata(apiMapSerializable, type);
 }
 
 /**
  * Function to transform the JsonProperty value into an object like {name: string, type: Function}
  */
-function getJsonPropertyValue(key: string, args: string | { name?: string, type: Function }): { name: string, type: Function } {
-    if (args) {
-        return {
-            name: typeof args === 'string' ? args : args['name'] ? args['name'] : key.toString(),
-            type: args['type']
-        };
-    } else {
+function getJsonPropertyValue(key: string, args: string | { name?: string, type: Function }): Metadata {
+    if (!args) {
         return {
             name: key.toString(),
             type: undefined
         };
     }
+
+    return {
+        name: typeof args === Type.String ? args : args['name'] ? args['name'] : key.toString(),
+        type: args['type']
+    };
 }
 
 /**
@@ -173,31 +194,29 @@ function castSimpleData(type: string, data: any): any {
 
     if ((typeof data).toLowerCase() === type) {
         return data;
-    } else {
-        if (type === 'string') {
+    }
+
+    switch (type) {
+        case Type.String:
             return data.toString();
-        } else if (type === 'number') {
-            const n: number = +data;
-            if (isNaN(n)) {
+        case Type.Number:
+            const number: number = +data;
+            if (isNaN(number)) {
                 console.error(`${data}: Type ${typeof data} is not assignable to type ${type}.`);
                 return undefined;
-            } else {
-                return n;
             }
-        } else if (type === 'boolean') {
+            return number;
+        case Type.Boolean:
             console.error(`${data}: Type ${typeof data} is not assignable to type ${type}.`);
             return undefined;
-        } else if (type === 'date') {
-            const n: number = Date.parse(data);
-            if (isNaN(n)) {
+        case Type.Date:
+            if (isNaN(Date.parse(data))) {
                 console.error(`${data}: Type ${typeof data} is not assignable to type ${type}.`);
                 return undefined;
-            } else {
-                return new Date(data);
             }
-        }
-
-        return data;
+            return new Date(data);
+        default:
+            return data;
     }
 }
 

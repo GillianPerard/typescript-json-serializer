@@ -28,6 +28,8 @@ For example:
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
         "target": "es5",
         "typeRoots": [
             "node_modules/@types"
