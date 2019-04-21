@@ -112,28 +112,28 @@ export const data: any = {
 const boss: Employee = new Employee();
 boss.birthdate = new Date(data.boss.birthdate);
 boss.email = data.boss.email;
-boss.gender = Gender.male;
+boss.gender = Gender.Male;
 boss.id = data.boss.id;
 boss.name = data.boss.name;
 
 const mikasa: Employee = new Employee();
 mikasa.birthdate = new Date(data.employees[1].birthdate);
 mikasa.email = data.employees[1].email;
-mikasa.gender = Gender.female;
+mikasa.gender = Gender.Female;
 mikasa.id = data.employees[1].id;
 mikasa.name = data.employees[1].name;
 
 const red: Employee = new Employee();
 red.birthdate = new Date(data.employees[2].birthdate);
 red.email = data.employees[2].email;
-red.gender = Gender.male;
+red.gender = Gender.Male;
 red.id = data.employees[2].id;
 red.name = data.employees[2].name;
 
 const fried: Employee = new Employee();
 fried.birthdate = new Date(data.employees[3].birthdate);
 fried.email = data.employees[3].email;
-fried.gender = Gender.male;
+fried.gender = Gender.Male;
 fried.id = data.employees[3].id;
 fried.name = data.employees[3].name;
 
@@ -141,41 +141,41 @@ const bagheera: Panther = new Panther();
 bagheera.birthdate = new Date(data.Animals[0].birthdate);
 bagheera.childrenIds = data.Animals[0].childrenIdentifiers;
 bagheera.color = data.Animals[0].color;
-bagheera.gender = Gender.male;
+bagheera.gender = Gender.Male;
 bagheera.id = data.Animals[0].id;
 bagheera.isSpeckled = data.Animals[0].isSpeckled;
 bagheera.name = data.Animals[0].name;
 bagheera.numberOfPaws = data.Animals[0].numberOfPaws;
-bagheera.status = Status.sick;
+bagheera.status = Status.Sick;
 
 const jolene: Panther = new Panther();
 jolene.birthdate = new Date(data.Animals[1].birthdate);
 jolene.color = data.Animals[1].color;
-jolene.gender = Gender.female;
+jolene.gender = Gender.Female;
 jolene.id = data.Animals[1].id;
 jolene.isSpeckled = data.Animals[1].isSpeckled;
 jolene.name = data.Animals[1].name;
 jolene.numberOfPaws = data.Animals[1].numberOfPaws;
-jolene.status = Status.alive;
+jolene.status = Status.Alive;
 
 const ka: Snake = new Snake();
 ka.birthdate = new Date(data.Animals[2].birthdate);
-ka.gender = Gender.male;
+ka.gender = Gender.Male;
 ka.id = data.Animals[2].id;
 ka.isPoisonous = data.Animals[2].isPoisonous;
 ka.name = data.Animals[2].name;
 ka.numberOfPaws = data.Animals[2].numberOfPaws;
-ka.status = Status.alive;
+ka.status = Status.Alive;
 
 const schrodinger: Panther = new Panther();
 schrodinger.birthdate = new Date(data.Animals[3].birthdate);
 schrodinger.color = data.Animals[3].color;
-schrodinger.gender = Gender.male;
+schrodinger.gender = Gender.Male;
 schrodinger.id = data.Animals[3].id;
 schrodinger.isSpeckled = data.Animals[3].isSpeckled;
 schrodinger.name = data.Animals[3].name;
 schrodinger.numberOfPaws = data.Animals[3].numberOfPaws;
-schrodinger.status = Status.deadAndAlive;
+schrodinger.status = Status.DeadAndAlive;
 
 const zoo: Zoo = new Zoo();
 zoo.animals = [bagheera, jolene, ka, schrodinger];

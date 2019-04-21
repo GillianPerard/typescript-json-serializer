@@ -1,6 +1,6 @@
 export enum Status {
-    alive = 'Alive',
-    sick = 'Sick',
-    deadAndAlive = 'Dead and alive',
-    dead = 'Dead'
+    Alive = 'Alive',
+    Sick = 'Sick',
+    DeadAndAlive = 'Dead and alive',
+    Dead = 'Dead'
 }
