@@ -10,7 +10,7 @@ export class Employee {
     @JsonProperty()
     public name: string;
     @JsonProperty()
-    public birthdate: Date;
+    public birthDate: Date;
     @JsonProperty()
     public email: string;
     @JsonProperty()

@@ -14,7 +14,7 @@ export const data: any = {
     'boss': {
         'id': 1,
         'name': 'Bob Razowsky',
-        'birthdate': '1984-04-03T22:00:00.000Z',
+        'birthDate': '1984-04-03T22:00:00.000Z',
         'email': 'bob.razowsky@tgzoo.fr',
         'gender': 1
     },
@@ -22,28 +22,28 @@ export const data: any = {
         {
             'id': 1,
             'name': 'Bob Razowsky',
-            'birthdate': '1984-04-03T22:00:00.000Z',
+            'birthDate': '1984-04-03T22:00:00.000Z',
             'email': 'bob.razowsky@tgzoo.fr',
             'gender': 1
         },
         {
             'id': 2,
             'name': 'Mikasa Ackerman',
-            'birthdate': '1984-01-11T22:00:00.000Z',
+            'birthDate': '1984-01-11T22:00:00.000Z',
             'email': 'mikasa.ackerman@tgzoo.fr',
             'gender': 0
         },
         {
             'id': 3,
             'name': 'Red Redington',
-            'birthdate': '1970-12-04T22:00:00.000Z',
+            'birthDate': '1970-12-04T22:00:00.000Z',
             'email': 'red.redington@tgzoo.fr',
             'gender': 1
         },
         {
             'id': 4,
             'name': 'Fried Richter',
-            'birthdate': '1994-04-01T22:00:00.000Z',
+            'birthDate': '1994-04-01T22:00:00.000Z',
             'email': 'fried.richter@tgzoo.fr',
             'gender': 1
         }
@@ -52,7 +52,7 @@ export const data: any = {
         {
             'id': 1,
             'name': 'Bagheera',
-            'birthdate': '2010-01-11T22:00:00.000Z',
+            'birthDate': '2010-01-11T22:00:00.000Z',
             'numberOfPaws': 4,
             'gender': 1,
             'childrenIdentifiers': [
@@ -66,7 +66,7 @@ export const data: any = {
         {
             'id': 2,
             'name': 'Jolene',
-            'birthdate': '2017-03-10T22:00:00.000Z',
+            'birthDate': '2017-03-10T22:00:00.000Z',
             'numberOfPaws': 4,
             'gender': 0,
             'color': 'blond',
@@ -76,7 +76,7 @@ export const data: any = {
         {
             'id': 3,
             'name': 'Ka',
-            'birthdate': '2018-09-09T00:00:00.000Z',
+            'birthDate': '2018-09-09T00:00:00.000Z',
             'numberOfPaws': 0,
             'gender': 1,
             'isPoisonous': true,
@@ -85,7 +85,7 @@ export const data: any = {
         {
             'id': 4,
             'name': 'Schrodinger',
-            'birthdate': '2015-03-05T22:00:00.000Z',
+            'birthDate': '2015-03-05T22:00:00.000Z',
             'numberOfPaws': 4,
             'gender': 1,
             'color': 'brown',
@@ -96,7 +96,7 @@ export const data: any = {
     'mascot': {
         'id': 1,
         'name': 'Bagheera',
-        'birthdate': '2010-01-11T22:00:00.000Z',
+        'birthDate': '2010-01-11T22:00:00.000Z',
         'numberOfPaws': 4,
         'gender': 1,
         'childrenIdentifiers': [
@@ -110,70 +110,63 @@ export const data: any = {
 };
 
 const boss: Employee = new Employee();
-boss.birthdate = new Date(data.boss.birthdate);
+boss.birthDate = new Date(data.boss.birthDate);
 boss.email = data.boss.email;
 boss.gender = Gender.Male;
 boss.id = data.boss.id;
 boss.name = data.boss.name;
 
 const mikasa: Employee = new Employee();
-mikasa.birthdate = new Date(data.employees[1].birthdate);
+mikasa.birthDate = new Date(data.employees[1].birthDate);
 mikasa.email = data.employees[1].email;
 mikasa.gender = Gender.Female;
 mikasa.id = data.employees[1].id;
 mikasa.name = data.employees[1].name;
 
 const red: Employee = new Employee();
-red.birthdate = new Date(data.employees[2].birthdate);
+red.birthDate = new Date(data.employees[2].birthDate);
 red.email = data.employees[2].email;
 red.gender = Gender.Male;
 red.id = data.employees[2].id;
 red.name = data.employees[2].name;
 
 const fried: Employee = new Employee();
-fried.birthdate = new Date(data.employees[3].birthdate);
+fried.birthDate = new Date(data.employees[3].birthDate);
 fried.email = data.employees[3].email;
 fried.gender = Gender.Male;
 fried.id = data.employees[3].id;
 fried.name = data.employees[3].name;
 
-const bagheera: Panther = new Panther();
-bagheera.birthdate = new Date(data.Animals[0].birthdate);
-bagheera.childrenIds = data.Animals[0].childrenIdentifiers;
+const bagheera: Panther = new Panther(data.Animals[0].isSpeckled, data.Animals[0].name);
 bagheera.color = data.Animals[0].color;
+bagheera.birthDate = new Date(data.Animals[0].birthDate);
+bagheera.childrenIds = data.Animals[0].childrenIdentifiers;
 bagheera.gender = Gender.Male;
 bagheera.id = data.Animals[0].id;
-bagheera.isSpeckled = data.Animals[0].isSpeckled;
-bagheera.name = data.Animals[0].name;
 bagheera.numberOfPaws = data.Animals[0].numberOfPaws;
 bagheera.status = Status.Sick;
 
-const jolene: Panther = new Panther();
-jolene.birthdate = new Date(data.Animals[1].birthdate);
+const jolene: Panther = new Panther(data.Animals[1].isSpeckled, data.Animals[1].name);
 jolene.color = data.Animals[1].color;
+jolene.birthDate = new Date(data.Animals[1].birthDate);
 jolene.gender = Gender.Female;
 jolene.id = data.Animals[1].id;
-jolene.isSpeckled = data.Animals[1].isSpeckled;
-jolene.name = data.Animals[1].name;
 jolene.numberOfPaws = data.Animals[1].numberOfPaws;
 jolene.status = Status.Alive;
 
-const ka: Snake = new Snake();
-ka.birthdate = new Date(data.Animals[2].birthdate);
+const ka: Snake = new Snake(data.Animals[2].name);
+ka.birthDate = new Date(data.Animals[2].birthDate);
 ka.gender = Gender.Male;
 ka.id = data.Animals[2].id;
 ka.isPoisonous = data.Animals[2].isPoisonous;
-ka.name = data.Animals[2].name;
 ka.numberOfPaws = data.Animals[2].numberOfPaws;
 ka.status = Status.Alive;
 
-const schrodinger: Panther = new Panther();
-schrodinger.birthdate = new Date(data.Animals[3].birthdate);
+const schrodinger: Panther = new Panther(data.Animals[3].isSpeckled, data.Animals[3].name);
 schrodinger.color = data.Animals[3].color;
+schrodinger.birthDate = new Date(data.Animals[3].birthDate);
 schrodinger.gender = Gender.Male;
 schrodinger.id = data.Animals[3].id;
-schrodinger.isSpeckled = data.Animals[3].isSpeckled;
-schrodinger.name = data.Animals[3].name;
 schrodinger.numberOfPaws = data.Animals[3].numberOfPaws;
 schrodinger.status = Status.DeadAndAlive;
 
