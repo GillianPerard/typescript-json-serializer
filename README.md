@@ -26,8 +26,8 @@ For example:
         "sourceMap": false,
         "declaration": true,
         "moduleResolution": "node",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,      // Add this line
+        "experimentalDecorators": true,     // Add this line
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "target": "es5",
@@ -100,7 +100,7 @@ deserialize(json: any, type: any)
 // zoo.ts
 
 // Import decorators from library
-import { Serializable, JsonProperty } from './../../src';
+import { Serializable, JsonProperty } from 'typescript-json-serializer';
 
 // Enums
 export enum Gender {
