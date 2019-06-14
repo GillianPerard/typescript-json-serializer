@@ -11,7 +11,7 @@ export class Animal {
     @JsonProperty()
     public name: string;
     @JsonProperty()
-    public birthdate: Date;
+    public birthDate: Date;
     @JsonProperty()
     public numberOfPaws: number;
     @JsonProperty()
@@ -21,6 +21,8 @@ export class Animal {
     @JsonProperty()
     public status: Status;
 
-    public constructor() { }
+    public constructor(name: string) {
+        this.name = name;
+    }
 
 }

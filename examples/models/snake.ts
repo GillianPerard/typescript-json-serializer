@@ -7,8 +7,8 @@ export class Snake extends Animal {
     @JsonProperty()
     public isPoisonous: boolean;
 
-    public constructor() {
-        super();
+    public constructor(name: string) {
+        super(name);
     }
 
 }
