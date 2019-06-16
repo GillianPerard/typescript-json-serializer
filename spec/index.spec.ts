@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import 'reflect-metadata';
 import * as rewire from 'rewire';
 
-import { deserialize, serialize } from '../src/index';
+import { deserialize, serialize, Serializable, JsonProperty } from '../src/index';
 
 import { Dummy } from '../examples/models/dummy';
 import { Panther } from '../examples/models/panther';
@@ -172,5 +172,30 @@ describe('getJsonPropertyValue', () => {
 
     it('should return name equals to args["name"] and type equals args["type"]', () => {
         expect(getJsonPropertyValue('zoo', { name: 'myZoo', type: Zoo })).to.deep.equal({ name: 'myZoo', type: Zoo });
+    });
+});
+
+describe('Support constructor parameter decorators #28', () => {
+    @Serializable()
+    class Student {
+        public constructor(
+            @JsonProperty() public readonly studentId: number,
+            @JsonProperty() public readonly name: string,
+            @JsonProperty() public readonly grade: number
+        ) {}
+    }
+
+    const original: Student = new Student(12345, 'name', 54321);
+    const serialized: Student = serialize(original);
+
+    it('should be serialized properly', () => {
+        expect(serialized.studentId).to.equal(original.studentId);
+        expect(serialized.name).to.equal(original.name);
+        expect(serialized.grade).to.equal(original.grade);
+    });
+
+    it('should be deserialized properly', () => {
+        const deserialized: Student = deserialize(serialized, Student);
+        expect(deserialized).to.deep.equal(original);
     });
 });
