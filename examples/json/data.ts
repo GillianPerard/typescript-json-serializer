@@ -109,33 +109,21 @@ export const data: any = {
     }
 };
 
-const boss: Employee = new Employee();
-boss.birthDate = new Date(data.boss.birthDate);
+const boss: Employee = new Employee(data.boss.name, Gender.Male, new Date(data.boss.birthDate));
 boss.email = data.boss.email;
-boss.gender = Gender.Male;
 boss.id = data.boss.id;
-boss.name = data.boss.name;
 
-const mikasa: Employee = new Employee();
-mikasa.birthDate = new Date(data.employees[1].birthDate);
+const mikasa: Employee = new Employee(data.employees[1].name, Gender.Female, new Date(data.employees[1].birthDate));
 mikasa.email = data.employees[1].email;
-mikasa.gender = Gender.Female;
 mikasa.id = data.employees[1].id;
-mikasa.name = data.employees[1].name;
 
-const red: Employee = new Employee();
-red.birthDate = new Date(data.employees[2].birthDate);
+const red: Employee = new Employee(data.employees[2].name, Gender.Male, new Date(data.employees[2].birthDate));
 red.email = data.employees[2].email;
-red.gender = Gender.Male;
 red.id = data.employees[2].id;
-red.name = data.employees[2].name;
 
-const fried: Employee = new Employee();
-fried.birthDate = new Date(data.employees[3].birthDate);
+const fried: Employee = new Employee(data.employees[3].name, Gender.Male, new Date(data.employees[3].birthDate));
 fried.email = data.employees[3].email;
-fried.gender = Gender.Male;
 fried.id = data.employees[3].id;
-fried.name = data.employees[3].name;
 
 const bagheera: Panther = new Panther(data.Animals[0].isSpeckled, data.Animals[0].name);
 bagheera.color = data.Animals[0].color;

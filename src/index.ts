@@ -13,7 +13,7 @@ const designParamtypes: string = 'design:paramtypes';
  */
 function getParamNames(ctor: object): Array<string> {
     const params: string = ctor.toString().match(/function\s.*?\(([^)]*)\)/)[1];
-    return params.split(',');
+    return params.replace(/\s/g, '').split(',');
 }
 
 /**
@@ -38,6 +38,7 @@ export function JsonProperty(args?: string | { name?: string, type: Function } |
 
         map[key] = getJsonPropertyValue(key, args);
         Reflect.defineMetadata(apiMapTargetName, map, target);
+    console.log(target, key);
     };
 }
 
@@ -199,7 +200,6 @@ function getJsonPropertyValue(key: string, args: string | { name?: string, type:
             type: undefined
         };
     }
-
     const name: string = typeof args === Type.String ? args : args['name'] ? args['name'] : key.toString();
     return args['predicate'] ? { name, predicate: args['predicate'] } : { name, type: args['type'] };
 }
