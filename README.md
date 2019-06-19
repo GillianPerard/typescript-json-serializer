@@ -20,24 +20,11 @@ For example:
 
 ```json
 {
-    "compileOnSave": false,
     "compilerOptions": {
-        "outDir": "./dist",
-        "sourceMap": false,
-        "declaration": true,
-        "moduleResolution": "node",
-        "emitDecoratorMetadata": true,      // Add this line
-        "experimentalDecorators": true,     // Add this line
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "target": "es5",
-        "typeRoots": [
-            "node_modules/@types"
-        ],
-        "lib": [
-            "es2015",
-            "dom"
-        ]
+        ...
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        ...
     }
 }
 ```
@@ -126,17 +113,13 @@ export class Employee {
     @JsonProperty()
     public id: number;
     @JsonProperty()
-    public name: string;
-    @JsonProperty()
-    public birthDate: Date;
-    @JsonProperty()
     public email: string;
 
-    // Enum value (number)
-    @JsonProperty()
-    public gender: Gender;
-
-    public constructor() { }
+    public constructor(
+        @JsonProperty() public name: string,
+        @JsonProperty() public gender: Gender,
+        @JsonProperty() public readonly birthDate: Date
+    ) { }
 
 }
 
@@ -179,7 +162,7 @@ export class Animal {
 @Serializable('Animal')
 export class Panther extends Animal {
 
-    @JsonProperty() public color: string,
+    @JsonProperty() public color: string;
 
     // JsonProperty directly inside the constructor
     // for property parameters
