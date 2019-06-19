@@ -8,14 +8,12 @@ export class Employee {
     @JsonProperty()
     public id: number;
     @JsonProperty()
-    public name: string;
-    @JsonProperty()
-    public birthDate: Date;
-    @JsonProperty()
     public email: string;
-    @JsonProperty()
-    public gender: Gender;
 
-    public constructor() { }
+    public constructor(
+        @JsonProperty() public name: string,
+        @JsonProperty() public gender: Gender,
+        @JsonProperty() public readonly birthDate: Date
+    ) { }
 
 }
