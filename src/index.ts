@@ -12,7 +12,12 @@ const designParamtypes: string = 'design:paramtypes';
  * Function to find the name of function parameters
  */
 function getParamNames(ctor: object): Array<string> {
-    const params: string = ctor.toString().match(/function\s.*?\(([^)]*)\)/)[1];
+    // Get params from constructor string
+    let params: string = ctor.toString().match(/function\s.*?\(([^)]*)\)/)[1];
+
+    // Remove jsDoc from params
+    params = params.replace(/\/\*.*\*\//g, '');
+
     return params.replace(/\s/g, '').split(',');
 }
 
@@ -38,7 +43,6 @@ export function JsonProperty(args?: string | { name?: string, type: Function } |
 
         map[key] = getJsonPropertyValue(key, args);
         Reflect.defineMetadata(apiMapTargetName, map, target);
-    console.log(target, key);
     };
 }
 
