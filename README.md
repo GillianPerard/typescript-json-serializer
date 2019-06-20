@@ -110,14 +110,21 @@ export enum Status {
 @Serializable()
 export class Employee {
 
+    /**
+     * The employee's id
+     */
     @JsonProperty()
     public id: number;
+
+    /** The employee's email */
     @JsonProperty()
     public email: string;
 
     public constructor(
+        // This comment will throw an error
         @JsonProperty() public name: string,
         @JsonProperty() public gender: Gender,
+        /** This comment works */
         @JsonProperty() public readonly birthDate: Date
     ) { }
 
