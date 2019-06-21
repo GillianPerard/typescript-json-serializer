@@ -111,7 +111,7 @@ export enum Status {
 export class Employee {
 
     /**
-     * The employee's id
+     * The employee's id (PK)
      */
     @JsonProperty()
     public id: number;
@@ -121,7 +121,7 @@ export class Employee {
     public email: string;
 
     public constructor(
-        // This comment will throw an error
+        // This comment works
         @JsonProperty() public name: string,
         @JsonProperty() public gender: Gender,
         /** This comment works */

@@ -12,13 +12,23 @@ const designParamtypes: string = 'design:paramtypes';
  * Function to find the name of function parameters
  */
 function getParamNames(ctor: object): Array<string> {
-    // Get params from constructor string
-    let params: string = ctor.toString().match(/function\s.*?\(([^)]*)\)/)[1];
-
-    // Remove jsDoc from params
-    params = params.replace(/\/\*.*\*\//g, '');
-
-    return params.replace(/\s/g, '').split(',');
+    return (
+        [ctor.toString()]
+            // 1. Remove all kind of comments
+            .map((_: string) => _.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, ''))
+            // 2. Parse as a function declaration
+            .map((_: string) => _.match(/function\s.*?\(((?:)|([^)]*))\)/))
+            // 3. Get the parsed string
+            .map((matches?: RegExpMatchArray) => (matches && matches[1]) || '')
+            // 4. Remove all whitespaces
+            .map((_: string) => _.replace(/\s/g, ''))
+            // 5. Split by comma
+            .map((_: string) => _.split(','))
+            // 6. Collect parameter names to array
+            .reduce((acc: Array<string>, params: Array<string>) => acc.concat(params))
+            // 7. Filter out blanks
+            .filter((_: string) => Boolean(_))
+    );
 }
 
 /**
