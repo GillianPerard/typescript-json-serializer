@@ -15,7 +15,7 @@ function getParamNames(ctor: object): Array<string> {
     return (
         [ctor.toString()]
             // 1. Remove all kind of comments
-            .map((_: string) => _.replace(/(\/\*[\s\S]*?\*\/|([^:]|^)\/\/.*$)/gm, ''))
+            .map((_: string) => _.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, ''))
             // 2. Parse as a function declaration
             .map((_: string) => _.match(/function\s.*?\(((?:)|([^)]*))\)/))
             // 3. Get the parsed string
