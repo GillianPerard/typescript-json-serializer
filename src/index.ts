@@ -9,26 +9,25 @@ const designType: string = 'design:type';
 const designParamtypes: string = 'design:paramtypes';
 
 /**
- * Function to find the name of function parameters
+ * Generator function to find the name of function parameters
  */
-function getParamNames(ctor: object): Array<string> {
-    return (
-        [ctor.toString()]
-            // 1. Remove all kind of comments
-            .map((_: string) => _.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, ''))
-            // 2. Parse as a function declaration
-            .map((_: string) => _.match(/function\s.*?\(((?:)|([^)]*))\)/))
-            // 3. Get the parsed string
-            .map((matches?: RegExpMatchArray) => (matches && matches[1]) || '')
-            // 4. Remove all whitespaces
-            .map((_: string) => _.replace(/\s/g, ''))
-            // 5. Split by comma
-            .map((_: string) => _.split(','))
-            // 6. Collect parameter names to array
-            .reduce((acc: Array<string>, params: Array<string>) => acc.concat(params))
-            // 7. Filter out blanks
-            .filter((_: string) => Boolean(_))
+function* getParamNames(ctor: object): IterableIterator<string> {
+    const comments_removed: string = ctor.toString().replace(
+        /(\/\*[\s\S]*?\*\/|\/\/.*$)/gm,
+        ''
     );
+    const parameter_pattern: RegExp = /(?:this.)([^\s=;]+)\s*=/gm;
+    let match: RegExpExecArray | null;
+
+    // tslint:disable-next-line:no-conditional-assignment
+    while ((match = parameter_pattern.exec(comments_removed))) {
+        const parameter_name: string = match[1];
+        if (parameter_name) {
+          yield parameter_name;
+        }
+    }
+
+    return;
 }
 
 /**
@@ -38,7 +37,7 @@ export function JsonProperty(args?: string | { name?: string, type: Function } |
     return (target: Object | Function, key: string, index: number): void => {
         if (key === undefined && target['prototype']) {
             const type: Function = Reflect.getMetadata(designParamtypes, target, key)[index];
-            const keys: Array<string> = getParamNames(target['prototype'].constructor);
+            const keys: Array<string> = Array.from(getParamNames(target['prototype'].constructor));
             key = keys[index];
             target = target['prototype'];
             Reflect.defineMetadata(designType, type, target, key);
