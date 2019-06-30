@@ -1,55 +1,33 @@
 {
-    "name": "typescript-json-serializer",
-    "version": "1.2.4",
-    "description": "Typescript library to serialize classes into json and deserialize json into classes.",
-    "main": "index.js",
-    "types": "index.d.ts",
-    "scripts": {
-        "build": "gulp build",
-        "test": "yarn build && mocha dist/spec",
-        "cover": "yarn build && nyc --reporter html --reporter text mocha dist/spec",
-        "lint": "./node_modules/tslint/bin/tslint -p tsconfig.json",
-        "pub": "cd dist/src/ && npm publish"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/GillianPerard/typescript-json-serializer.git"
-    },
-    "author": "Gillian Pérard",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/GillianPerard/typescript-json-serializer/issues"
-    },
-    "homepage": "https://github.com/GillianPerard/typescript-json-serializer#readme",
-    "keywords": [
-        "json",
-        "typescript",
-        "serializer",
-        "deserializer",
-        "decorator",
-        "metadata"
-    ],
-    "dependencies": {
-        "reflect-metadata": "^0.1.13"
-    },
-    "devDependencies": {
-        "@istanbuljs/nyc-config-typescript": "^0.1.3",
-        "@types/chai": "^4.1.7",
-        "@types/mocha": "^5.2.7",
-        "@types/node": "^12.0.8",
-        "chai": "^4.2.0",
-        "coveralls": "^3.0.4",
-        "del": "^4.1.1",
-        "gulp": "^4.0.2",
-        "gulp-copy": "^4.0.1",
-        "gulp-tslint": "^8.1.4",
-        "gulp-typescript": "^5.0.1",
-        "istanbul": "^0.4.5",
-        "mocha": "^6.1.4",
-        "nyc": "^14.1.1",
-        "rewire": "^4.0.1",
-        "ts-node": "^8.3.0",
-        "tslint": "^5.17.0",
-        "typescript": "^3.5.2"
-    }
+  "name": "typescript-json-serializer",
+  "version": "1.2.5",
+  "description": "Typescript library to serialize classes into json and deserialize json into classes.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "react-scripts-ts build",
+    "start": "react-scripts-ts start",
+    "test": "serve -s build"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "deep-equal": "^1.0",
+    "react": "^16.8",
+    "react-dom": "^16.8",
+    "reflect-metadata": "^0.1"
+  },
+  "devDependencies": {
+    "@types/deep-equal": "^1.0",
+    "@types/node": "^12",
+    "@types/react": "^16.8",
+    "@types/react-dom": "^16.8",
+    "react-scripts-ts": "^3.1",
+    "serve": "^11.0",
+    "ts-node": "^8.3",
+    "tslint": "^5.18",
+    "tslint-config-prettier": "^1.18",
+    "tslint-consistent-codestyle": "^1.15",
+    "tslint-react": "^4.0",
+    "typescript": "^3.5"
+  }
 }
