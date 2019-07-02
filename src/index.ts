@@ -12,23 +12,24 @@ const designParamtypes: string = 'design:paramtypes';
  * Function to find the name of function parameters
  */
 function getParamNames(ctor: object): Array<string> {
-    return (
-        [ctor.toString()]
-            // 1. Remove all kind of comments
-            .map((_: string) => _.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, ''))
-            // 2. Parse as a function declaration
-            .map((_: string) => _.match(/function\s.*?\(((?:)|([^)]*))\)/))
-            // 3. Get the parsed string
-            .map((matches?: RegExpMatchArray) => (matches && matches[1]) || '')
-            // 4. Remove all whitespaces
-            .map((_: string) => _.replace(/\s/g, ''))
-            // 5. Split by comma
-            .map((_: string) => _.split(','))
-            // 6. Collect parameter names to array
-            .reduce((acc: Array<string>, params: Array<string>) => acc.concat(params))
-            // 7. Filter out blanks
-            .filter((_: string) => Boolean(_))
-    );
+
+    // Remove all kind of comments
+    const withoutComments: string = ctor.toString().replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, '');
+
+    // Parse function body
+    const parameterPattern: RegExp = /(?:this.)([^\s=;]+)\s*=/gm;
+    const paramNames: Array<string> = [];
+    let match: RegExpExecArray;
+
+    // Get params
+    while (match = parameterPattern.exec(withoutComments)) {
+        const paramName: string = match[1];
+        if (paramName) {
+            paramNames.push(paramName);
+        }
+    }
+
+    return paramNames;
 }
 
 /**
