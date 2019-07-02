@@ -383,3 +383,12 @@ npm run test
 # or
 yarn test
 ```
+
+## Author
+
+Gillian Pérard - [@GillianPerard](https://github.com/GillianPerard)
+
+
+## Contributors
+
+* Hyeonsoo David Lee - [@civilizeddev](https://github.com/civilizeddev)
