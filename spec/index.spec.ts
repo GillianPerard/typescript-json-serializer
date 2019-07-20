@@ -2,13 +2,14 @@ import { expect } from 'chai';
 import 'reflect-metadata';
 import * as rewire from 'rewire';
 
-import { deserialize, serialize } from '../src/index';
+import { deserialize, serialize } from '../src';
 
 import { Dummy } from '../examples/models/dummy';
 import { Panther } from '../examples/models/panther';
 import { Zoo } from '../examples/models/zoo';
 
 import { data, deserializedData } from '../examples/json/data';
+import { Animal } from '../examples/models/animal';
 
 const tjs: any = rewire('../src/index');
 
@@ -71,21 +72,28 @@ describe('serialize', () => {
 
 describe('deserialize', () => {
     it('should return true', () => {
-        expect(deserialize(data, Zoo)).to.deep.equal(deserializedData);
+        expect(deserialize<Zoo>(data, Zoo)).to.deep.equal(deserializedData);
     });
 
     it('should return true even if there are fake data included', () => {
         const alteredData: any = { ...data };
         alteredData['fake'] = 'fake';
         alteredData['Animals'][0]['fake'] = 'fake';
-        expect(deserialize(alteredData, Zoo)).to.deep.equal(deserializedData);
+        expect(deserialize<Zoo>(alteredData, Zoo)).to.deep.equal(deserializedData);
     });
 
     it('should return an empty zoo (except for the isOpen property)', () => {
         const badData: any = {
             fake: 'fake'
         };
-        expect(deserialize(badData, Zoo)).to.deep.equal({ isOpen: true });
+        expect(deserialize<Zoo>(badData, Zoo)).to.deep.equal({ isOpen: true });
+    });
+
+    it('should accept a non-default (has parameter(s) on) constructor', () => {
+        const name: string = 'My beautiful animal';
+        const nonDefault: Animal = deserialize<Animal>({ name }, Animal);
+        const myBeautifulAnimal: Animal = new Animal(name);
+        expect(nonDefault).to.deep.equal(myBeautifulAnimal);
     });
 });
 
