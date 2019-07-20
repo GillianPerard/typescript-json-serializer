@@ -1,0 +1,11 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: debian:stretch
+    steps:
+      -checkout
+      - run: yarn
+      - run: yarn cover
+      - store_artifacts:
+          path: coverage
