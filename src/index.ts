@@ -69,7 +69,7 @@ export function Serializable(baseClassName?: string): Function {
 /**
  * Function to deserialize json into a class
  */
-export function deserialize(json: any, type: any): any {
+export function deserialize<T>(json: any, type: new (...params: Array<any>) => T): T {
     const instance: any = new type();
     const instanceName: string = instance.constructor.name;
     const baseClassName: string = Reflect.getMetadata(apiMapSerializable, type);
