@@ -1,4 +1,4 @@
-import { Serializable, JsonProperty } from './../../src';
+import { Serializable, JsonProperty } from '../../src';
 import { Animal } from './animal';
 
 @Serializable('Animal')
