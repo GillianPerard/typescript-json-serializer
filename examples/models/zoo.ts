@@ -1,4 +1,4 @@
-import { Serializable, JsonProperty } from './../../src';
+import { Serializable, JsonProperty } from '../../src';
 
 import { Employee } from './employee';
 import { Panther } from './panther';
