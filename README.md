@@ -67,7 +67,7 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
 // - a instance of the class to serialize
 // - a boolean to remove undefined property (default true)
 
-serialize(instance: any, removeUndefined: boolean = true)
+serialize(instance: any, removeUndefined: boolean = true): any
 ```
 
 ```typescript
@@ -76,7 +76,7 @@ serialize(instance: any, removeUndefined: boolean = true)
 // - json data
 // - the class you want to deserialize into
 
-deserialize(json: any, type: any)
+deserialize<T>(json: any, type: new (...params) => T): T
 ```
 
 ## Example
@@ -367,7 +367,7 @@ import { json } from '../json/data';
 import { Zoo } from '../models/zoo';
 
 // deserialize
-const zoo: Zoo = deserialize(json, Zoo);
+const zoo: Zoo = deserialize<Zoo>(json, Zoo);
 
 // serialize
 const data: any = serialize(zoo);
