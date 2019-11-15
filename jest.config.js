@@ -1,8 +1,8 @@
 module.exports = {
-    "roots": [
-        "spec"
-    ],
-    "transform": {
-        "^.+\\.tsx?$": "ts-jest"
-    },
+    coverageReporters: ['text', 'lcov'],
+    reporters: ['default', 'jest-junit'],
+    roots: ['spec'],
+    transform: {
+        '^.+\\.tsx?$': 'ts-jest'
+    }
 };

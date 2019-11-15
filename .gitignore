@@ -20,6 +20,10 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 
+# Reporting
+reports
+junit.xml
+
 # nyc test coverage
 .nyc_output
 
