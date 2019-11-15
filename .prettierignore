@@ -1,0 +1,7 @@
+**/vscode/*
+**/dist
+**/package-lock.json
+**/yarn.lock
+**/.gitlab
+**/*.md
+**/node_modules

@@ -1,7 +1,3 @@
 {
-    "editor.detectIndentation": false,
-    "editor.insertSpaces": true,
-    "tslint.enable": true,
-    "tslint.autoFixOnSave": true,
     "editor.formatOnSave": true
 }

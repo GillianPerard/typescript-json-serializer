@@ -12,73 +12,38 @@
             "object-destructuring",
             "array-destructuring"
         ],
-        "indent": [
-            true,
-            "spaces",
-            4
-        ],
+        "indent": [true, "spaces", 4],
         "arrow-return-shorthand": true,
         "callable-types": true,
         "class-name": true,
-        "comment-format": [
-            true,
-            "check-space"
-        ],
+        "comment-format": [true, "check-space"],
         "curly": true,
         "deprecation": {
             "severity": "warn"
         },
         "eofline": true,
         "forin": true,
-        "import-blacklist": [
-            true,
-            "rxjs",
-            "rxjs/Rx"
-        ],
+        "import-blacklist": [true, "rxjs", "rxjs/Rx"],
         "import-spacing": true,
         "interface-over-type-literal": true,
         "label-position": true,
-        "max-line-length": [
-            false,
-            140
-        ],
-        "member-access": [
-            true,
-            "check-accessor",
-            "check-constructor",
-            "check-parameter-property"
-        ],
+        "member-access": [true, "check-accessor", "check-constructor", "check-parameter-property"],
         "member-ordering": [
             true,
             {
-                "order": [
-                    "static-field",
-                    "instance-field",
-                    "static-method",
-                    "instance-method"
-                ]
+                "order": ["static-field", "instance-field", "static-method", "instance-method"]
             }
         ],
         "no-arg": true,
         "no-bitwise": true,
-        "no-console": [
-            true,
-            "debug",
-            "info",
-            "time",
-            "timeEnd",
-            "trace"
-        ],
+        "no-console": [true, "debug", "info", "time", "timeEnd", "trace"],
         "no-construct": true,
         "no-debugger": true,
         "no-duplicate-super": true,
         "no-empty": false,
         "no-empty-interface": true,
         "no-eval": true,
-        "no-inferrable-types": [
-            false,
-            "ignore-params"
-        ],
+        "no-inferrable-types": [false, "ignore-params"],
         "no-misused-new": true,
         "no-non-null-assertion": true,
         "no-shadowed-variable": true,
@@ -90,27 +55,12 @@
         "no-unused-expression": true,
         "no-var-keyword": true,
         "object-literal-sort-keys": false,
-        "one-line": [
-            true,
-            "check-open-brace",
-            "check-catch",
-            "check-else",
-            "check-whitespace"
-        ],
+        "one-line": [true, "check-open-brace", "check-catch", "check-else", "check-whitespace"],
         "prefer-const": true,
-        "quotemark": [
-            true,
-            "single"
-        ],
+        "quotemark": [true, "single"],
         "radix": true,
-        "semicolon": [
-            true,
-            "always"
-        ],
-        "triple-equals": [
-            true,
-            "allow-null-check"
-        ],
+        "semicolon": [true, "always"],
+        "triple-equals": [true, "allow-null-check"],
         "typedef-whitespace": [
             true,
             {
@@ -123,14 +73,7 @@
         ],
         "unified-signatures": true,
         "variable-name": false,
-        "whitespace": [
-            true,
-            "check-branch",
-            "check-decl",
-            "check-operator",
-            "check-separator",
-            "check-type"
-        ],
+        "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-separator", "check-type"],
         "no-duplicate-imports": true,
         "prefer-readonly": true,
         "trailing-comma": [
@@ -151,17 +94,11 @@
                 "esSpecCompliant": true
             }
         ],
-        "array-type": [
-            true,
-            "generic"
-        ],
+        "array-type": [true, "generic"],
         "arrow-parens": true,
         "new-parens": true,
         "no-angle-bracket-type-assertion": true,
-        "no-consecutive-blank-lines": [
-            true,
-            2
-        ],
+        "no-consecutive-blank-lines": [true, 2],
         "return-undefined": true,
         "no-unnecessary-type-assertion": true,
         "no-irregular-whitespace": true,

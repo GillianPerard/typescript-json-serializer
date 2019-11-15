@@ -11,7 +11,6 @@ const predicate: Function = (animal: any): Function => {
 
 @Serializable()
 export class Zoo {
-
     @JsonProperty()
     public boss: Employee;
     @JsonProperty()
@@ -33,6 +32,5 @@ export class Zoo {
 
     public isOpen: boolean = true;
 
-    public constructor() { }
-
+    public constructor() {}
 }

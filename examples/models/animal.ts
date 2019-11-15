@@ -5,7 +5,6 @@ import { Status } from './status';
 
 @Serializable()
 export class Animal {
-
     @JsonProperty()
     public id: number;
     @JsonProperty()
@@ -24,5 +23,4 @@ export class Animal {
     public constructor(name: string) {
         this.name = name;
     }
-
 }

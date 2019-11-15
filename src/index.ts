@@ -12,7 +12,6 @@ const designParamtypes: string = 'design:paramtypes';
  * Function to find the name of function parameters
  */
 function getParamNames(ctor: object): Array<string> {
-
     // Remove all kind of comments
     const withoutComments: string = ctor.toString().replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, '');
 
@@ -22,7 +21,7 @@ function getParamNames(ctor: object): Array<string> {
     let match: RegExpExecArray;
 
     // Get params
-    while (match = parameterPattern.exec(withoutComments)) {
+    while ((match = parameterPattern.exec(withoutComments))) {
         const paramName: string = match[1];
         if (paramName) {
             paramNames.push(paramName);
@@ -35,7 +34,9 @@ function getParamNames(ctor: object): Array<string> {
 /**
  * Decorator JsonProperty
  */
-export function JsonProperty(args?: string | { name?: string, type: Function } | { name?: string, predicate: Function }): Function {
+export function JsonProperty(
+    args?: string | { name?: string; type: Function } | { name?: string; predicate: Function }
+): Function {
     return (target: Object | Function, key: string, index: number): void => {
         if (key === undefined && target['prototype']) {
             const type: Function = Reflect.getMetadata(designParamtypes, target, key)[index];
@@ -44,7 +45,7 @@ export function JsonProperty(args?: string | { name?: string, type: Function } |
             target = target['prototype'];
             Reflect.defineMetadata(designType, type, target, key);
         }
-        let map: { [id: string]: Metadata; } = {};
+        let map: { [id: string]: Metadata } = {};
         const targetName: string = target.constructor.name;
         const apiMapTargetName: string = `${apiMap}${targetName}`;
 
@@ -75,7 +76,7 @@ export function deserialize<T>(json: any, type: new (...params: Array<any>) => T
     const baseClassName: string = Reflect.getMetadata(apiMapSerializable, type);
     const apiMapInstanceName: string = `${apiMap}${instanceName}`;
     const hasMap: boolean = Reflect.hasMetadata(apiMapInstanceName, instance);
-    let instanceMap: { [id: string]: Metadata; } = {};
+    let instanceMap: { [id: string]: Metadata } = {};
 
     if (!hasMap) {
         return instance;
@@ -84,7 +85,7 @@ export function deserialize<T>(json: any, type: new (...params: Array<any>) => T
     instanceMap = Reflect.getMetadata(apiMapInstanceName, instance);
 
     if (baseClassName) {
-        const baseClassMap: { [id: string]: Metadata; } = Reflect.getMetadata(`${apiMap}${baseClassName}`, instance);
+        const baseClassMap: { [id: string]: Metadata } = Reflect.getMetadata(`${apiMap}${baseClassName}`, instance);
         instanceMap = { ...instanceMap, ...baseClassMap };
     }
 
@@ -102,7 +103,6 @@ export function deserialize<T>(json: any, type: new (...params: Array<any>) => T
  * Function to serialize a class into json
  */
 export function serialize(instance: any, removeUndefined: boolean = true): any {
-
     const json: any = {};
     const instanceName: string = instance.constructor.name;
     const baseClassName: string = Reflect.getMetadata(apiMapSerializable, instance.constructor);
@@ -117,7 +117,7 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
     instanceMap = Reflect.getMetadata(apiMapInstanceName, instance);
 
     if (baseClassName !== undefined) {
-        const baseClassMap: { [id: string]: any; } = Reflect.getMetadata(`${apiMap}${baseClassName}`, instance);
+        const baseClassMap: { [id: string]: any } = Reflect.getMetadata(`${apiMap}${baseClassName}`, instance);
         instanceMap = { ...instanceMap, ...baseClassMap };
     }
 
@@ -127,7 +127,7 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
             return;
         }
         const data: any = convertPropertyToData(instance, key, instanceMap[key], removeUndefined);
-        if (!removeUndefined || removeUndefined && data !== undefined) {
+        if (!removeUndefined || (removeUndefined && data !== undefined)) {
             json[instanceMap[key].name] = data;
         }
     });
@@ -139,7 +139,6 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
  * Function to convert json data to the class property
  */
 function convertPropertyToData(instance: Function, key: string, value: Metadata, removeUndefined: boolean): any {
-
     const property: any = instance[key];
     const type: Metadata = Reflect.getMetadata(designType, instance, key);
     const isArray: boolean = type.name.toLocaleLowerCase() === Type.Array;
@@ -171,7 +170,6 @@ function convertPropertyToData(instance: Function, key: string, value: Metadata,
  * Function to convert json data to the class property
  */
 function convertDataToProperty(instance: Function, key: string, value: Metadata, data: any): any {
-
     const type: Metadata = Reflect.getMetadata(designType, instance, key);
     const isArray: boolean = type.name.toLowerCase() === Type.Array;
     const predicate: Function = value['predicate'];
@@ -208,7 +206,10 @@ function isSerializable(type: any): boolean {
 /**
  * Function to transform the JsonProperty value into an object like {name: string, type: Function}
  */
-function getJsonPropertyValue(key: string, args: string | { name?: string, type: Function } | { name?: string, predicate: Function }): Metadata {
+function getJsonPropertyValue(
+    key: string,
+    args: string | { name?: string; type: Function } | { name?: string; predicate: Function }
+): Metadata {
     if (!args) {
         return {
             name: key.toString(),
@@ -252,4 +253,3 @@ function castSimpleData(type: string, data: any): any {
             return data;
     }
 }
-

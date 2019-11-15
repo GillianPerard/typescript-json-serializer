@@ -38,7 +38,7 @@ describe('serialize', () => {
     it('should return 1 childrenIdentifiers', () => {
         const result: any = serialize(deserializedData, false);
         const count: number = result.Animals.filter((animal: any) => {
-            return (animal.hasOwnProperty('childrenIdentifiers'));
+            return animal.hasOwnProperty('childrenIdentifiers');
         }).length;
         expect(count).toBe(1);
     });

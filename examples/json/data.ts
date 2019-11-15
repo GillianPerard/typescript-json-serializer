@@ -7,105 +7,99 @@ import { Status } from '../models/status';
 import { Snake } from '../models/snake';
 
 export const data: any = {
-    'id': 15,
-    'name': 'The Greatest Zoo',
-    'city': 'Bordeaux',
-    'country': 'France',
-    'boss': {
-        'id': 1,
-        'name': 'Bob Razowsky',
-        'birthDate': '1984-04-03T22:00:00.000Z',
-        'email': 'bob.razowsky@tgzoo.fr',
-        'gender': 1
+    id: 15,
+    name: 'The Greatest Zoo',
+    city: 'Bordeaux',
+    country: 'France',
+    boss: {
+        id: 1,
+        name: 'Bob Razowsky',
+        birthDate: '1984-04-03T22:00:00.000Z',
+        email: 'bob.razowsky@tgzoo.fr',
+        gender: 1
     },
-    'employees': [
+    employees: [
         {
-            'id': 1,
-            'name': 'Bob Razowsky',
-            'birthDate': '1984-04-03T22:00:00.000Z',
-            'email': 'bob.razowsky@tgzoo.fr',
-            'gender': 1
+            id: 1,
+            name: 'Bob Razowsky',
+            birthDate: '1984-04-03T22:00:00.000Z',
+            email: 'bob.razowsky@tgzoo.fr',
+            gender: 1
         },
         {
-            'id': 2,
-            'name': 'Mikasa Ackerman',
-            'birthDate': '1984-01-11T22:00:00.000Z',
-            'email': 'mikasa.ackerman@tgzoo.fr',
-            'gender': 0
+            id: 2,
+            name: 'Mikasa Ackerman',
+            birthDate: '1984-01-11T22:00:00.000Z',
+            email: 'mikasa.ackerman@tgzoo.fr',
+            gender: 0
         },
         {
-            'id': 3,
-            'name': 'Red Redington',
-            'birthDate': '1970-12-04T22:00:00.000Z',
-            'email': 'red.redington@tgzoo.fr',
-            'gender': 1
+            id: 3,
+            name: 'Red Redington',
+            birthDate: '1970-12-04T22:00:00.000Z',
+            email: 'red.redington@tgzoo.fr',
+            gender: 1
         },
         {
-            'id': 4,
-            'name': 'Fried Richter',
-            'birthDate': '1994-04-01T22:00:00.000Z',
-            'email': 'fried.richter@tgzoo.fr',
-            'gender': 1
+            id: 4,
+            name: 'Fried Richter',
+            birthDate: '1994-04-01T22:00:00.000Z',
+            email: 'fried.richter@tgzoo.fr',
+            gender: 1
         }
     ],
-    'Animals': [
+    Animals: [
         {
-            'id': 1,
-            'name': 'Bagheera',
-            'birthDate': '2010-01-11T22:00:00.000Z',
-            'numberOfPaws': 4,
-            'gender': 1,
-            'childrenIdentifiers': [
-                2,
-                3
-            ],
-            'color': 'black',
-            'isSpeckled': false,
-            'status': 'Sick'
+            id: 1,
+            name: 'Bagheera',
+            birthDate: '2010-01-11T22:00:00.000Z',
+            numberOfPaws: 4,
+            gender: 1,
+            childrenIdentifiers: [2, 3],
+            color: 'black',
+            isSpeckled: false,
+            status: 'Sick'
         },
         {
-            'id': 2,
-            'name': 'Jolene',
-            'birthDate': '2017-03-10T22:00:00.000Z',
-            'numberOfPaws': 4,
-            'gender': 0,
-            'color': 'blond',
-            'isSpeckled': true,
-            'status': 'Alive'
+            id: 2,
+            name: 'Jolene',
+            birthDate: '2017-03-10T22:00:00.000Z',
+            numberOfPaws: 4,
+            gender: 0,
+            color: 'blond',
+            isSpeckled: true,
+            status: 'Alive'
         },
         {
-            'id': 3,
-            'name': 'Ka',
-            'birthDate': '2018-09-09T00:00:00.000Z',
-            'numberOfPaws': 0,
-            'gender': 1,
-            'isPoisonous': true,
-            'status': 'Alive'
+            id: 3,
+            name: 'Ka',
+            birthDate: '2018-09-09T00:00:00.000Z',
+            numberOfPaws: 0,
+            gender: 1,
+            isPoisonous: true,
+            status: 'Alive'
         },
         {
-            'id': 4,
-            'name': 'Schrodinger',
-            'birthDate': '2015-03-05T22:00:00.000Z',
-            'numberOfPaws': 4,
-            'gender': 1,
-            'color': 'brown',
-            'isSpeckled': false,
-            'status': 'Dead and alive'
+            id: 4,
+            name: 'Schrodinger',
+            birthDate: '2015-03-05T22:00:00.000Z',
+            numberOfPaws: 4,
+            gender: 1,
+            color: 'brown',
+            isSpeckled: false,
+            status: 'Dead and alive'
         }
     ],
-    'mascot': {
-        'id': 1,
-        'name': 'Bagheera',
-        'birthDate': '2010-01-11T22:00:00.000Z',
-        'numberOfPaws': 4,
-        'gender': 1,
-        'childrenIdentifiers': [
-            2,
-            3
-        ],
-        'color': 'black',
-        'isSpeckled': false,
-        'status': 'Sick'
+    mascot: {
+        id: 1,
+        name: 'Bagheera',
+        birthDate: '2010-01-11T22:00:00.000Z',
+        numberOfPaws: 4,
+        gender: 1,
+        childrenIdentifiers: [2, 3],
+        color: 'black',
+        isSpeckled: false,
+        status: 'Sick'
     }
 };
 

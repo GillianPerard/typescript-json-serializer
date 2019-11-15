@@ -4,7 +4,6 @@ import { Gender } from './gender';
 
 @Serializable()
 export class Employee {
-
     /**
      * The employee's id
      */
@@ -21,6 +20,5 @@ export class Employee {
         @JsonProperty() public gender: Gender,
         /** The birth date of the employee (readonly) */
         @JsonProperty() public readonly birthDate: Date
-    ) { }
-
+    ) {}
 }
