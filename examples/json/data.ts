@@ -10,6 +10,7 @@ export const data: any = {
     id: 15,
     name: 'The Greatest Zoo',
     city: 'Bordeaux',
+    coordinates: [1, 2, 3],
     country: 'France',
     boss: {
         id: 1,
@@ -156,6 +157,11 @@ const zoo: Zoo = new Zoo();
 zoo.animals = [bagheera, jolene, ka, schrodinger];
 zoo.boss = boss;
 zoo.city = data.city;
+zoo.coordinates = {
+    x: data.coordinates[0],
+    y: data.coordinates[1],
+    z: data.coordinates[2]
+};
 zoo.country = data.country;
 zoo.employees = [boss, mikasa, red, fried];
 zoo.id = data.id;
