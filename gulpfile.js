@@ -13,34 +13,30 @@ const clean = () => del(destinationFolder);
 const lint = () => {
     return project
         .src()
-        .pipe(tsLint({ configuration: "./tslint.json", formatter: "verbose" }))
-        .pipe(tsLint.report())
+        .pipe(tsLint({ configuration: './tslint.json', formatter: 'verbose' }))
+        .pipe(tsLint.report());
 };
 
 const transpile = () => {
     return project
         .src()
         .pipe(project())
-        .js
-        .pipe(gulp.dest(destinationFolder))
+        .js.pipe(gulp.dest(destinationFolder));
 };
 
 const declare = () => {
-    return tsResult = gulp
+    return gulp
         .src('src/**/*.ts')
         .pipe(project())
-        .dts
-        .pipe(gulp.dest(`${destinationFolder}/src/`));
+        .dts.pipe(gulp.dest(`${destinationFolder}/src/`));
 };
 
 const copy = () => {
     const sourceFiles = ['./package.json', './LICENSE', './README.md'];
-    return gulp
-        .src(sourceFiles)
-        .pipe(gulpCopy(`${destinationFolder}/src`))
+    return gulp.src(sourceFiles).pipe(gulpCopy(`${destinationFolder}/src`));
 };
 
-const build = (done) => gulp.series(lint, clean, transpile, declare, copy)(done);
+const build = done => gulp.series(lint, clean, transpile, declare, copy)(done);
 
 const tasks = [clean, lint, transpile, declare, build, copy];
 

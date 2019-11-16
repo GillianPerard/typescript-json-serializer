@@ -55,8 +55,13 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
 // - the name of json property
 // - the type of the property (if needed)
 // - a predicate function that return a type (if needed)
+// - a function to transform data on deserialize
+// - a function to transform data on serialize
 
-@JsonProperty(args?: string | { name?: string, type: Function } | { name?: string, predicate: Function })
+@JsonProperty(args?: string
+    | { name?: string, type?: Function, onDeserialize?: Function, onSerialize?: Function }
+    | { name?: string, predicate?: Function, onDeserialize?: Function, onSerializ?: Function }
+)
 ```
 
 ### Functions
@@ -200,9 +205,23 @@ export class Snake extends Animal {
 
 // Create a serializable class: Zoo
 
+// Function to transform coordinates into an array
+const coordinatesToArray: Function = (coordinates: { x: number; y: number; z: number }): Array<number> => {
+    return Object.values(coordinates);
+};
+
+// Function to transform an array into coordinates
+const arrayToCoordinates: Function = (array: Array<number>): { x: number; y: number; z: number } => {
+    return {
+        x: array[0],
+        y: array[1],
+        z: array[2]
+    };
+};
+
 // A predicate function use to determine what is the
 // right type of the data (Snake or Panther)
-const predicate: Function = (animal: any): Function => {
+const snakeOrPanther: Function = (animal: any): Function => {
     return animal['isPoisonous'] !== undefined ? Snake : Panther;
 };
 
@@ -219,6 +238,11 @@ export class Zoo {
     @JsonProperty()
     public country: string;
 
+    // Property with transform functions executed respectively
+    // on serialize and on deserialize
+    @JsonProperty({ onDeserialize: arrayToCoordinates, onSerialize: coordinatesToArray })
+    public coordinates: { x: number; y: number; z: number };
+
     // Array of none-basic type elements
     @JsonProperty({ type: Employee })
     public employees: Array<Employee>;
@@ -232,7 +256,7 @@ export class Zoo {
     // specify the name of the json property
     // and use the predicate function to cast the deserialized
     // object into the correct child class
-    @JsonProperty({ name: 'Animals', predicate })
+    @JsonProperty({ name: 'Animals', predicate: snakeOrPanther })
     public animals: Array<Animal>;
 
     // Property that can be Panther or Snake type
@@ -257,6 +281,7 @@ export const data: any = {
     'id': 15,
     'name': 'The Greatest Zoo',
     'city': 'Bordeaux',
+    'coordinates': [1, 2, 3],
     'country': 'France',
     'boss': {
         'id': 1,

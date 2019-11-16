@@ -1,0 +1,72 @@
+variables:
+    NODE_IMAGE: node:12.13-alpine
+
+stages:
+    - test
+    - sonar
+    - build
+    - publish
+
+TEST lib:
+    stage: test
+    image: $NODE_IMAGE
+    cache:
+        paths:
+            - node_modules/
+    before_script:
+        - yarn
+    script:
+        - yarn lint:ci
+        - yarn test:ci
+    artifacts:
+        paths:
+            - coverage
+        expire_in: 1 days
+
+SONAR lib:
+    stage: sonar
+    image: hiorgserver/gitlab-sonar-scanner
+    variables:
+        SONAR_URL: https://sonarqube.gillianperard.com
+        SONAR_TOKEN: $SONARQUBE_TOKEN
+        SONAR_PROJECT_VERSION: $CI_COMMIT_REF_NAME
+        SONAR_GITLAB_COMMENT: 'true'
+        SONAR_PUBLISH: 'true'
+    script:
+        - npm install -D typescript
+        - /usr/bin/sonar-scanner-run.sh
+    except:
+        - master
+    allow_failure: true
+    dependencies:
+        - TEST lib
+
+BUILD lib:
+    stage: build
+    image: node:12.13-alpine
+    cache:
+        paths:
+            - node_modules/
+    before_script:
+        - yarn
+    script:
+        - yarn build
+    artifacts:
+        paths:
+            - dist/src
+        expire_in: 1 days
+
+PUBLISH lib:
+    image: $NODE_IMAGE
+    stage: publish
+    before_script:
+        - npm config set registry https://registry.npmjs.org/
+        - npm config set always-auth true
+        - npm config set "//registry.npmjs.org/:_authToken" $NPM_TOKEN
+    script:
+        - yarn publish:lib
+    dependencies:
+        - BUILD lib
+    when: manual
+    only:
+        - master
