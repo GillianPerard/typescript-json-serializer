@@ -1,6 +1,6 @@
 # typescript-json-serializer
 
-![CircleCI](https://img.shields.io/circleci/build/github/GillianPerard/typescript-json-serializer.svg)
+[![pipeline status](https://gitlab.com/gillian.perard/typescript-json-serializer/badges/master/pipeline.svg)](https://gitlab.com/gillian.perard/typescript-json-serializer/commits/master)
 [![Coverage Status](https://coveralls.io/repos/github/GillianPerard/typescript-json-serializer/badge.svg)](https://coveralls.io/github/GillianPerard/typescript-json-serializer)
 [![Known Vulnerabilities](https://snyk.io/test/github/gillianperard/typescript-json-serializer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/gillianperard/typescript-json-serializer?targetFile=package.json)
 
@@ -60,7 +60,7 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
 
 @JsonProperty(args?: string
     | { name?: string, type?: Function, onDeserialize?: Function, onSerialize?: Function }
-    | { name?: string, predicate?: Function, onDeserialize?: Function, onSerializ?: Function }
+    | { name?: string, predicate?: Function, onDeserialize?: Function, onSerialize?: Function }
 )
 ```
 
@@ -392,7 +392,7 @@ import { json } from '../json/data';
 import { Zoo } from '../models/zoo';
 
 // deserialize
-const zoo: Zoo = deserialize<Zoo>(json, Zoo);
+const zoo: Zoo = deserialize(json, Zoo);
 
 // serialize
 const data: any = serialize(zoo);

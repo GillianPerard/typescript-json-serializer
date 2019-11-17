@@ -67,25 +67,25 @@ describe('serialize', () => {
 
 describe('deserialize', () => {
     it('should return true', () => {
-        expect(deserialize<Zoo>(data, Zoo)).toEqual(deserializedData);
+        expect(deserialize(data, Zoo)).toEqual(deserializedData);
     });
 
     it('should return true even if there are fake data included', () => {
         const alteredData: any = { ...data };
         alteredData['fake'] = 'fake';
         alteredData['Animals'][0]['fake'] = 'fake';
-        expect(deserialize<Zoo>(alteredData, Zoo)).toEqual(deserializedData);
+        expect(deserialize(alteredData, Zoo)).toEqual(deserializedData);
     });
 
     it('should return an empty zoo (except for the isOpen property)', () => {
         const badData: any = {
             fake: 'fake'
         };
-        expect(deserialize<Zoo>(badData, Zoo)).toEqual({ isOpen: true });
+        expect(deserialize(badData, Zoo)).toEqual({ isOpen: true });
     });
 
     it('should return the right type', () => {
-        const object: any = deserialize<Animal>({ name: 'My beautiful animal' }, Animal);
+        const object: any = deserialize({ name: 'My beautiful animal' }, Animal);
         const isAnimal: boolean = object instanceof Animal;
         expect(isAnimal).toBeTruthy();
     });
