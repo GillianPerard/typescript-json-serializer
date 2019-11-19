@@ -171,7 +171,7 @@ function convertPropertyToData(instance: Function, key: string, value: Metadata,
     }
 
     if (propertyType.name.toLocaleLowerCase() === Type.Date) {
-        return property.toISOString();
+        return property ? property.toISOString() : property;
     }
 
     return property;

@@ -83,7 +83,7 @@ export const data: any = {
         {
             id: 4,
             name: 'Schrodinger',
-            birthDate: '2015-03-05T22:00:00.000Z',
+            birthDate: undefined,
             numberOfPaws: 4,
             gender: 1,
             color: 'brown',
@@ -147,7 +147,7 @@ ka.status = Status.Alive;
 
 const schrodinger: Panther = new Panther(data.Animals[3].isSpeckled, data.Animals[3].name);
 schrodinger.color = data.Animals[3].color;
-schrodinger.birthDate = new Date(data.Animals[3].birthDate);
+schrodinger.birthDate = undefined;
 schrodinger.gender = Gender.Male;
 schrodinger.id = data.Animals[3].id;
 schrodinger.numberOfPaws = data.Animals[3].numberOfPaws;
