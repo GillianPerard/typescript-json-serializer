@@ -76,7 +76,7 @@ export function Serializable(baseClassName?: string): Function {
 /**
  * Function to deserialize json into a class
  */
-export function deserialize<T>(json: any, type: new (...params: Array<any>) => T): T {
+export function deserialize<T>(json: object, type: new (...params: Array<any>) => T): T {
     const instance: any = new type();
     const instanceName: string = instance.constructor.name;
     const baseClassName: string = Reflect.getMetadata(apiMapSerializable, type);
@@ -171,7 +171,7 @@ function convertPropertyToData(instance: Function, key: string, value: Metadata,
     }
 
     if (propertyType.name.toLocaleLowerCase() === Type.Date) {
-        return property.toISOString();
+        return property ? property.toISOString() : property;
     }
 
     return property;
