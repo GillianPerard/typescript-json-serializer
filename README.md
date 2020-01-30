@@ -261,8 +261,11 @@ export class Zoo {
 
     // Property that can be Panther or Snake type
     // Use again the predicate function
-    @JsonProperty({ predicate })
+    @JsonProperty({ predicate: snakeOrPanther })
     public mascot: Panther | Snake;
+
+    @JsonProperty()
+    public bestEmployeeOfTheMonth: Employee;
 
     // Property which will be not serialized and deserialized
     // but event accessible and editable from Zoo class.
@@ -378,7 +381,8 @@ export const data: any = {
         'color': 'black',
         'isSpeckled': false,
         'status': 'Sick'
-    }
+    },
+    'bestEmployeeOfTheMonth': undefined
 };
 ```
 

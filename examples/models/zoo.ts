@@ -43,6 +43,8 @@ export class Zoo {
     public animals: Array<Animal>;
     @JsonProperty({ predicate: snakeOrPanther })
     public mascot: Panther | Snake;
+    @JsonProperty()
+    public bestEmployeeOfTheMonth: Employee;
 
     public isOpen: boolean = true;
 
