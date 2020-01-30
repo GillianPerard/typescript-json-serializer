@@ -101,7 +101,8 @@ export const data: any = {
         color: 'black',
         isSpeckled: false,
         status: 'Sick'
-    }
+    },
+    bestEmployeeOfTheMonth: undefined
 };
 
 const boss: Employee = new Employee(data.boss.name, Gender.Male, new Date(data.boss.birthDate));
@@ -167,5 +168,6 @@ zoo.employees = [boss, mikasa, red, fried];
 zoo.id = data.id;
 zoo.mascot = bagheera;
 zoo.name = data.name;
+zoo.bestEmployeeOfTheMonth = data.bestEmployeeOfTheMonth;
 
 export const deserializedData: Zoo = zoo;

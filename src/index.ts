@@ -157,7 +157,7 @@ function convertPropertyToData(instance: Function, key: string, value: Metadata,
         property = onSerialize(property);
     }
 
-    if (isSerializableProperty || predicate) {
+    if (property && (isSerializableProperty || predicate)) {
         if (isArray) {
             const array: Array<any> = [];
             property.forEach((d: any) => {
