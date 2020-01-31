@@ -24,7 +24,7 @@ function getParamNames(ctor: object): Array<string> {
     const withoutComments: string = ctor.toString().replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, '');
 
     // Parse function body
-    const parameterPattern: RegExp = /(?:this.)([^\s=;]+)\s*=/gm;
+    const parameterPattern: RegExp = /(?:this.*\.)([^\s=;]+)\s*=/gm;
     const paramNames: Array<string> = [];
     let match: RegExpExecArray;
 
