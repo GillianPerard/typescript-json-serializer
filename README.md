@@ -203,6 +203,16 @@ export class Snake extends Animal {
 }
 
 
+// Create a serializable empty class that extends Animal: UnknownAnimal
+
+@Serializable('Animal')
+export class UnknownAnimal extends Animal {
+    public constructor(name: string) {
+        super(name);
+    }
+}
+
+
 // Create a serializable class: Zoo
 
 // Function to transform coordinates into an array
@@ -263,6 +273,10 @@ export class Zoo {
     // Use again the predicate function
     @JsonProperty({ predicate: snakeOrPanther })
     public mascot: Panther | Snake;
+
+    // Array of empty child classes
+    @JsonProperty({ type: UnknownAnimal })
+    public unknownAnimals: Array<UnknownAnimal>;
 
     @JsonProperty()
     public bestEmployeeOfTheMonth: Employee;
@@ -330,10 +344,7 @@ export const data: any = {
             'birthDate': '2010-01-11T22:00:00.000Z',
             'numberOfPaws': 4,
             'gender': 1,
-            'childrenIdentifiers': [
-                2,
-                3
-            ],
+            'childrenIdentifiers': [2, 3],
             'color': 'black',
             'isSpeckled': false,
             'status': 'Sick'
@@ -374,15 +385,13 @@ export const data: any = {
         'birthDate': '2010-01-11T22:00:00.000Z',
         'numberOfPaws': 4,
         'gender': 1,
-        'childrenIdentifiers': [
-            2,
-            3
-        ],
+        'childrenIdentifiers': [2, 3],
         'color': 'black',
         'isSpeckled': false,
         'status': 'Sick'
     },
-    'bestEmployeeOfTheMonth': undefined
+    'bestEmployeeOfTheMonth': undefined,
+    'unknownAnimals': [{ 'name': 'Bob' }]
 };
 ```
 
@@ -396,7 +405,7 @@ import { json } from '../json/data';
 import { Zoo } from '../models/zoo';
 
 // deserialize
-const zoo: Zoo = deserialize(json, Zoo);
+const zoo: Zoo = deserialize<Zoo>(json, Zoo);
 
 // serialize
 const data: any = serialize(zoo);
