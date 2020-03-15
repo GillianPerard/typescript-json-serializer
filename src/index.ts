@@ -129,12 +129,12 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
 
     const instanceKeys: Array<string> = Object.keys(instance);
     Object.keys(instanceMap).forEach((key: string): void => {
-        if (!instanceKeys.includes(key)) {
-            return;
-        }
-        const data: any = convertPropertyToData(instance, key, instanceMap[key], removeUndefined);
-        if (!removeUndefined || (removeUndefined && data !== undefined)) {
-            json[instanceMap[key].name] = data;
+        if (instanceKeys.includes(key)) {
+            const data: any = convertPropertyToData(instance, key, instanceMap[key], removeUndefined);
+
+            if (!removeUndefined || (removeUndefined && data !== undefined)) {
+                json[instanceMap[key].name] = data;
+            }
         }
     });
 
