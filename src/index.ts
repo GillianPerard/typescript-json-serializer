@@ -96,7 +96,7 @@ export function deserialize<T>(json: object, type: new (...params: Array<any>) =
     }
 
     const keys: Array<string> = Object.keys(instanceMap);
-    keys.forEach((key: string) => {
+    keys.forEach((key: string): void => {
         if (json[instanceMap[key].name] !== undefined) {
             instance[key] = convertDataToProperty(instance, key, instanceMap[key], json[instanceMap[key].name]);
         }
@@ -128,7 +128,7 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
     }
 
     const instanceKeys: Array<string> = Object.keys(instance);
-    Object.keys(instanceMap).forEach((key: string) => {
+    Object.keys(instanceMap).forEach((key: string): void => {
         if (!instanceKeys.includes(key)) {
             return;
         }
@@ -160,7 +160,7 @@ function convertPropertyToData(instance: Function, key: string, value: Metadata,
     if (property && (isSerializableProperty || predicate)) {
         if (isArray) {
             const array: Array<any> = [];
-            property.forEach((d: any) => {
+            property.forEach((d: any): void => {
                 array.push(serialize(d, removeUndefined));
             });
 
@@ -198,7 +198,7 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
 
     if (isArray) {
         const array: Array<any> = [];
-        data.forEach((d: any) => {
+        data.forEach((d: any): void => {
             if (predicate) {
                 propertyType = predicate(d);
             }
