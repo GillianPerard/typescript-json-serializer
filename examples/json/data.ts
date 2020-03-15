@@ -1,10 +1,10 @@
 import { Zoo } from '../models/zoo';
 import { Employee } from '../models/employee';
 import { Panther } from '../models/panther';
-
 import { Gender } from '../models/gender';
 import { Status } from '../models/status';
 import { Snake } from '../models/snake';
+import { UnknownAnimal } from '../models/unknown-animal';
 
 export const data: any = {
     id: 15,
@@ -102,6 +102,11 @@ export const data: any = {
         isSpeckled: false,
         status: 'Sick'
     },
+    unknownAnimals: [
+        {
+            name: 'Bob'
+        }
+    ],
     bestEmployeeOfTheMonth: undefined
 };
 
@@ -154,6 +159,8 @@ schrodinger.id = data.Animals[3].id;
 schrodinger.numberOfPaws = data.Animals[3].numberOfPaws;
 schrodinger.status = Status.DeadAndAlive;
 
+const unknownAnimal: UnknownAnimal = new UnknownAnimal(data.unknownAnimals[0].name);
+
 const zoo: Zoo = new Zoo();
 zoo.animals = [bagheera, jolene, ka, schrodinger];
 zoo.boss = boss;
@@ -169,5 +176,6 @@ zoo.id = data.id;
 zoo.mascot = bagheera;
 zoo.name = data.name;
 zoo.bestEmployeeOfTheMonth = data.bestEmployeeOfTheMonth;
+zoo.unknownAnimals = [unknownAnimal];
 
 export const deserializedData: Zoo = zoo;
