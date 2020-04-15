@@ -11,9 +11,9 @@
         "format:staged": "pretty-quick --staged",
         "lint": "gulp lint",
         "lint:ci": "yarn tslint -p tsconfig.json --format junit -o reports/junit/js-lint-results.xml",
-        "publish:lib": "cd dist && npm publish --registry https://registry.npmjs.org",
+        "npm-publish": "cd dist && npm publish",
         "test": "jest",
-        "test:ci": "yarn jest --reporters=default --reporters=jest-junit --coverage --coverageReporters=lcov --coverageReporters=text-lcov | coveralls"
+        "test:ci": "yarn jest --reporters=default --reporters=jest-junit --coverage --coverageReporters=lcov --coverageReporters=text-lcov"
     },
     "repository": {
         "type": "git",
@@ -41,7 +41,6 @@
         "@commitlint/config-conventional": "^8.3.4",
         "@types/jest": "^25.2.1",
         "@types/node": "^13.11.1",
-        "coveralls": "^3.0.11",
         "del": "^5.1.0",
         "gulp": "^4.0.2",
         "gulp-copy": "^4.0.1",
