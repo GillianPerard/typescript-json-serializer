@@ -14,6 +14,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
+          registry-url: https://registry.npmjs.org/
       - name: Install dependencies
         run: yarn install
       - name: Lint
@@ -27,6 +28,6 @@ jobs:
       - name: Build
         run: yarn build
       - name: Publish
-        run: yarn npm-publish
+        run: cd dist && npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
