@@ -11,7 +11,7 @@
         "format:staged": "pretty-quick --staged",
         "lint": "gulp lint",
         "lint:ci": "yarn tslint -p tsconfig.json --format junit -o reports/junit/js-lint-results.xml",
-        "npm-publish": "cd dist && npm publish",
+        "npm-publish": "cd dist && npm publish --registry https://registry.npmjs.org",
         "test": "jest",
         "test:ci": "yarn jest --reporters=default --reporters=jest-junit --coverage --coverageReporters=lcov --coverageReporters=text-lcov"
     },
