@@ -1,12 +1,20 @@
 import 'reflect-metadata';
 
-import { Type } from './type';
-
 const apiMap: string = 'api:map:';
 const apiMapSerializable: string = `${apiMap}serializable`;
 const designType: string = 'design:type';
 const designParamTypes: string = 'design:paramtypes';
 
+// Enums
+enum Type {
+    Array = 'array',
+    Boolean = 'boolean',
+    Date = 'date',
+    Number = 'number',
+    String = 'string'
+}
+
+// Types
 type Args =
     | string
     | { name?: string; type?: Function; onSerialize?: Function; onDeserialize?: Function }
