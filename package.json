@@ -1,6 +1,6 @@
 {
     "name": "typescript-json-serializer",
-    "version": "1.4.5",
+    "version": "1.4.6",
     "description": "Typescript library to serialize classes into json and deserialize json into classes.",
     "main": "index.js",
     "types": "index.d.ts",
@@ -11,9 +11,9 @@
         "format:staged": "pretty-quick --staged",
         "lint": "gulp lint",
         "lint:ci": "yarn tslint -p tsconfig.json --format junit -o reports/junit/js-lint-results.xml",
-        "publish:lib": "cd dist/src/ && npm publish --registry https://registry.npmjs.org",
+        "npm-publish": "cd dist && npm publish",
         "test": "jest",
-        "test:ci": "yarn jest --reporters=default --reporters=jest-junit --coverage --coverageReporters=lcov --coverageReporters=text-lcov | coveralls"
+        "test:ci": "yarn jest --reporters=default --reporters=jest-junit --coverage --coverageReporters=lcov --coverageReporters=text-lcov"
     },
     "repository": {
         "type": "git",
@@ -39,22 +39,21 @@
     "devDependencies": {
         "@commitlint/cli": "^8.3.5",
         "@commitlint/config-conventional": "^8.3.4",
-        "@types/jest": "^25.1.4",
-        "@types/node": "^13.9.1",
-        "coveralls": "^3.0.9",
+        "@types/jest": "^25.2.1",
+        "@types/node": "^13.11.1",
         "del": "^5.1.0",
         "gulp": "^4.0.2",
         "gulp-copy": "^4.0.1",
         "gulp-tslint": "^8.1.4",
         "gulp-typescript": "^5.0.1",
-        "husky": "^4.2.3",
-        "jest": "^25.1.0",
+        "husky": "^4.2.5",
+        "jest": "^25.3.0",
         "jest-junit": "^10.0.0",
-        "prettier": "^1.19.1",
+        "prettier": "^2.0.4",
         "pretty-quick": "^2.0.1",
-        "ts-jest": "^25.2.1",
-        "ts-node": "^8.6.2",
-        "tslint": "^6.1.0",
+        "ts-jest": "^25.3.1",
+        "ts-node": "^8.8.2",
+        "tslint": "^6.1.1",
         "typescript": "^3.8.3"
     }
 }

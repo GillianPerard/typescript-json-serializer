@@ -18,28 +18,25 @@ const lint = () => {
 };
 
 const transpile = () => {
-    return project
-        .src()
-        .pipe(project())
-        .js.pipe(gulp.dest(destinationFolder));
+    return project.src().pipe(project()).js.pipe(gulp.dest(destinationFolder));
 };
 
 const declare = () => {
     return gulp
         .src('src/**/*.ts')
         .pipe(project())
-        .dts.pipe(gulp.dest(`${destinationFolder}/src/`));
+        .dts.pipe(gulp.dest(`${destinationFolder}`));
 };
 
 const copy = () => {
     const sourceFiles = ['./package.json', './LICENSE', './README.md'];
-    return gulp.src(sourceFiles).pipe(gulpCopy(`${destinationFolder}/src`));
+    return gulp.src(sourceFiles).pipe(gulpCopy(`${destinationFolder}`));
 };
 
-const build = done => gulp.series(lint, clean, transpile, declare, copy)(done);
+const build = (done) => gulp.series(lint, clean, transpile, declare, copy)(done);
 
 const tasks = [clean, lint, transpile, declare, build, copy];
 
-tasks.forEach(t => {
+tasks.forEach((t) => {
     gulp.task(t);
 });
