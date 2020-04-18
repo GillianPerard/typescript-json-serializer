@@ -6,15 +6,15 @@ import { Snake } from './snake';
 import { Animal } from './animal';
 import { UnknownAnimal } from './unknown-animal';
 
-const snakeOrPanther: Function = (animal: any): Function => {
+const snakeOrPanther = (animal: any) => {
     return animal['isPoisonous'] !== undefined ? Snake : Panther;
 };
 
-const coordinatesToArray: Function = (coordinates: { x: number; y: number; z: number }): Array<number> => {
+const coordinatesToArray = (coordinates: { x: number; y: number; z: number }) => {
     return Object.values(coordinates);
 };
 
-const arrayToCoordinates: Function = (array: Array<number>): { x: number; y: number; z: number } => {
+const arrayToCoordinates = (array: Array<number>) => {
     return {
         x: array[0],
         y: array[1],
@@ -25,31 +25,31 @@ const arrayToCoordinates: Function = (array: Array<number>): { x: number; y: num
 @Serializable()
 export class Zoo {
     @JsonProperty()
-    public boss: Employee;
+    boss: Employee;
     @JsonProperty()
-    public city: string;
+    city: string;
     @JsonProperty()
-    public country: string;
+    country: string;
     @JsonProperty({ onDeserialize: arrayToCoordinates, onSerialize: coordinatesToArray })
-    public coordinates: { x: number; y: number; z: number };
+    coordinates: { x: number; y: number; z: number };
     @JsonProperty()
-    public description: string;
+    description: string;
     @JsonProperty({ type: Employee })
-    public employees: Array<Employee>;
+    employees: Array<Employee>;
     @JsonProperty()
-    public id: number;
+    id: number;
     @JsonProperty()
-    public name: string;
+    name: string;
     @JsonProperty({ name: 'Animals', predicate: snakeOrPanther })
-    public animals: Array<Animal>;
+    animals: Array<Animal>;
     @JsonProperty({ predicate: snakeOrPanther })
-    public mascot: Panther | Snake;
+    mascot: Panther | Snake;
     @JsonProperty()
-    public bestEmployeeOfTheMonth: Employee;
+    bestEmployeeOfTheMonth: Employee;
     @JsonProperty({ type: UnknownAnimal })
-    public unknownAnimals: Array<UnknownAnimal>;
+    unknownAnimals: Array<UnknownAnimal>;
 
-    public isOpen: boolean = true;
+    isOpen = true;
 
-    public constructor() {}
+    constructor() {}
 }

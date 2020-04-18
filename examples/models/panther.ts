@@ -1,11 +1,11 @@
 import { Serializable, JsonProperty } from '../../src';
 import { Animal } from './animal';
 
-@Serializable('Animal')
+@Serializable()
 export class Panther extends Animal {
-    @JsonProperty() public color: string;
+    @JsonProperty() color: string;
 
-    public constructor(@JsonProperty() public isSpeckled: boolean, public name: string) {
+    constructor(name: string, @JsonProperty() public isSpeckled: boolean) {
         super(name);
     }
 }
