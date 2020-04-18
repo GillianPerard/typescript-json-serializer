@@ -11,8 +11,8 @@
         "format:staged": "pretty-quick --staged",
         "lint": "gulp lint",
         "lint:ci": "yarn tslint -p tsconfig.json --format junit -o reports/junit/js-lint-results.xml",
-        "test": "jest",
-        "test:ci": "yarn jest --reporters=default --reporters=jest-junit --coverage --coverageReporters=lcov --coverageReporters=text-lcov"
+        "test": "jest --clearCache && jest",
+        "test:ci": "jest --clearCache && jest --reporters=default --reporters=jest-junit --coverage --coverageReporters=lcov --coverageReporters=text-lcov"
     },
     "repository": {
         "type": "git",
