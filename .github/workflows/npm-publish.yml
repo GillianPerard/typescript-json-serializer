@@ -28,6 +28,7 @@ jobs:
       - name: Build
         run: yarn build
       - name: Publish
+        if: success()
         run: cd dist && npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
