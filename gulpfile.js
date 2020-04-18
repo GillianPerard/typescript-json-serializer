@@ -4,7 +4,7 @@ const tsLint = require('gulp-tslint');
 const del = require('del');
 const gulpCopy = require('gulp-copy');
 
-const project = ts.createProject('./tsconfig.json');
+const project = ts.createProject('./tsconfig.build.json');
 
 const destinationFolder = './dist/';
 
