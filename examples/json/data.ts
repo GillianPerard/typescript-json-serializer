@@ -1,181 +1,197 @@
-import { Zoo } from '../models/zoo';
 import { Employee } from '../models/employee';
-import { Panther } from '../models/panther';
 import { Gender } from '../models/gender';
-import { Status } from '../models/status';
+import { Organization } from '../models/organization';
+import { Panther } from '../models/panther';
 import { Snake } from '../models/snake';
+import { Status } from '../models/status';
 import { UnknownAnimal } from '../models/unknown-animal';
+import { Zoo } from '../models/zoo';
 
 export const data: any = {
-    id: 15,
-    name: 'The Greatest Zoo',
-    city: 'Bordeaux',
-    coordinates: [1, 2, 3],
-    country: 'France',
-    boss: {
-        id: 1,
-        name: 'Bob Razowsky',
-        birthDate: '1984-04-03T22:00:00.000Z',
-        email: 'bob.razowsky@tgzoo.fr',
-        gender: 1
-    },
-    employees: [
+    id: '1',
+    name: 'Zoos Organization',
+    zoos: [
         {
-            id: 1,
-            name: 'Bob Razowsky',
-            birthDate: '1984-04-03T22:00:00.000Z',
-            email: 'bob.razowsky@tgzoo.fr',
-            gender: 1
-        },
-        {
-            id: 2,
-            name: 'Mikasa Ackerman',
-            birthDate: '1984-01-11T22:00:00.000Z',
-            email: 'mikasa.ackerman@tgzoo.fr',
-            gender: 0
-        },
-        {
-            id: 3,
-            name: 'Red Redington',
-            birthDate: '1970-12-04T22:00:00.000Z',
-            email: 'red.redington@tgzoo.fr',
-            gender: 1
-        },
-        {
-            id: 4,
-            name: 'Fried Richter',
-            birthDate: '1994-04-01T22:00:00.000Z',
-            email: 'fried.richter@tgzoo.fr',
-            gender: 1
+            id: 15,
+            name: 'The Greatest Zoo',
+            city: 'Bordeaux',
+            coordinates: [1, 2, 3],
+            country: 'France',
+            boss: {
+                id: 1,
+                name: 'Bob Razowsky',
+                birthDate: '1984-04-03T22:00:00.000Z',
+                email: 'bob.razowsky@tgzoo.fr',
+                gender: 1
+            },
+            employees: [
+                {
+                    id: 1,
+                    name: 'Bob Razowsky',
+                    birthDate: '1984-04-03T22:00:00.000Z',
+                    email: 'bob.razowsky@tgzoo.fr',
+                    gender: 1
+                },
+                {
+                    id: 2,
+                    name: 'Mikasa Ackerman',
+                    birthDate: '1984-01-11T22:00:00.000Z',
+                    email: 'mikasa.ackerman@tgzoo.fr',
+                    gender: 0
+                },
+                {
+                    id: 3,
+                    name: 'Red Redington',
+                    birthDate: '1970-12-04T22:00:00.000Z',
+                    email: 'red.redington@tgzoo.fr',
+                    gender: 1
+                },
+                {
+                    id: 4,
+                    name: 'Fried Richter',
+                    birthDate: '1994-04-01T22:00:00.000Z',
+                    email: 'fried.richter@tgzoo.fr',
+                    gender: 1
+                }
+            ],
+            Animals: [
+                {
+                    id: 1,
+                    name: 'Bagheera',
+                    birthDate: '2010-01-11T22:00:00.000Z',
+                    numberOfPaws: 4,
+                    gender: 1,
+                    childrenIdentifiers: [2, 3],
+                    color: 'black',
+                    isSpeckled: false,
+                    status: 'Sick'
+                },
+                {
+                    id: 2,
+                    name: 'Jolene',
+                    birthDate: '2017-03-10T22:00:00.000Z',
+                    numberOfPaws: 4,
+                    gender: 0,
+                    color: 'blond',
+                    isSpeckled: true,
+                    status: 'Alive'
+                },
+                {
+                    id: 3,
+                    name: 'Ka',
+                    birthDate: '2018-09-09T00:00:00.000Z',
+                    numberOfPaws: 0,
+                    gender: 1,
+                    isPoisonous: true,
+                    status: 'Alive'
+                },
+                {
+                    id: 4,
+                    name: 'Schrodinger',
+                    birthDate: undefined,
+                    numberOfPaws: 4,
+                    gender: 1,
+                    color: 'brown',
+                    isSpeckled: false,
+                    status: 'Dead and alive'
+                }
+            ],
+            mascot: {
+                id: 1,
+                name: 'Bagheera',
+                birthDate: '2010-01-11T22:00:00.000Z',
+                numberOfPaws: 4,
+                gender: 1,
+                childrenIdentifiers: [2, 3],
+                color: 'black',
+                isSpeckled: false,
+                status: 'Sick'
+            },
+            unknownAnimals: [
+                {
+                    name: 'Bob'
+                }
+            ],
+            bestEmployeeOfTheMonth: undefined
         }
-    ],
-    Animals: [
-        {
-            id: 1,
-            name: 'Bagheera',
-            birthDate: '2010-01-11T22:00:00.000Z',
-            numberOfPaws: 4,
-            gender: 1,
-            childrenIdentifiers: [2, 3],
-            color: 'black',
-            isSpeckled: false,
-            status: 'Sick'
-        },
-        {
-            id: 2,
-            name: 'Jolene',
-            birthDate: '2017-03-10T22:00:00.000Z',
-            numberOfPaws: 4,
-            gender: 0,
-            color: 'blond',
-            isSpeckled: true,
-            status: 'Alive'
-        },
-        {
-            id: 3,
-            name: 'Ka',
-            birthDate: '2018-09-09T00:00:00.000Z',
-            numberOfPaws: 0,
-            gender: 1,
-            isPoisonous: true,
-            status: 'Alive'
-        },
-        {
-            id: 4,
-            name: 'Schrodinger',
-            birthDate: undefined,
-            numberOfPaws: 4,
-            gender: 1,
-            color: 'brown',
-            isSpeckled: false,
-            status: 'Dead and alive'
-        }
-    ],
-    mascot: {
-        id: 1,
-        name: 'Bagheera',
-        birthDate: '2010-01-11T22:00:00.000Z',
-        numberOfPaws: 4,
-        gender: 1,
-        childrenIdentifiers: [2, 3],
-        color: 'black',
-        isSpeckled: false,
-        status: 'Sick'
-    },
-    unknownAnimals: [
-        {
-            name: 'Bob'
-        }
-    ],
-    bestEmployeeOfTheMonth: undefined
+    ]
 };
 
-const boss: Employee = new Employee(data.boss.name, Gender.Male, new Date(data.boss.birthDate));
-boss.email = data.boss.email;
-boss.id = data.boss.id;
+const boss = new Employee(data.zoos[0].boss.name, Gender.Male, new Date(data.zoos[0].boss.birthDate));
+boss.email = data.zoos[0].boss.email;
+boss.id = data.zoos[0].boss.id;
 
-const mikasa: Employee = new Employee(data.employees[1].name, Gender.Female, new Date(data.employees[1].birthDate));
-mikasa.email = data.employees[1].email;
-mikasa.id = data.employees[1].id;
+const mikasa = new Employee(
+    data.zoos[0].employees[1].name,
+    Gender.Female,
+    new Date(data.zoos[0].employees[1].birthDate)
+);
+mikasa.email = data.zoos[0].employees[1].email;
+mikasa.id = data.zoos[0].employees[1].id;
 
-const red: Employee = new Employee(data.employees[2].name, Gender.Male, new Date(data.employees[2].birthDate));
-red.email = data.employees[2].email;
-red.id = data.employees[2].id;
+const red = new Employee(data.zoos[0].employees[2].name, Gender.Male, new Date(data.zoos[0].employees[2].birthDate));
+red.email = data.zoos[0].employees[2].email;
+red.id = data.zoos[0].employees[2].id;
 
-const fried: Employee = new Employee(data.employees[3].name, Gender.Male, new Date(data.employees[3].birthDate));
-fried.email = data.employees[3].email;
-fried.id = data.employees[3].id;
+const fried = new Employee(data.zoos[0].employees[3].name, Gender.Male, new Date(data.zoos[0].employees[3].birthDate));
+fried.email = data.zoos[0].employees[3].email;
+fried.id = data.zoos[0].employees[3].id;
 
-const bagheera: Panther = new Panther(data.Animals[0].isSpeckled, data.Animals[0].name);
-bagheera.color = data.Animals[0].color;
-bagheera.birthDate = new Date(data.Animals[0].birthDate);
-bagheera.childrenIds = data.Animals[0].childrenIdentifiers;
+const bagheera = new Panther(data.zoos[0].Animals[0].name, data.zoos[0].Animals[0].isSpeckled);
+bagheera.color = data.zoos[0].Animals[0].color;
+bagheera.birthDate = new Date(data.zoos[0].Animals[0].birthDate);
+bagheera.childrenIds = data.zoos[0].Animals[0].childrenIdentifiers;
 bagheera.gender = Gender.Male;
-bagheera.id = data.Animals[0].id;
-bagheera.numberOfPaws = data.Animals[0].numberOfPaws;
+bagheera.id = data.zoos[0].Animals[0].id;
+bagheera.numberOfPaws = data.zoos[0].Animals[0].numberOfPaws;
 bagheera.status = Status.Sick;
 
-const jolene: Panther = new Panther(data.Animals[1].isSpeckled, data.Animals[1].name);
-jolene.color = data.Animals[1].color;
-jolene.birthDate = new Date(data.Animals[1].birthDate);
+const jolene = new Panther(data.zoos[0].Animals[1].name, data.zoos[0].Animals[1].isSpeckled);
+jolene.color = data.zoos[0].Animals[1].color;
+jolene.birthDate = new Date(data.zoos[0].Animals[1].birthDate);
 jolene.gender = Gender.Female;
-jolene.id = data.Animals[1].id;
-jolene.numberOfPaws = data.Animals[1].numberOfPaws;
+jolene.id = data.zoos[0].Animals[1].id;
+jolene.numberOfPaws = data.zoos[0].Animals[1].numberOfPaws;
 jolene.status = Status.Alive;
 
-const ka: Snake = new Snake(data.Animals[2].name);
-ka.birthDate = new Date(data.Animals[2].birthDate);
+const ka = new Snake(data.zoos[0].Animals[2].name);
+ka.birthDate = new Date(data.zoos[0].Animals[2].birthDate);
 ka.gender = Gender.Male;
-ka.id = data.Animals[2].id;
-ka.isPoisonous = data.Animals[2].isPoisonous;
-ka.numberOfPaws = data.Animals[2].numberOfPaws;
+ka.id = data.zoos[0].Animals[2].id;
+ka.isPoisonous = data.zoos[0].Animals[2].isPoisonous;
+ka.numberOfPaws = data.zoos[0].Animals[2].numberOfPaws;
 ka.status = Status.Alive;
 
-const schrodinger: Panther = new Panther(data.Animals[3].isSpeckled, data.Animals[3].name);
-schrodinger.color = data.Animals[3].color;
+const schrodinger = new Panther(data.zoos[0].Animals[3].name, data.zoos[0].Animals[3].isSpeckled);
+schrodinger.color = data.zoos[0].Animals[3].color;
 schrodinger.birthDate = undefined;
 schrodinger.gender = Gender.Male;
-schrodinger.id = data.Animals[3].id;
-schrodinger.numberOfPaws = data.Animals[3].numberOfPaws;
+schrodinger.id = data.zoos[0].Animals[3].id;
+schrodinger.numberOfPaws = data.zoos[0].Animals[3].numberOfPaws;
 schrodinger.status = Status.DeadAndAlive;
 
-const unknownAnimal: UnknownAnimal = new UnknownAnimal(data.unknownAnimals[0].name);
+const unknownAnimal = new UnknownAnimal(data.zoos[0].unknownAnimals[0].name);
 
-const zoo: Zoo = new Zoo();
+const zoo = new Zoo();
 zoo.animals = [bagheera, jolene, ka, schrodinger];
 zoo.boss = boss;
-zoo.city = data.city;
+zoo.city = data.zoos[0].city;
 zoo.coordinates = {
-    x: data.coordinates[0],
-    y: data.coordinates[1],
-    z: data.coordinates[2]
+    x: data.zoos[0].coordinates[0],
+    y: data.zoos[0].coordinates[1],
+    z: data.zoos[0].coordinates[2]
 };
-zoo.country = data.country;
+zoo.country = data.zoos[0].country;
 zoo.employees = [boss, mikasa, red, fried];
-zoo.id = data.id;
+zoo.id = data.zoos[0].id;
 zoo.mascot = bagheera;
-zoo.name = data.name;
-zoo.bestEmployeeOfTheMonth = data.bestEmployeeOfTheMonth;
+zoo.name = data.zoos[0].name;
+zoo.bestEmployeeOfTheMonth = data.zoos[0].bestEmployeeOfTheMonth;
 zoo.unknownAnimals = [unknownAnimal];
 
-export const deserializedData: Zoo = zoo;
+const organization = new Organization();
+organization.id = data.id;
+organization.name = data.name;
+organization.zoos = [zoo];
+
+export const deserializedData = organization;

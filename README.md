@@ -43,10 +43,10 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
 
 ```typescript
 // Serializable decorator set a class as serializable.
-// It can take an optional parameter that specifies
-// the name of the class extended.
+// BREAKING CHANGE: Since version 2.0.0 the
+// parameter `baseClassName` is not needed anymore
 
-@Serializable(baseClassName?: string)
+@Serializable()
 ```
 
 ```typescript
@@ -108,22 +108,24 @@ export enum Status {
     Dead = 'Dead'
 }
 
-
-// Create a serializable class: Employee
+// Create a serializable class: LivingBeing
 
 // Serializable decorator
 @Serializable()
-export class Employee {
+export class LivingBeing {
 
-    /**
-     * The employee's id (PK)
-     */
-    @JsonProperty()
-    public id: number;
+    /** The living being id (PK) */
+    @JsonProperty() id: number;
+}
+
+
+// Create a serializable class that extends LivingBeing: Employee
+
+@Serializable()
+export class Employee extends LivingBeing {
 
     /** The employee's email */
-    @JsonProperty()
-    public email: string;
+    @JsonProperty() email: string;
 
     public constructor(
         // This comment works
@@ -141,46 +143,38 @@ export class Employee {
 @Serializable()
 export class Animal {
 
-    @JsonProperty()
-    public id: number;
-    @JsonProperty()
-    public name: string;
-    @JsonProperty()
-    public birthDate: Date;
-    @JsonProperty()
-    public numberOfPaws: number;
-    @JsonProperty()
-    public gender: Gender;
+    @JsonProperty() id: number;
+    @JsonProperty() name: string;
+    @JsonProperty() birthDate: Date;
+    @JsonProperty() numberOfPaws: number;
+    @JsonProperty() gender: Gender;
 
     // Enum value (string)
-    @JsonProperty()
-    public status: Status;
+    @JsonProperty() status: Status;
 
     // Specify the property name of json property if needed
     @JsonProperty('childrenIdentifiers')
-    public childrenIds: Array<number>;
+    childrenIds: Array<number>;
 
-    public constructor(name: string) {
+    constructor(name: string) {
         this.name = name;
     }
 
 }
 
 
-// Create a serializable class that extends Animal: Panther
+// Create a serializable class that extends Animal (which extends LivingBeing): Panther
 
-// Serializable decorator where you need
-// to specify if the class extends another
-@Serializable('Animal')
+@Serializable()
 export class Panther extends Animal {
 
-    @JsonProperty() public color: string;
+    @JsonProperty() color: string;
 
     // JsonProperty directly inside the constructor
     // for property parameters
     public constructor(
-        @JsonProperty() public isSpeckled: boolean,
-        name: string
+        name: string,
+        @JsonProperty() public isSpeckled: boolean
     ) {
         super(name);
     }
@@ -188,13 +182,12 @@ export class Panther extends Animal {
 }
 
 
-// Create a serializable class that extends Animal: Snake
+// Create a serializable class that extends Animal (which extends LivingBeing): Snake
 
-@Serializable('Animal')
+@Serializable()
 export class Snake extends Animal {
 
-    @JsonProperty()
-    public isPoisonous: boolean;
+    @JsonProperty() isPoisonous: boolean;
 
     public constructor(name: string) {
         super(name);
@@ -203,9 +196,9 @@ export class Snake extends Animal {
 }
 
 
-// Create a serializable empty class that extends Animal: UnknownAnimal
+// Create a serializable empty class that extends Animal (which extends LivingBeing): UnknownAnimal
 
-@Serializable('Animal')
+@Serializable()
 export class UnknownAnimal extends Animal {
     public constructor(name: string) {
         super(name);
@@ -216,12 +209,12 @@ export class UnknownAnimal extends Animal {
 // Create a serializable class: Zoo
 
 // Function to transform coordinates into an array
-const coordinatesToArray: Function = (coordinates: { x: number; y: number; z: number }): Array<number> => {
+const coordinatesToArray = (coordinates: { x: number; y: number; z: number }): Array<number> => {
     return Object.values(coordinates);
 };
 
 // Function to transform an array into coordinates
-const arrayToCoordinates: Function = (array: Array<number>): { x: number; y: number; z: number } => {
+const arrayToCoordinates = (array: Array<number>): { x: number; y: number; z: number } => {
     return {
         x: array[0],
         y: array[1],
@@ -231,7 +224,7 @@ const arrayToCoordinates: Function = (array: Array<number>): { x: number; y: num
 
 // A predicate function use to determine what is the
 // right type of the data (Snake or Panther)
-const snakeOrPanther: Function = (animal: any): Function => {
+const snakeOrPanther = animal => {
     return animal['isPoisonous'] !== undefined ? Snake : Panther;
 };
 
@@ -240,46 +233,40 @@ export class Zoo {
 
     // Here you do not need to specify the type
     // inside the decorator
-    @JsonProperty()
-    public boss: Employee;
+    @JsonProperty() boss: Employee;
 
-    @JsonProperty()
-    public city: string;
-    @JsonProperty()
-    public country: string;
+    @JsonProperty() city: string;
+    @JsonProperty() country: string;
 
     // Property with transform functions executed respectively
     // on serialize and on deserialize
     @JsonProperty({ onDeserialize: arrayToCoordinates, onSerialize: coordinatesToArray })
-    public coordinates: { x: number; y: number; z: number };
+    coordinates: { x: number; y: number; z: number };
 
     // Array of none-basic type elements
     @JsonProperty({ type: Employee })
-    public employees: Array<Employee>;
+    employees: Array<Employee>;
 
-    @JsonProperty()
-    public id: number;
-    @JsonProperty()
-    public name: string;
+    @JsonProperty() id: number;
+    @JsonProperty() name: string;
 
     // Array of none-basic type elements where you need to
     // specify the name of the json property
     // and use the predicate function to cast the deserialized
     // object into the correct child class
     @JsonProperty({ name: 'Animals', predicate: snakeOrPanther })
-    public animals: Array<Animal>;
+    animals: Array<Animal>;
 
     // Property that can be Panther or Snake type
     // Use again the predicate function
     @JsonProperty({ predicate: snakeOrPanther })
-    public mascot: Panther | Snake;
+    mascot: Panther | Snake;
 
     // Array of empty child classes
     @JsonProperty({ type: UnknownAnimal })
-    public unknownAnimals: Array<UnknownAnimal>;
+    unknownAnimals: Array<UnknownAnimal>;
 
-    @JsonProperty()
-    public bestEmployeeOfTheMonth: Employee;
+    @JsonProperty() bestEmployeeOfTheMonth: Employee;
 
     // Property which will be not serialized and deserialized
     // but event accessible and editable from Zoo class.
@@ -288,6 +275,17 @@ export class Zoo {
     public constructor() { }
 
 }
+
+
+// Create a serializable class: Organization
+
+@Serializable()
+export class Organization {
+    @JsonProperty() id: string;
+    @JsonProperty() name: string;
+    @JsonProperty({ type: Zoo }) zoos: Array<Zoo>;
+}
+
 ```
 
 ### Json data
@@ -295,103 +293,113 @@ export class Zoo {
 ```typescript
 // data.ts
 export const data: any = {
-    'id': 15,
-    'name': 'The Greatest Zoo',
-    'city': 'Bordeaux',
-    'coordinates': [1, 2, 3],
-    'country': 'France',
-    'boss': {
-        'id': 1,
-        'name': 'Bob Razowsky',
-        'birthDate': '1984-04-03T22:00:00.000Z',
-        'email': 'bob.razowsky@tgzoo.fr',
-        'gender': 1
-    },
-    'employees': [
+    id: '1',
+    name: 'Zoos Organization',
+    zoos: [
         {
-            'id': 1,
-            'name': 'Bob Razowsky',
-            'birthDate': '1984-04-03T22:00:00.000Z',
-            'email': 'bob.razowsky@tgzoo.fr',
-            'gender': 1
-        },
-        {
-            'id': 2,
-            'name': 'Mikasa Ackerman',
-            'birthDate': '1984-01-11T22:00:00.000Z',
-            'email': 'mikasa.ackerman@tgzoo.fr',
-            'gender': 0
-        },
-        {
-            'id': 3,
-            'name': 'Red Redington',
-            'birthDate': '1970-12-04T22:00:00.000Z',
-            'email': 'red.redington@tgzoo.fr',
-            'gender': 1
-        },
-        {
-            'id': 4,
-            'name': 'Fried Richter',
-            'birthDate': '1994-04-01T22:00:00.000Z',
-            'email': 'fried.richter@tgzoo.fr',
-            'gender': 1
+            id: 15,
+            name: 'The Greatest Zoo',
+            city: 'Bordeaux',
+            coordinates: [1, 2, 3],
+            country: 'France',
+            boss: {
+                id: 1,
+                name: 'Bob Razowsky',
+                birthDate: '1984-04-03T22:00:00.000Z',
+                email: 'bob.razowsky@tgzoo.fr',
+                gender: 1
+            },
+            employees: [
+                {
+                    id: 1,
+                    name: 'Bob Razowsky',
+                    birthDate: '1984-04-03T22:00:00.000Z',
+                    email: 'bob.razowsky@tgzoo.fr',
+                    gender: 1
+                },
+                {
+                    id: 2,
+                    name: 'Mikasa Ackerman',
+                    birthDate: '1984-01-11T22:00:00.000Z',
+                    email: 'mikasa.ackerman@tgzoo.fr',
+                    gender: 0
+                },
+                {
+                    id: 3,
+                    name: 'Red Redington',
+                    birthDate: '1970-12-04T22:00:00.000Z',
+                    email: 'red.redington@tgzoo.fr',
+                    gender: 1
+                },
+                {
+                    id: 4,
+                    name: 'Fried Richter',
+                    birthDate: '1994-04-01T22:00:00.000Z',
+                    email: 'fried.richter@tgzoo.fr',
+                    gender: 1
+                }
+            ],
+            Animals: [
+                {
+                    id: 1,
+                    name: 'Bagheera',
+                    birthDate: '2010-01-11T22:00:00.000Z',
+                    numberOfPaws: 4,
+                    gender: 1,
+                    childrenIdentifiers: [2, 3],
+                    color: 'black',
+                    isSpeckled: false,
+                    status: 'Sick'
+                },
+                {
+                    id: 2,
+                    name: 'Jolene',
+                    birthDate: '2017-03-10T22:00:00.000Z',
+                    numberOfPaws: 4,
+                    gender: 0,
+                    color: 'blond',
+                    isSpeckled: true,
+                    status: 'Alive'
+                },
+                {
+                    id: 3,
+                    name: 'Ka',
+                    birthDate: '2018-09-09T00:00:00.000Z',
+                    numberOfPaws: 0,
+                    gender: 1,
+                    isPoisonous: true,
+                    status: 'Alive'
+                },
+                {
+                    id: 4,
+                    name: 'Schrodinger',
+                    birthDate: undefined,
+                    numberOfPaws: 4,
+                    gender: 1,
+                    color: 'brown',
+                    isSpeckled: false,
+                    status: 'Dead and alive'
+                }
+            ],
+            mascot: {
+                id: 1,
+                name: 'Bagheera',
+                birthDate: '2010-01-11T22:00:00.000Z',
+                numberOfPaws: 4,
+                gender: 1,
+                childrenIdentifiers: [2, 3],
+                color: 'black',
+                isSpeckled: false,
+                status: 'Sick'
+            },
+            unknownAnimals: [
+                {
+                    name: 'Bob'
+                }
+            ],
+            bestEmployeeOfTheMonth: undefined
         }
-    ],
-    'Animals': [
-        {
-            'id': 1,
-            'name': 'Bagheera',
-            'birthDate': '2010-01-11T22:00:00.000Z',
-            'numberOfPaws': 4,
-            'gender': 1,
-            'childrenIdentifiers': [2, 3],
-            'color': 'black',
-            'isSpeckled': false,
-            'status': 'Sick'
-        },
-        {
-            'id': 2,
-            'name': 'Jolene',
-            'birthDate': '2017-03-10T22:00:00.000Z',
-            'numberOfPaws': 4,
-            'gender': 0,
-            'color': 'blond',
-            'isSpeckled': true,
-            'status': 'Alive'
-        },
-        {
-            'id': 3,
-            'name': 'Ka',
-            'birthDate': '2018-09-09T00:00:00.000Z',
-            'numberOfPaws': 0,
-            'gender': 1,
-            'isPoisonous': true,
-            'status': 'Alive'
-        },
-        {
-            'id': 4,
-            'name': 'Schrodinger',
-            'birthDate': '2015-03-05T22:00:00.000Z',
-            'numberOfPaws': 4,
-            'gender': 1,
-            'color': 'brown',
-            'isSpeckled': false,
-            'status': 'Dead and alive'
-        }
-    ],
-    'mascot': {
-        'id': 1,
-        'name': 'Bagheera',
-        'birthDate': '2010-01-11T22:00:00.000Z',
-        'numberOfPaws': 4,
-        'gender': 1,
-        'childrenIdentifiers': [2, 3],
-        'color': 'black',
-        'isSpeckled': false,
-        'status': 'Sick'
-    },
-    'bestEmployeeOfTheMonth': undefined,
-    'unknownAnimals': [{ 'name': 'Bob' }]
+    ]
 };
 ```
 
@@ -402,15 +410,15 @@ export const data: any = {
 import { deserialize, serialize } from 'typescript-json-serializer';
 
 import { json } from '../json/data';
-import { Zoo } from '../models/zoo';
+import { Organization } from '../models/organization';
 
 // deserialize
-const zoo: Zoo = deserialize<Zoo>(json, Zoo);
+const organization = deserialize<Organization>(json, Organization);
 
 // serialize
-const data: any = serialize(zoo);
+const data = serialize(zoo);
 // or
-const data: any = serialize(zoo, false);
+const data = serialize(zoo, false);
 
 ```
 

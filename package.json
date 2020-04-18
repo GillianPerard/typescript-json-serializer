@@ -1,6 +1,6 @@
 {
     "name": "typescript-json-serializer",
-    "version": "1.4.6",
+    "version": "2.0.0",
     "description": "Typescript library to serialize classes into json and deserialize json into classes.",
     "main": "index.js",
     "types": "index.d.ts",
@@ -11,8 +11,8 @@
         "format:staged": "pretty-quick --staged",
         "lint": "gulp lint",
         "lint:ci": "yarn tslint -p tsconfig.json --format junit -o reports/junit/js-lint-results.xml",
-        "test": "jest",
-        "test:ci": "yarn jest --reporters=default --reporters=jest-junit --coverage --coverageReporters=lcov --coverageReporters=text-lcov"
+        "test": "jest --clearCache && jest",
+        "test:ci": "jest --clearCache && jest --reporters=default --reporters=jest-junit --coverage --coverageReporters=lcov --coverageReporters=text-lcov"
     },
     "repository": {
         "type": "git",
@@ -39,7 +39,7 @@
         "@commitlint/cli": "^8.3.5",
         "@commitlint/config-conventional": "^8.3.4",
         "@types/jest": "^25.2.1",
-        "@types/node": "^13.11.1",
+        "@types/node": "^13.13.0",
         "del": "^5.1.0",
         "gulp": "^4.0.2",
         "gulp-copy": "^4.0.1",
@@ -50,9 +50,11 @@
         "jest-junit": "^10.0.0",
         "prettier": "^2.0.4",
         "pretty-quick": "^2.0.1",
-        "ts-jest": "^25.3.1",
+        "ts-jest": "^25.4.0",
         "ts-node": "^8.8.2",
         "tslint": "^6.1.1",
+        "tslint-config-prettier": "^1.18.0",
+        "tslint-consistent-codestyle": "^1.16.0",
         "typescript": "^3.8.3"
     }
 }

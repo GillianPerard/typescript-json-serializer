@@ -6,87 +6,87 @@ import { Animal } from '../examples/models/animal';
 import { Dummy } from '../examples/models/dummy';
 import { Panther } from '../examples/models/panther';
 import { Zoo } from '../examples/models/zoo';
-
 import { data, deserializedData } from '../examples/json/data';
+import { Organization } from '../examples/models/organization';
 
-describe('Serializable', (): void => {
-    it('should return false', (): void => {
-        const hasMetadata: boolean = Reflect.hasOwnMetadata('api:map:serializable', Dummy);
+describe('Serializable', () => {
+    it('should return false', () => {
+        const hasMetadata = Reflect.hasOwnMetadata('api:map:serializable', Dummy);
         expect(hasMetadata).toBe(false);
     });
 
-    it('should return true without value', (): void => {
-        const hasMetadata: boolean = Reflect.hasOwnMetadata('api:map:serializable', Zoo);
-        const metadata: any = Reflect.getOwnMetadata('api:map:serializable', Zoo);
+    it('should return true with one value', () => {
+        const hasMetadata = Reflect.hasOwnMetadata('api:map:serializable', Animal);
+        const metadata = Reflect.getOwnMetadata('api:map:serializable', Animal);
         expect(hasMetadata).toBe(true);
-        expect(metadata).toBe(undefined);
+        expect(metadata).toEqual(['LivingBeing']);
     });
 
-    it('should return true with value', (): void => {
-        const hasMetadata: boolean = Reflect.hasOwnMetadata('api:map:serializable', Panther);
-        const metadata: any = Reflect.getOwnMetadata('api:map:serializable', Panther);
+    it('should return true with multiple values', () => {
+        const hasMetadata = Reflect.hasOwnMetadata('api:map:serializable', Panther);
+        const metadata = Reflect.getOwnMetadata('api:map:serializable', Panther);
         expect(hasMetadata).toBe(true);
-        expect(metadata).toBe('Animal');
+        expect(metadata).toEqual(['Animal', 'LivingBeing']);
     });
 });
 
-describe('serialize', (): void => {
-    it('should return true', (): void => {
+describe('serialize', () => {
+    it('should return true', () => {
         expect(serialize(deserializedData)).toEqual(data);
     });
 
-    it('should return 1 childrenIdentifiers', (): void => {
-        const result: any = serialize(deserializedData, false);
-        const count: number = result.Animals.filter((animal: any): any => {
+    it('should return 1 childrenIdentifiers', () => {
+        const result = serialize(deserializedData, false);
+        const count = result.zoos[0].Animals.filter((animal: any) => {
             return animal.hasOwnProperty('childrenIdentifiers');
         }).length;
         expect(count).toBe(1);
     });
 
-    it('empty zoo should return an empty object', (): void => {
-        const zoo: Zoo = new Zoo();
+    it('empty zoo should return an empty object', () => {
+        const zoo = new Organization();
         expect(serialize(zoo)).toEqual({});
     });
 
-    it('{} should return an empty object', (): void => {
+    it('{} should return an empty object', () => {
         expect(serialize({})).toEqual({});
     });
 
-    const zooWithUndefinedValue: Zoo = new Zoo();
-    zooWithUndefinedValue.id = 4;
-    zooWithUndefinedValue.name = undefined;
+    const organizationWithUndefinedValue = new Organization();
+    organizationWithUndefinedValue.id = '4';
+    organizationWithUndefinedValue.name = undefined;
 
-    it('zooWithUndefinedValue should return an object with undefined value', (): void => {
-        expect(serialize(zooWithUndefinedValue, false)).toEqual({ id: 4, name: undefined });
+    it('organizationWithUndefinedValue should return an object with undefined value', () => {
+        expect(serialize(organizationWithUndefinedValue, false)).toEqual({ id: '4', name: undefined });
     });
 
-    it('zooWithUndefinedValue should return an object without undefined value', (): void => {
-        expect(serialize(zooWithUndefinedValue)).toEqual({ id: 4 });
+    it('organizationWithUndefinedValue should return an object without undefined value', () => {
+        expect(serialize(organizationWithUndefinedValue)).toEqual({ id: '4' });
     });
 });
 
-describe('deserialize', (): void => {
-    it('should return true', (): void => {
-        expect(deserialize(data, Zoo)).toEqual(deserializedData);
+describe('deserialize', () => {
+    it('should return true', () => {
+        expect(deserialize<Organization>(data, Organization)).toEqual(deserializedData);
     });
 
-    it('should return true even if there are fake data included', (): void => {
-        const alteredData: any = { ...data };
+    it('should return true even if there are fake data included', () => {
+        const alteredData = { ...data };
         alteredData['fake'] = 'fake';
-        alteredData['Animals'][0]['fake'] = 'fake';
-        expect(deserialize(alteredData, Zoo)).toEqual(deserializedData);
+        alteredData.zoos[0]['Animals'][0]['fake'] = 'fake';
+        expect(deserialize<Organization>(alteredData, Organization)).toEqual(deserializedData);
     });
 
-    it('should return an empty zoo (except for the isOpen property)', (): void => {
-        const badData: any = {
+    it('should return an empty zoo (except for the isOpen property)', () => {
+        const badData = {
             fake: 'fake'
         };
-        expect(deserialize(badData, Zoo)).toEqual({ isOpen: true });
+        expect(deserialize<Zoo>(badData, Zoo)).toEqual({ isOpen: true });
     });
 
-    it('should return the right type', (): void => {
-        const object: any = deserialize({ name: 'My beautiful animal' }, Animal);
-        const isAnimal: boolean = object instanceof Animal;
+    it('should return the right type', () => {
+        const object = deserialize<Animal>({ name: 'My beautiful animal' }, Animal);
+        const isAnimal = object instanceof Animal;
         expect(isAnimal).toBeTruthy();
     });
 });

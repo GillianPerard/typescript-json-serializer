@@ -2,9 +2,9 @@ import { Serializable } from '../../src';
 
 import { Animal } from './animal';
 
-@Serializable('Animal')
+@Serializable()
 export class UnknownAnimal extends Animal {
-    public constructor(name: string) {
+    constructor(name: string) {
         super(name);
     }
 }

@@ -1,18 +1,7 @@
 {
+    "extends": ["tslint:recommended", "tslint-config-prettier", "tslint-consistent-codestyle"],
     "rules": {
-        "typedef": [
-            true,
-            "call-signature",
-            "arrow-call-signature",
-            "parameter",
-            "arrow-parameter",
-            "property-declaration",
-            "variable-declaration",
-            "member-variable-declaration",
-            "object-destructuring",
-            "array-destructuring"
-        ],
-        "indent": [true, "spaces", 4],
+        "array-type": [true, "generic"],
         "arrow-return-shorthand": true,
         "callable-types": true,
         "class-name": true,
@@ -27,12 +16,52 @@
         "import-spacing": true,
         "interface-over-type-literal": true,
         "label-position": true,
-        "member-access": [true, "check-accessor", "check-constructor", "check-parameter-property"],
+        "member-access": false,
         "member-ordering": [
             true,
             {
-                "order": ["static-field", "instance-field", "static-method", "instance-method"]
+                "order": [
+                    "private-static-field",
+                    "private-instance-field",
+                    "protected-instance-field",
+                    "protected-static-field",
+                    "public-static-field",
+                    "public-instance-field",
+                    "private-constructor",
+                    "protected-constructor",
+                    "public-constructor",
+                    "private-static-method",
+                    "private-instance-method",
+                    "protected-static-method",
+                    "protected-instance-method",
+                    "public-static-method",
+                    "public-instance-method"
+                ]
             }
+        ],
+        "naming-convention": [
+            true,
+            {
+                "type": "property",
+                "modifiers": "private",
+                "leadingUnderscore": "require",
+                "final": true
+            },
+            {
+                "type": "parameterProperty",
+                "modifiers": "private",
+                "leadingUnderscore": "require",
+                "final": true
+            },
+            { "type": "property", "modifiers": "protected", "format": "camelCase", "final": true },
+            {
+                "type": "parameterProperty",
+                "modifiers": "protected",
+                "format": "camelCase",
+                "final": true
+            },
+            { "type": "method", "format": "camelCase" },
+            { "type": "class", "format": "PascalCase" }
         ],
         "no-arg": true,
         "no-bitwise": true,
@@ -43,7 +72,7 @@
         "no-empty": false,
         "no-empty-interface": true,
         "no-eval": true,
-        "no-inferrable-types": [false, "ignore-params"],
+        "no-inferrable-types": [true, "ignore-params"],
         "no-misused-new": true,
         "no-non-null-assertion": true,
         "no-shadowed-variable": true,
@@ -53,9 +82,11 @@
         "no-trailing-whitespace": true,
         "no-unnecessary-initializer": true,
         "no-unused-expression": true,
+        "no-unnecessary-else": true,
+        "no-unused": true,
         "no-var-keyword": true,
         "object-literal-sort-keys": false,
-        "one-line": [true, "check-open-brace", "check-catch", "check-else", "check-whitespace"],
+        "one-line": [true, "check-catch", "check-finally", "check-else", "check-open-brace", "check-whitespace"],
         "prefer-const": true,
         "quotemark": [true, "single"],
         "radix": true,
@@ -94,14 +125,14 @@
                 "esSpecCompliant": true
             }
         ],
-        "array-type": [true, "generic"],
-        "arrow-parens": true,
+        "arrow-parens": false,
         "new-parens": true,
         "no-angle-bracket-type-assertion": true,
         "no-consecutive-blank-lines": [true, 2],
         "return-undefined": true,
         "no-unnecessary-type-assertion": true,
         "no-irregular-whitespace": true,
-        "ban-types": false
+        "ban-types": false,
+        "no-conditional-assignment": false
     }
 }

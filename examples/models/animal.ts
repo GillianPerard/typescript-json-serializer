@@ -2,25 +2,51 @@ import { Serializable, JsonProperty } from '../../src';
 
 import { Gender } from './gender';
 import { Status } from './status';
+import { LivingBeing } from './living-being';
 
 @Serializable()
-export class Animal {
+export class Animal extends LivingBeing {
     @JsonProperty()
-    public id: number;
+    name: string;
     @JsonProperty()
-    public name: string;
+    birthDate: Date;
     @JsonProperty()
-    public birthDate: Date;
+    numberOfPaws: number;
     @JsonProperty()
-    public numberOfPaws: number;
-    @JsonProperty()
-    public gender: Gender;
+    gender: Gender;
     @JsonProperty('childrenIdentifiers')
-    public childrenIds: Array<number>;
+    childrenIds: Array<number>;
     @JsonProperty()
-    public status: Status;
+    status: Status;
 
-    public constructor(name: string) {
+    constructor(name: string) {
+        super();
         this.name = name;
+    }
+}
+
+// tslint:disable: max-classes-per-file
+@Serializable()
+class Lala {
+    @JsonProperty() id: string;
+
+    constructor(id: string) {
+        this.id = id;
+    }
+}
+
+@Serializable()
+// tslint:disable-next-line: no-unused
+class Student extends Lala {
+    @JsonProperty() birthDate: Date;
+
+    constructor(
+        id: string,
+        /* lala */
+        @JsonProperty() public name: string,
+        birthDate: Date
+    ) {
+        super(id);
+        this.birthDate = birthDate;
     }
 }
