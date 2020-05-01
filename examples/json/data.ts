@@ -110,7 +110,7 @@ export const data: any = {
             },
             unknownAnimals: [
                 {
-                    name: 'Bob'
+                    name: null
                 }
             ],
             bestEmployeeOfTheMonth: undefined

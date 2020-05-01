@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { deserialize, serialize } from '../src';
+import { deserialize, serialize, JsonProperty, Serializable } from '../src';
 
 import { Animal } from '../examples/models/animal';
 import { Dummy } from '../examples/models/dummy';

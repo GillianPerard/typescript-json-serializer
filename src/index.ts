@@ -411,7 +411,7 @@ function castSimpleData(type: string, data: any): any {
 
     switch (type) {
         case Type.String:
-            return data.toString();
+            return data ? data.toString() : data;
         case Type.Number:
             const number: number = +data;
             if (isNaN(number)) {
