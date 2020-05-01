@@ -9,8 +9,8 @@
         "cover": "jest --coverage",
         "format": "pretty-quick",
         "format:staged": "pretty-quick --staged",
-        "lint": "gulp lint",
-        "lint:ci": "yarn tslint -p tsconfig.json --format junit -o reports/junit/js-lint-results.xml",
+        "lint": "tslint -p tsconfig.json --fix",
+        "lint:ci": "tslint -p tsconfig.json",
         "test": "jest --clearCache && jest",
         "test:ci": "jest --clearCache && jest --reporters=default --reporters=jest-junit --coverage --coverageReporters=lcov --coverageReporters=text-lcov"
     },
@@ -43,7 +43,6 @@
         "del": "^5.1.0",
         "gulp": "^4.0.2",
         "gulp-copy": "^4.0.1",
-        "gulp-tslint": "^8.1.4",
         "gulp-typescript": "^5.0.1",
         "husky": "^4.2.5",
         "jest": "^25.5.3",

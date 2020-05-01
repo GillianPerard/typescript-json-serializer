@@ -1,8 +1,8 @@
-import { Serializable, JsonProperty } from '../../src';
+import { JsonProperty, Serializable } from '../../src';
 
 import { Gender } from './gender';
-import { Status } from './status';
 import { LivingBeing } from './living-being';
+import { Status } from './status';
 
 @Serializable()
 export class Animal extends LivingBeing {

@@ -1,6 +1,6 @@
-import { Serializable, JsonProperty } from '../../src';
-import { Zoo } from './zoo';
+import { JsonProperty, Serializable } from '../../src';
 import { Human } from './human';
+import { Zoo } from './zoo';
 
 @Serializable()
 export class Organization {

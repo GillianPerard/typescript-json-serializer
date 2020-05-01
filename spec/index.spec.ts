@@ -1,13 +1,13 @@
 import 'reflect-metadata';
 
-import { deserialize, serialize, JsonProperty, Serializable } from '../src';
+import { deserialize, serialize } from '../src';
 
+import { data, deserializedData } from '../examples/json/data';
 import { Animal } from '../examples/models/animal';
 import { Dummy } from '../examples/models/dummy';
+import { Organization } from '../examples/models/organization';
 import { Panther } from '../examples/models/panther';
 import { Zoo } from '../examples/models/zoo';
-import { data, deserializedData } from '../examples/json/data';
-import { Organization } from '../examples/models/organization';
 
 describe('Serializable', () => {
     it('should return false', () => {

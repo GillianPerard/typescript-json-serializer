@@ -1,12 +1,12 @@
 import { Employee } from '../models/employee';
 import { Gender } from '../models/gender';
+import { Human } from '../models/human';
 import { Organization } from '../models/organization';
 import { Panther } from '../models/panther';
 import { Snake } from '../models/snake';
 import { Status } from '../models/status';
 import { UnknownAnimal } from '../models/unknown-animal';
 import { Zoo } from '../models/zoo';
-import { Human } from '../models/human';
 
 export const data: any = {
     id: '1',
