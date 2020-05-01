@@ -1,8 +1,8 @@
-import { Serializable, JsonProperty } from '../../src';
+import { JsonProperty, Serializable } from '../../src';
 
 import { Gender } from './gender';
-import { Status } from './status';
 import { LivingBeing } from './living-being';
+import { Status } from './status';
 
 @Serializable()
 export class Animal extends LivingBeing {
@@ -22,31 +22,5 @@ export class Animal extends LivingBeing {
     constructor(name: string) {
         super();
         this.name = name;
-    }
-}
-
-// tslint:disable: max-classes-per-file
-@Serializable()
-class Lala {
-    @JsonProperty() id: string;
-
-    constructor(id: string) {
-        this.id = id;
-    }
-}
-
-@Serializable()
-// tslint:disable-next-line: no-unused
-class Student extends Lala {
-    @JsonProperty() birthDate: Date;
-
-    constructor(
-        id: string,
-        /* lala */
-        @JsonProperty() public name: string,
-        birthDate: Date
-    ) {
-        super(id);
-        this.birthDate = birthDate;
     }
 }

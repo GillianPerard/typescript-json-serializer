@@ -1,9 +1,9 @@
-import { Serializable, JsonProperty } from '../../src';
+import { JsonProperty, Serializable } from '../../src';
 
+import { Animal } from './animal';
 import { Employee } from './employee';
 import { Panther } from './panther';
 import { Snake } from './snake';
-import { Animal } from './animal';
 import { UnknownAnimal } from './unknown-animal';
 
 const snakeOrPanther = (animal: any) => {

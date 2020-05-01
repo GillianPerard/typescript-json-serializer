@@ -1,6 +1,6 @@
 # typescript-json-serializer
 
-[![pipeline status](https://gitlab.com/gillian.perard/typescript-json-serializer/badges/master/pipeline.svg)](https://gitlab.com/gillian.perard/typescript-json-serializer/commits/master)
+![](https://github.com/GillianPerard/typescript-json-serializer/workflows/Build/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/GillianPerard/typescript-json-serializer/badge.svg)](https://coveralls.io/github/GillianPerard/typescript-json-serializer)
 [![Known Vulnerabilities](https://snyk.io/test/github/gillianperard/typescript-json-serializer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/gillianperard/typescript-json-serializer?targetFile=package.json)
 
@@ -119,22 +119,40 @@ export class LivingBeing {
 }
 
 
-// Create a serializable class that extends LivingBeing: Employee
+// Create a serializable class that extends LivingBeing: Human
 
 @Serializable()
-export class Employee extends LivingBeing {
-
-    /** The employee's email */
-    @JsonProperty() email: string;
-
-    public constructor(
+export class Human extends LivingBeing {
+    constructor(
         // This comment works
         @JsonProperty() public name: string,
+        public id: number,
         @JsonProperty() public gender: Gender,
         /** This comment works */
         @JsonProperty() public readonly birthDate: Date
-    ) { }
+    ) {
+        super();
+        this.id = id;
+    }
+}
 
+
+// Create a serializable class that extends Human: Employee
+
+@Serializable()
+export class Employee extends Human {
+    /** The employee's email */
+    @JsonProperty()
+    email: string;
+
+    constructor(
+        public name: string,
+        public id: number,
+        public gender: Gender,
+        public birthDate: Date
+    ) {
+        super(name, id, gender, birthDate);
+    }
 }
 
 
@@ -284,8 +302,26 @@ export class Organization {
     @JsonProperty() id: string;
     @JsonProperty() name: string;
     @JsonProperty({ type: Zoo }) zoos: Array<Zoo>;
-}
 
+    // To merge multiple properties in a single one
+    // use the property `names`.
+    // If you don't create your own merge with the `onDeserialize`
+    // and `onSerialize` function, it will just merge properties in this
+    // one when using `deserialize` and split back
+    // when using `serialize`
+    @JsonProperty({
+        names: ['mainShareholder', 'secondaryShareholder'],
+        type: Human,
+        onDeserialize: value => Object.values(value),
+        onSerialize: value => {
+            return {
+                mainShareholder: value[0],
+                secondaryShareholder: value[1]
+            };
+        }
+    })
+    shareholders: Array<Human>;
+}
 ```
 
 ### Json data
@@ -394,12 +430,24 @@ export const data: any = {
             },
             unknownAnimals: [
                 {
-                    name: 'Bob'
+                    name: null
                 }
             ],
             bestEmployeeOfTheMonth: undefined
         }
-    ]
+    ],
+    mainShareholder: {
+        id: 100,
+        name: 'Elon Musk',
+        birthDate: '1971-06-28T22:00:00.000Z',
+        gender: 1
+    },
+    secondaryShareholder: {
+        id: 101,
+        name: 'Bill Gates',
+        birthDate: '1955-10-28T22:00:00.000Z',
+        gender: 1
+    }
 };
 ```
 
@@ -416,10 +464,9 @@ import { Organization } from '../models/organization';
 const organization = deserialize<Organization>(json, Organization);
 
 // serialize
-const data = serialize(zoo);
+const data = serialize(organization);
 // or
-const data = serialize(zoo, false);
-
+const data = serialize(organization, false);
 ```
 
 ## Test
@@ -433,7 +480,6 @@ yarn test
 ## Author
 
 Gillian Pérard - [@GillianPerard](https://github.com/GillianPerard)
-
 
 ## Contributors
 

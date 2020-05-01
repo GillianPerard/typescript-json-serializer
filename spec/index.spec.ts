@@ -2,12 +2,12 @@ import 'reflect-metadata';
 
 import { deserialize, serialize } from '../src';
 
+import { data, deserializedData } from '../examples/json/data';
 import { Animal } from '../examples/models/animal';
 import { Dummy } from '../examples/models/dummy';
+import { Organization } from '../examples/models/organization';
 import { Panther } from '../examples/models/panther';
 import { Zoo } from '../examples/models/zoo';
-import { data, deserializedData } from '../examples/json/data';
-import { Organization } from '../examples/models/organization';
 
 describe('Serializable', () => {
     it('should return false', () => {
@@ -57,7 +57,10 @@ describe('serialize', () => {
     organizationWithUndefinedValue.name = undefined;
 
     it('organizationWithUndefinedValue should return an object with undefined value', () => {
-        expect(serialize(organizationWithUndefinedValue, false)).toEqual({ id: '4', name: undefined });
+        expect(serialize(organizationWithUndefinedValue, false)).toEqual({
+            id: '4',
+            name: undefined
+        });
     });
 
     it('organizationWithUndefinedValue should return an object without undefined value', () => {

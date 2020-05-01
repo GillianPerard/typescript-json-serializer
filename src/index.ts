@@ -18,11 +18,20 @@ enum Type {
 type Args =
     | string
     | { name?: string; type?: Function; onSerialize?: Function; onDeserialize?: Function }
-    | { name?: string; predicate?: Function; onSerialize?: Function; onDeserialize?: Function };
+    | { name?: string; predicate?: Function; onSerialize?: Function; onDeserialize?: Function }
+    | { names: Array<string>; type?: Function; onSerialize?: Function; onDeserialize?: Function }
+    | {
+          names: Array<string>;
+          predicate?: Function;
+          onSerialize?: Function;
+          onDeserialize?: Function;
+      };
 
 type Metadata =
     | { name: string; type: Function; onSerialize: Function; onDeserialize: Function }
-    | { name: string; predicate: Function; onSerialize: Function; onDeserialize: Function };
+    | { name: string; predicate: Function; onSerialize: Function; onDeserialize: Function }
+    | { names: Array<string>; type: Function; onSerialize: Function; onDeserialize: Function }
+    | { names: Array<string>; predicate: Function; onSerialize: Function; onDeserialize: Function };
 
 /**
  * Function to get all base class names recursively
@@ -127,11 +136,17 @@ export function Serializable(): Function {
  * @param {any} instance The instance target from which the parents metadata are extracted
  * @returns {{ [id: string]: Metadata }} All base class metadata properties
  */
-function getBaseClassMaps(baseClassNames: Array<string>, instance: any): { [id: string]: Metadata } {
+function getBaseClassMaps(
+    baseClassNames: Array<string>,
+    instance: any
+): { [id: string]: Metadata } {
     let baseClassMaps: { [id: string]: Metadata } = {};
 
     baseClassNames.forEach(baseClassName => {
-        baseClassMaps = { ...baseClassMaps, ...Reflect.getMetadata(`${apiMap}${baseClassName}`, instance) };
+        baseClassMaps = {
+            ...baseClassMaps,
+            ...Reflect.getMetadata(`${apiMap}${baseClassName}`, instance)
+        };
     });
 
     return baseClassMaps;
@@ -162,10 +177,13 @@ export function deserialize<T>(json: object, type: new (...params: Array<any>) =
         instanceMap = { ...instanceMap, ...getBaseClassMaps(baseClassNames, instance) };
     }
 
-    const keys: Array<string> = Object.keys(instanceMap);
-    keys.forEach(key => {
-        if (json[instanceMap[key].name] !== undefined) {
-            instance[key] = convertDataToProperty(instance, key, instanceMap[key], json[instanceMap[key].name]);
+    Object.keys(instanceMap).forEach(key => {
+        const canConvert = instanceMap[key]['names']
+            ? instanceMap[key]['names'].some((name: string) => json[name] !== undefined)
+            : json[instanceMap[key]['name']] !== undefined;
+
+        if (canConvert) {
+            instance[key] = convertDataToProperty(instance, key, instanceMap[key], json);
         }
     });
 
@@ -182,7 +200,10 @@ export function deserialize<T>(json: object, type: new (...params: Array<any>) =
 export function serialize(instance: any, removeUndefined: boolean = true): any {
     const json: any = {};
     const instanceName = instance.constructor.name;
-    const baseClassNames: Array<string> = Reflect.getMetadata(apiMapSerializable, instance.constructor);
+    const baseClassNames: Array<string> = Reflect.getMetadata(
+        apiMapSerializable,
+        instance.constructor
+    );
     const apiMapInstanceName = `${apiMap}${instanceName}`;
     const hasMap = Reflect.hasMetadata(apiMapInstanceName, instance);
     let instanceMap: { [id: string]: Metadata } = {};
@@ -199,11 +220,25 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
 
     const instanceKeys = Object.keys(instance);
     Object.keys(instanceMap).forEach(key => {
-        if (instanceKeys.includes(key)) {
-            const data = convertPropertyToData(instance, key, instanceMap[key], removeUndefined);
+        const onSerialize: Function = instanceMap[key]['onSerialize'];
 
-            if (!removeUndefined || (removeUndefined && data !== undefined)) {
-                json[instanceMap[key].name] = data;
+        if (instanceKeys.includes(key)) {
+            let data = convertPropertyToData(instance, key, instanceMap[key], removeUndefined);
+
+            if (onSerialize) {
+                data = onSerialize(data);
+            }
+
+            if (instanceMap[key]['names']) {
+                instanceMap[key]['names'].forEach((name: string) => {
+                    if (!removeUndefined || (removeUndefined && data[name] !== undefined)) {
+                        json[name] = data[name];
+                    }
+                });
+            } else {
+                if (!removeUndefined || (removeUndefined && data !== undefined)) {
+                    json[instanceMap[key]['name']] = data;
+                }
             }
         }
     });
@@ -216,22 +251,22 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
  *
  * @param {Function} instance The instance containing the property to convert
  * @param {string} key The name of the property to convert
- * @param {Metadata} value The metadata of the property to convert
+ * @param {Metadata} metadata The metadata of the property to convert
  * @param {boolean} removeUndefined Indicates if you want to keep or remove undefined value
  * @returns {any} The converted property
  */
-function convertPropertyToData(instance: Function, key: string, value: Metadata, removeUndefined: boolean): any {
-    let property: any = instance[key];
+function convertPropertyToData(
+    instance: Function,
+    key: string,
+    metadata: Metadata,
+    removeUndefined: boolean
+): any {
+    const property: any = instance[key];
     const type: any = Reflect.getMetadata(designType, instance, key);
     const isArray = type.name.toLocaleLowerCase() === Type.Array;
-    const predicate: Function = value['predicate'];
-    const onSerialize: Function = value['onSerialize'];
-    const propertyType: any = value['type'] || type;
+    const predicate: Function = metadata['predicate'];
+    const propertyType: any = metadata['type'] || type;
     const isSerializableProperty = isSerializable(propertyType);
-
-    if (onSerialize) {
-        property = onSerialize(property);
-    }
 
     if (property && (isSerializableProperty || predicate)) {
         if (isArray) {
@@ -257,15 +292,25 @@ function convertPropertyToData(instance: Function, key: string, value: Metadata,
  * Function to convert json data to the class property
  * @param {Function} instance The instance containing the property to convert
  * @param {string} key The name of the property to convert
- * @param {Metadata} value The metadata of the property to convert
- * @param {any} data Data containing the values
+ * @param {Metadata} metadata The metadata of the property to convert
+ * @param {any} json Json containing the values
  */
-function convertDataToProperty(instance: Function, key: string, value: Metadata, data: any) {
+function convertDataToProperty(instance: Function, key: string, metadata: Metadata, json: any) {
+    let data: any;
+
+    if (metadata['names']) {
+        const object = {};
+        metadata['names'].forEach((name: string) => (object[name] = json[name]));
+        data = object;
+    } else {
+        data = json[metadata['name']];
+    }
+
     const type: any = Reflect.getMetadata(designType, instance, key);
     const isArray = type.name.toLowerCase() === Type.Array;
-    const predicate: Function = value['predicate'];
-    const onDeserialize: Function = value['onDeserialize'];
-    let propertyType: any = value['type'] || type;
+    const predicate: Function = metadata['predicate'];
+    const onDeserialize: Function = metadata['onDeserialize'];
+    let propertyType: any = metadata['type'] || type;
     const isSerializableProperty = isSerializable(propertyType);
 
     if (onDeserialize) {
@@ -278,13 +323,18 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
 
     if (isArray) {
         const array = [];
+
+        if (!Array.isArray(data)) {
+            console.error(`${data} is not and array.`);
+            return array;
+        }
+
         data.forEach((d: any) => {
             if (predicate) {
                 propertyType = predicate(d);
             }
             array.push(deserialize(d, propertyType));
         });
-
         return array;
     }
 
@@ -318,10 +368,31 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
             onSerialize: undefined
         };
     }
-    const name: string = typeof args === Type.String ? args : args['name'] ? args['name'] : key.toString();
+
+    let metadata: any;
+    if (typeof args === Type.String) {
+        metadata = { name: args };
+    } else if (args['name']) {
+        metadata = { name: args['name'] };
+    } else if (args['names'] && args['names'].length) {
+        metadata = { names: args['names'] };
+    } else {
+        metadata = { name: key.toString() };
+    }
+
     return args['predicate']
-        ? { name, predicate: args['predicate'], onDeserialize: args['onDeserialize'], onSerialize: args['onSerialize'] }
-        : { name, type: args['type'], onDeserialize: args['onDeserialize'], onSerialize: args['onSerialize'] };
+        ? {
+              ...metadata,
+              predicate: args['predicate'],
+              onDeserialize: args['onDeserialize'],
+              onSerialize: args['onSerialize']
+          }
+        : {
+              ...metadata,
+              type: args['type'],
+              onDeserialize: args['onDeserialize'],
+              onSerialize: args['onSerialize']
+          };
 }
 
 /**
@@ -340,7 +411,7 @@ function castSimpleData(type: string, data: any): any {
 
     switch (type) {
         case Type.String:
-            return data.toString();
+            return data ? data.toString() : data;
         case Type.Number:
             const number: number = +data;
             if (isNaN(number)) {

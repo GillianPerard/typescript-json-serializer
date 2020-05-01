@@ -1,21 +1,20 @@
-import { Serializable, JsonProperty } from '../../src';
+import { JsonProperty, Serializable } from '../../src';
 
-import { LivingBeing } from './living-being';
 import { Gender } from './gender';
+import { Human } from './human';
 
 @Serializable()
-export class Employee extends LivingBeing {
+export class Employee extends Human {
     /** The employee's email */
     @JsonProperty()
     email: string;
 
     constructor(
-        // This comment works
-        @JsonProperty() public name: string,
-        @JsonProperty() public gender: Gender,
-        /** The birth date of the employee (readonly) */
-        @JsonProperty() public readonly birthDate: Date
+        public name: string,
+        public id: number,
+        public gender: Gender,
+        public birthDate: Date
     ) {
-        super();
+        super(name, id, gender, birthDate);
     }
 }
