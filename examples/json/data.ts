@@ -6,6 +6,7 @@ import { Snake } from '../models/snake';
 import { Status } from '../models/status';
 import { UnknownAnimal } from '../models/unknown-animal';
 import { Zoo } from '../models/zoo';
+import { Human } from '../models/human';
 
 export const data: any = {
     id: '1',
@@ -114,28 +115,52 @@ export const data: any = {
             ],
             bestEmployeeOfTheMonth: undefined
         }
-    ]
+    ],
+    mainShareholder: {
+        id: 100,
+        name: 'Elon Musk',
+        birthDate: '1971-06-28T22:00:00.000Z',
+        gender: 1
+    },
+    secondaryShareholder: {
+        id: 101,
+        name: 'Bill Gates',
+        birthDate: '1955-10-28T22:00:00.000Z',
+        gender: 1
+    }
 };
 
-const boss = new Employee(data.zoos[0].boss.name, Gender.Male, new Date(data.zoos[0].boss.birthDate));
+const boss = new Employee(
+    data.zoos[0].boss.name,
+    data.zoos[0].boss.id,
+    Gender.Male,
+    new Date(data.zoos[0].boss.birthDate)
+);
 boss.email = data.zoos[0].boss.email;
-boss.id = data.zoos[0].boss.id;
 
 const mikasa = new Employee(
     data.zoos[0].employees[1].name,
+    data.zoos[0].employees[1].id,
     Gender.Female,
     new Date(data.zoos[0].employees[1].birthDate)
 );
 mikasa.email = data.zoos[0].employees[1].email;
-mikasa.id = data.zoos[0].employees[1].id;
 
-const red = new Employee(data.zoos[0].employees[2].name, Gender.Male, new Date(data.zoos[0].employees[2].birthDate));
+const red = new Employee(
+    data.zoos[0].employees[2].name,
+    data.zoos[0].employees[2].id,
+    Gender.Male,
+    new Date(data.zoos[0].employees[2].birthDate)
+);
 red.email = data.zoos[0].employees[2].email;
-red.id = data.zoos[0].employees[2].id;
 
-const fried = new Employee(data.zoos[0].employees[3].name, Gender.Male, new Date(data.zoos[0].employees[3].birthDate));
+const fried = new Employee(
+    data.zoos[0].employees[3].name,
+    data.zoos[0].employees[3].id,
+    Gender.Male,
+    new Date(data.zoos[0].employees[3].birthDate)
+);
 fried.email = data.zoos[0].employees[3].email;
-fried.id = data.zoos[0].employees[3].id;
 
 const bagheera = new Panther(data.zoos[0].Animals[0].name, data.zoos[0].Animals[0].isSpeckled);
 bagheera.color = data.zoos[0].Animals[0].color;
@@ -189,9 +214,24 @@ zoo.name = data.zoos[0].name;
 zoo.bestEmployeeOfTheMonth = data.zoos[0].bestEmployeeOfTheMonth;
 zoo.unknownAnimals = [unknownAnimal];
 
+const elonMusk = new Human(
+    data.mainShareholder.name,
+    data.mainShareholder.id,
+    data.mainShareholder.gender,
+    new Date(data.mainShareholder.birthDate)
+);
+
+const billGates = new Human(
+    data.secondaryShareholder.name,
+    data.secondaryShareholder.id,
+    data.secondaryShareholder.gender,
+    new Date(data.secondaryShareholder.birthDate)
+);
+
 const organization = new Organization();
 organization.id = data.id;
 organization.name = data.name;
 organization.zoos = [zoo];
+organization.shareholders = [elonMusk, billGates];
 
 export const deserializedData = organization;

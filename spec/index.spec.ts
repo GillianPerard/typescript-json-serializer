@@ -57,7 +57,10 @@ describe('serialize', () => {
     organizationWithUndefinedValue.name = undefined;
 
     it('organizationWithUndefinedValue should return an object with undefined value', () => {
-        expect(serialize(organizationWithUndefinedValue, false)).toEqual({ id: '4', name: undefined });
+        expect(serialize(organizationWithUndefinedValue, false)).toEqual({
+            id: '4',
+            name: undefined
+        });
     });
 
     it('organizationWithUndefinedValue should return an object without undefined value', () => {
