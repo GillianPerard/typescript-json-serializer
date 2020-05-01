@@ -24,29 +24,3 @@ export class Animal extends LivingBeing {
         this.name = name;
     }
 }
-
-// tslint:disable: max-classes-per-file
-@Serializable()
-class Lala {
-    @JsonProperty() id: string;
-
-    constructor(id: string) {
-        this.id = id;
-    }
-}
-
-@Serializable()
-// tslint:disable-next-line: no-unused
-class Student extends Lala {
-    @JsonProperty() birthDate: Date;
-
-    constructor(
-        id: string,
-        /* lala */
-        @JsonProperty() public name: string,
-        birthDate: Date
-    ) {
-        super(id);
-        this.birthDate = birthDate;
-    }
-}
