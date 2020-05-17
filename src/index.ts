@@ -17,21 +17,64 @@ enum Type {
 // Types
 type Args =
     | string
-    | { name?: string; type?: Function; onSerialize?: Function; onDeserialize?: Function }
-    | { name?: string; predicate?: Function; onSerialize?: Function; onDeserialize?: Function }
-    | { names: Array<string>; type?: Function; onSerialize?: Function; onDeserialize?: Function }
+    | {
+          name?: string;
+          type?: Function;
+          onSerialize?: Function;
+          onDeserialize?: Function;
+          postDeserialize?: Function;
+      }
+    | {
+          name?: string;
+          predicate?: Function;
+          onSerialize?: Function;
+          onDeserialize?: Function;
+          postDeserialize?: Function;
+      }
+    | {
+          names: Array<string>;
+          type?: Function;
+          onSerialize?: Function;
+          onDeserialize?: Function;
+          postDeserialize?: Function;
+      }
     | {
           names: Array<string>;
           predicate?: Function;
           onSerialize?: Function;
           onDeserialize?: Function;
+          postDeserialize?: Function;
       };
 
 type Metadata =
-    | { name: string; type: Function; onSerialize: Function; onDeserialize: Function }
-    | { name: string; predicate: Function; onSerialize: Function; onDeserialize: Function }
-    | { names: Array<string>; type: Function; onSerialize: Function; onDeserialize: Function }
-    | { names: Array<string>; predicate: Function; onSerialize: Function; onDeserialize: Function };
+    | {
+          name: string;
+          type: Function;
+          onSerialize: Function;
+          onDeserialize: Function;
+          postDeserialize: Function;
+      }
+    | {
+          name: string;
+          predicate: Function;
+          onSerialize: Function;
+          onDeserialize: Function;
+          postDeserialize: Function;
+      }
+    | {
+          names: Array<string>;
+          type: Function;
+          onSerialize: Function;
+          onDeserialize: Function;
+          postDeserialize: Function;
+      }
+    | {
+          names: Array<string>;
+          predicate: Function;
+          onSerialize: Function;
+          onDeserialize: Function;
+          postDeserialize: Function;
+      };
 
 /**
  * Function to get all base class names recursively
@@ -226,7 +269,7 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
             let data = convertPropertyToData(instance, key, instanceMap[key], removeUndefined);
 
             if (onSerialize) {
-                data = onSerialize(data);
+                data = onSerialize(data, instance);
             }
 
             if (instanceMap[key]['names']) {
@@ -310,36 +353,42 @@ function convertDataToProperty(instance: Function, key: string, metadata: Metada
     const isArray = type.name.toLowerCase() === Type.Array;
     const predicate: Function = metadata['predicate'];
     const onDeserialize: Function = metadata['onDeserialize'];
+    const postDeserialize: Function = metadata['postDeserialize'];
     let propertyType: any = metadata['type'] || type;
     const isSerializableProperty = isSerializable(propertyType);
+    let result: any;
 
     if (onDeserialize) {
-        data = onDeserialize(data);
+        data = onDeserialize(data, instance);
     }
 
     if (!isSerializableProperty && !predicate) {
-        return castSimpleData(propertyType.name, data);
-    }
-
-    if (isArray) {
+        result = castSimpleData(propertyType.name, data);
+    } else if (isArray) {
         const array = [];
 
         if (!Array.isArray(data)) {
             console.error(`${data} is not and array.`);
-            return array;
+            result = undefined;
+        } else {
+            data.forEach((d: any) => {
+                if (predicate) {
+                    propertyType = predicate(d);
+                }
+                array.push(deserialize(d, propertyType));
+            });
+            result = array;
         }
-
-        data.forEach((d: any) => {
-            if (predicate) {
-                propertyType = predicate(d);
-            }
-            array.push(deserialize(d, propertyType));
-        });
-        return array;
+    } else {
+        propertyType = predicate ? predicate(data) : propertyType;
+        result = deserialize(data, propertyType);
     }
 
-    propertyType = predicate ? predicate(data) : propertyType;
-    return deserialize(data, propertyType);
+    if (postDeserialize) {
+        result = postDeserialize(result, instance);
+    }
+
+    return result;
 }
 
 /**
@@ -365,7 +414,8 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
             name: key.toString(),
             type: undefined,
             onDeserialize: undefined,
-            onSerialize: undefined
+            onSerialize: undefined,
+            postDeserialize: undefined
         };
     }
 
@@ -385,13 +435,15 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
               ...metadata,
               predicate: args['predicate'],
               onDeserialize: args['onDeserialize'],
-              onSerialize: args['onSerialize']
+              onSerialize: args['onSerialize'],
+              postDeserialize: args['postDeserialize']
           }
         : {
               ...metadata,
               type: args['type'],
               onDeserialize: args['onDeserialize'],
-              onSerialize: args['onSerialize']
+              onSerialize: args['onSerialize'],
+              postDeserialize: args['postDeserialize']
           };
 }
 
