@@ -58,10 +58,35 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
 // - a function to transform data on deserialize
 // - a function to transform data on serialize
 
-@JsonProperty(args?: string
-    | { name?: string, type?: Function, onDeserialize?: Function, onSerialize?: Function }
-    | { name?: string, predicate?: Function, onDeserialize?: Function, onSerialize?: Function }
-)
+@JsonProperty(args?:
+    | string
+    | {
+        name?: string,
+        type?: Function,
+        onDeserialize?: (property: any, currentInstance: any) => {}, onSerialize?: (property: any, currentInstance: any) => {},
+        postDeserialize?: (property: any, currentInstance: any) => {}
+      }
+    | {
+        name?: string,
+        predicate?: (property: any) => {},
+        onDeserialize?: (property: any, currentInstance: any) => {},
+        onSerialize?: (property: any, currentInstance: any) => {},
+        postDeserialize?: (property: any, currentInstance: any) => {}
+      }
+    | {
+        names?: Array<string>,
+        predicate?: (property: any) => {},
+        onDeserialize?: (property: any, currentInstance: any) => {},
+        onSerialize?: (property: any, currentInstance: any) => {},
+        postDeserialize?: (property: any, currentInstance: any) => {}
+      }
+    | {
+        names?: Array<string>,
+        predicate?: (property: any) => {},
+        onDeserialize?: (property: any, currentInstance: any) => {},
+        onSerialize?: (property: any, currentInstance: any) => {},
+        postDeserialize?: (property: any, currentInstance: any) => {}
+    })
 ```
 
 ### Functions
