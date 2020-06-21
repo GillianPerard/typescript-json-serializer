@@ -7,6 +7,7 @@ import { Snake } from '../models/snake';
 import { Status } from '../models/status';
 import { UnknownAnimal } from '../models/unknown-animal';
 import { Zoo } from '../models/zoo';
+import { PhoneNumber } from '../models/phone-number';
 
 export const data: any = {
     id: '1',
@@ -23,6 +24,10 @@ export const data: any = {
                 name: 'Bob Razowsky',
                 birthDate: '1984-04-03T22:00:00.000Z',
                 email: 'bob.razowsky@tgzoo.fr',
+                phoneNumber: {
+                    countryCode: '1',
+                    phoneNumber: '111-111-1111'
+                },
                 gender: 1
             },
             employees: [
@@ -31,6 +36,10 @@ export const data: any = {
                     name: 'Bob Razowsky',
                     birthDate: '1984-04-03T22:00:00.000Z',
                     email: 'bob.razowsky@tgzoo.fr',
+                    phoneNumber: {
+                        countryCode: '1',
+                        phoneNumber: '111-111-1111'
+                    },
                     gender: 1
                 },
                 {
@@ -38,6 +47,7 @@ export const data: any = {
                     name: 'Mikasa Ackerman',
                     birthDate: '1984-01-11T22:00:00.000Z',
                     email: 'mikasa.ackerman@tgzoo.fr',
+                    phoneNumber: null,
                     gender: 0
                 },
                 {
@@ -45,6 +55,10 @@ export const data: any = {
                     name: 'Red Redington',
                     birthDate: '1970-12-04T22:00:00.000Z',
                     email: 'red.redington@tgzoo.fr',
+                    phoneNumber: {
+                        countryCode: '1',
+                        phoneNumber: '333-333-3333'
+                    },
                     gender: 1
                 },
                 {
@@ -52,6 +66,7 @@ export const data: any = {
                     name: 'Fried Richter',
                     birthDate: '1994-04-01T22:00:00.000Z',
                     email: 'fried.richter@tgzoo.fr',
+                    phoneNumber: null,
                     gender: 1
                 }
             ],
@@ -137,6 +152,9 @@ const boss = new Employee(
     new Date(data.zoos[0].boss.birthDate)
 );
 boss.email = data.zoos[0].boss.email;
+boss.phoneNumber = (d => (d ? new PhoneNumber(d.countryCode, d.phoneNumber) : null))(
+    data.zoos[0].boss.phoneNumber
+);
 
 const mikasa = new Employee(
     data.zoos[0].employees[1].name,
@@ -145,6 +163,9 @@ const mikasa = new Employee(
     new Date(data.zoos[0].employees[1].birthDate)
 );
 mikasa.email = data.zoos[0].employees[1].email;
+mikasa.phoneNumber = (d => (d ? new PhoneNumber(d.countryCode, d.phoneNumber) : null))(
+    data.zoos[0].employees[1].phoneNumber
+);
 
 const red = new Employee(
     data.zoos[0].employees[2].name,
@@ -153,6 +174,9 @@ const red = new Employee(
     new Date(data.zoos[0].employees[2].birthDate)
 );
 red.email = data.zoos[0].employees[2].email;
+red.phoneNumber = (d => (d ? new PhoneNumber(d.countryCode, d.phoneNumber) : null))(
+    data.zoos[0].employees[2].phoneNumber
+);
 
 const fried = new Employee(
     data.zoos[0].employees[3].name,
@@ -161,6 +185,9 @@ const fried = new Employee(
     new Date(data.zoos[0].employees[3].birthDate)
 );
 fried.email = data.zoos[0].employees[3].email;
+fried.phoneNumber = (d => (d ? new PhoneNumber(d.countryCode, d.phoneNumber) : null))(
+    data.zoos[0].employees[3].phoneNumber
+);
 
 const bagheera = new Panther(data.zoos[0].Animals[0].name, data.zoos[0].Animals[0].isSpeckled);
 bagheera.color = data.zoos[0].Animals[0].color;
