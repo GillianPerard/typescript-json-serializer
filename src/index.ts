@@ -446,8 +446,8 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
     return args['predicate']
         ? {
               ...metadata,
-              nullable: args['nullable'],
               predicate: args['predicate'],
+              nullable: args['nullable'],
               onDeserialize: args['onDeserialize'],
               onSerialize: args['onSerialize'],
               postDeserialize: args['postDeserialize']
