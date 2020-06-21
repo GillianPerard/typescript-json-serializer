@@ -63,12 +63,22 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
     | {
         name?: string,
         type?: Function,
+        nullable?: boolean,
         onDeserialize?: (property: any, currentInstance: any) => {}, onSerialize?: (property: any, currentInstance: any) => {},
         postDeserialize?: (property: any, currentInstance: any) => {}
       }
     | {
         name?: string,
         predicate?: (property: any) => {},
+        nullable?: boolean,
+        onDeserialize?: (property: any, currentInstance: any) => {},
+        onSerialize?: (property: any, currentInstance: any) => {},
+        postDeserialize?: (property: any, currentInstance: any) => {}
+      }
+    | {
+        names?: Array<string>,
+        type?: Function,
+        nullable?: boolean,
         onDeserialize?: (property: any, currentInstance: any) => {},
         onSerialize?: (property: any, currentInstance: any) => {},
         postDeserialize?: (property: any, currentInstance: any) => {}
@@ -76,13 +86,7 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
     | {
         names?: Array<string>,
         predicate?: (property: any) => {},
-        onDeserialize?: (property: any, currentInstance: any) => {},
-        onSerialize?: (property: any, currentInstance: any) => {},
-        postDeserialize?: (property: any, currentInstance: any) => {}
-      }
-    | {
-        names?: Array<string>,
-        predicate?: (property: any) => {},
+        nullable?: boolean,
         onDeserialize?: (property: any, currentInstance: any) => {},
         onSerialize?: (property: any, currentInstance: any) => {},
         postDeserialize?: (property: any, currentInstance: any) => {}
@@ -163,12 +167,17 @@ export class Human extends LivingBeing {
 
 
 // Create a serializable class that extends Human: Employee
+// PhoneNumber is optional
 
 @Serializable()
 export class Employee extends Human {
     /** The employee's email */
     @JsonProperty()
     email: string;
+
+    /** The employee's phone number */
+    @JsonProperty({ nullable: true })
+    phoneNumber: PhoneNumber | null;
 
     constructor(
         public name: string,
@@ -180,6 +189,15 @@ export class Employee extends Human {
     }
 }
 
+@Serializable()
+export class PhoneNumber {
+    constructor(
+        @JsonProperty()
+        public countryCode: string,
+        @JsonProperty()
+        public phoneNumber: string
+    ) {}
+}
 
 // Create a serializable class: Animal
 
@@ -368,6 +386,10 @@ export const data: any = {
                 name: 'Bob Razowsky',
                 birthDate: '1984-04-03T22:00:00.000Z',
                 email: 'bob.razowsky@tgzoo.fr',
+                phoneNumber: {
+                    countryCode: '1',
+                    phoneNumber: '111-111-1111'
+                },
                 gender: 1
             },
             employees: [
@@ -376,6 +398,10 @@ export const data: any = {
                     name: 'Bob Razowsky',
                     birthDate: '1984-04-03T22:00:00.000Z',
                     email: 'bob.razowsky@tgzoo.fr',
+                    phoneNumber: {
+                        countryCode: '1',
+                        phoneNumber: '111-111-1111'
+                    },
                     gender: 1
                 },
                 {
@@ -383,6 +409,7 @@ export const data: any = {
                     name: 'Mikasa Ackerman',
                     birthDate: '1984-01-11T22:00:00.000Z',
                     email: 'mikasa.ackerman@tgzoo.fr',
+                    phoneNumber: null,
                     gender: 0
                 },
                 {
@@ -390,6 +417,10 @@ export const data: any = {
                     name: 'Red Redington',
                     birthDate: '1970-12-04T22:00:00.000Z',
                     email: 'red.redington@tgzoo.fr',
+                    phoneNumber: {
+                        countryCode: '1',
+                        phoneNumber: '333-333-3333'
+                    },
                     gender: 1
                 },
                 {
@@ -397,6 +428,7 @@ export const data: any = {
                     name: 'Fried Richter',
                     birthDate: '1994-04-01T22:00:00.000Z',
                     email: 'fried.richter@tgzoo.fr',
+                    phoneNumber: null,
                     gender: 1
                 }
             ],
