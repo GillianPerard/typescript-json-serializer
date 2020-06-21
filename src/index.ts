@@ -27,8 +27,8 @@ type Args =
       }
     | {
           name?: string;
-          nullable?: boolean;
           predicate?: Function;
+          nullable?: boolean;
           onSerialize?: Function;
           onDeserialize?: Function;
           postDeserialize?: Function;
@@ -43,8 +43,8 @@ type Args =
       }
     | {
           names: Array<string>;
-          nullable?: boolean;
           predicate?: Function;
+          nullable?: boolean;
           onSerialize?: Function;
           onDeserialize?: Function;
           postDeserialize?: Function;
@@ -61,8 +61,8 @@ type Metadata =
       }
     | {
           name: string;
-          nullable: boolean;
           predicate: Function;
+          nullable: boolean;
           onSerialize: Function;
           onDeserialize: Function;
           postDeserialize: Function;
@@ -77,8 +77,8 @@ type Metadata =
       }
     | {
           names: Array<string>;
-          nullable: boolean;
           predicate: Function;
+          nullable: boolean;
           onSerialize: Function;
           onDeserialize: Function;
           postDeserialize: Function;
