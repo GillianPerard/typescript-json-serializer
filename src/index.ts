@@ -20,12 +20,14 @@ type Args =
     | {
           name?: string;
           type?: Function;
+          nullable?: boolean;
           onSerialize?: Function;
           onDeserialize?: Function;
           postDeserialize?: Function;
       }
     | {
           name?: string;
+          nullable?: boolean;
           predicate?: Function;
           onSerialize?: Function;
           onDeserialize?: Function;
@@ -34,12 +36,14 @@ type Args =
     | {
           names: Array<string>;
           type?: Function;
+          nullable?: boolean;
           onSerialize?: Function;
           onDeserialize?: Function;
           postDeserialize?: Function;
       }
     | {
           names: Array<string>;
+          nullable?: boolean;
           predicate?: Function;
           onSerialize?: Function;
           onDeserialize?: Function;
@@ -50,12 +54,14 @@ type Metadata =
     | {
           name: string;
           type: Function;
+          nullable: boolean;
           onSerialize: Function;
           onDeserialize: Function;
           postDeserialize: Function;
       }
     | {
           name: string;
+          nullable: boolean;
           predicate: Function;
           onSerialize: Function;
           onDeserialize: Function;
@@ -64,12 +70,14 @@ type Metadata =
     | {
           names: Array<string>;
           type: Function;
+          nullable: boolean;
           onSerialize: Function;
           onDeserialize: Function;
           postDeserialize: Function;
       }
     | {
           names: Array<string>;
+          nullable: boolean;
           predicate: Function;
           onSerialize: Function;
           onDeserialize: Function;
@@ -221,12 +229,16 @@ export function deserialize<T>(json: object, type: new (...params: Array<any>) =
     }
 
     Object.keys(instanceMap).forEach(key => {
-        const canConvert = instanceMap[key]['names']
-            ? instanceMap[key]['names'].some((name: string) => json[name] !== undefined)
-            : json[instanceMap[key]['name']] !== undefined;
+        if (!!instanceMap[key]['nullable'] && json[key] === null) {
+            instance[key] = null;
+        } else {
+            const canConvert = instanceMap[key]['names']
+                ? instanceMap[key]['names'].some((name: string) => json[name] !== undefined)
+                : json[instanceMap[key]['name']] !== undefined;
 
-        if (canConvert) {
-            instance[key] = convertDataToProperty(instance, key, instanceMap[key], json);
+            if (canConvert) {
+                instance[key] = convertDataToProperty(instance, key, instanceMap[key], json);
+            }
         }
     });
 
@@ -413,6 +425,7 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
         return {
             name: key.toString(),
             type: undefined,
+            nullable: undefined,
             onDeserialize: undefined,
             onSerialize: undefined,
             postDeserialize: undefined
@@ -433,6 +446,7 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
     return args['predicate']
         ? {
               ...metadata,
+              nullable: args['nullable'],
               predicate: args['predicate'],
               onDeserialize: args['onDeserialize'],
               onSerialize: args['onSerialize'],
@@ -441,6 +455,7 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
         : {
               ...metadata,
               type: args['type'],
+              nullable: args['nullable'],
               onDeserialize: args['onDeserialize'],
               onSerialize: args['onSerialize'],
               postDeserialize: args['postDeserialize']
