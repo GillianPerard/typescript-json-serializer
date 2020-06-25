@@ -203,6 +203,10 @@ function getBaseClassMaps(
  * @returns {T} The instance of the specified type containing all deserialized properties
  */
 export function deserialize<T>(json: object, type: new (...params: Array<any>) => T): T {
+    if ([null, undefined].includes(json)) {
+        return json as never;
+    }
+
     const instance: any = new type();
     const instanceName = instance.constructor.name;
     const baseClassNames: Array<string> = Reflect.getMetadata(apiMapSerializable, type);
@@ -221,13 +225,7 @@ export function deserialize<T>(json: object, type: new (...params: Array<any>) =
     }
 
     Object.keys(instanceMap).forEach(key => {
-        const canConvert = instanceMap[key]['names']
-            ? instanceMap[key]['names'].some((name: string) => json[name] !== undefined)
-            : json[instanceMap[key]['name']] !== undefined;
-
-        if (canConvert) {
-            instance[key] = convertDataToProperty(instance, key, instanceMap[key], json);
-        }
+        instance[key] = convertDataToProperty(instance, key, instanceMap[key], json);
     });
 
     return instance;
@@ -241,6 +239,10 @@ export function deserialize<T>(json: object, type: new (...params: Array<any>) =
  * @returns {any} The json object
  */
 export function serialize(instance: any, removeUndefined: boolean = true): any {
+    if ([undefined, null].includes(instance)) {
+        return instance;
+    }
+
     const json: any = {};
     const instanceName = instance.constructor.name;
     const baseClassNames: Array<string> = Reflect.getMetadata(
@@ -341,12 +343,20 @@ function convertPropertyToData(
 function convertDataToProperty(instance: Function, key: string, metadata: Metadata, json: any) {
     let data: any;
 
+    if ([null, undefined].includes(json)) {
+        return json;
+    }
+
     if (metadata['names']) {
         const object = {};
         metadata['names'].forEach((name: string) => (object[name] = json[name]));
         data = object;
     } else {
         data = json[metadata['name']];
+    }
+
+    if ([null, undefined].includes(data)) {
+        return data;
     }
 
     const type: any = Reflect.getMetadata(designType, instance, key);
