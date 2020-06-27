@@ -37,9 +37,11 @@ describe('serialize', () => {
 
     it('should return 1 childrenIdentifiers', () => {
         const result = serialize(deserializedData, false);
-        const count = result.zoos[0].Animals.filter((animal: any) => {
-            return animal.hasOwnProperty('childrenIdentifiers');
-        }).length;
+        const count = result.zoos
+            .find(x => x.id === 15)
+            .Animals.filter((animal: any) => {
+                return animal.hasOwnProperty('childrenIdentifiers');
+            }).length;
         expect(count).toBe(1);
     });
 

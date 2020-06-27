@@ -75,7 +75,7 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
       }
     | {
         names?: Array<string>,
-        predicate?: (property: any) => {},
+        type?: Function,
         onDeserialize?: (property: any, currentInstance: any) => {},
         onSerialize?: (property: any, currentInstance: any) => {},
         postDeserialize?: (property: any, currentInstance: any) => {}
@@ -268,7 +268,7 @@ const arrayToCoordinates = (array: Array<number>): { x: number; y: number; z: nu
 // A predicate function use to determine what is the
 // right type of the data (Snake or Panther)
 const snakeOrPanther = animal => {
-    return animal['isPoisonous'] !== undefined ? Snake : Panther;
+    return animal && animal['isPoisonous'] !== undefined ? Snake : Panther;
 };
 
 @Serializable()
@@ -335,13 +335,14 @@ export class Organization {
     // one when using `deserialize` and split back
     // when using `serialize`
     @JsonProperty({
-        names: ['mainShareholder', 'secondaryShareholder'],
+        names: ['mainShareholder', 'secondaryShareholder', 'thirdShareholder'],
         type: Human,
         onDeserialize: value => Object.values(value),
         onSerialize: value => {
             return {
                 mainShareholder: value[0],
-                secondaryShareholder: value[1]
+                secondaryShareholder: value[1],
+                thirdShareholder: value[2]
             };
         }
     })
@@ -459,6 +460,25 @@ export const data: any = {
                 }
             ],
             bestEmployeeOfTheMonth: undefined
+        },
+        {
+            id: 16,
+            name: 'Zoo Zoo',
+            city: 'Paris',
+            coordinates: [4, 2, 3],
+            country: 'France',
+            boss: {
+                id: 2,
+                name: 'Sully',
+                birthDate: '1984-08-03T22:00:00.000Z',
+                email: 'sully.razowsky@tgzoo.fr',
+                gender: 1
+            },
+            employees: [],
+            Animals: [],
+            mascot: null,
+            unknownAnimals: [],
+            bestEmployeeOfTheMonth: undefined
         }
     ],
     mainShareholder: {
@@ -467,12 +487,8 @@ export const data: any = {
         birthDate: '1971-06-28T22:00:00.000Z',
         gender: 1
     },
-    secondaryShareholder: {
-        id: 101,
-        name: 'Bill Gates',
-        birthDate: '1955-10-28T22:00:00.000Z',
-        gender: 1
-    }
+    secondaryShareholder: null,
+    thirdShareholder: undefined
 };
 ```
 

@@ -7,7 +7,7 @@ import { Snake } from './snake';
 import { UnknownAnimal } from './unknown-animal';
 
 const snakeOrPanther = (animal: any) => {
-    return animal['isPoisonous'] !== undefined ? Snake : Panther;
+    return animal && animal['isPoisonous'] !== undefined ? Snake : Panther;
 };
 
 const coordinatesToArray = (coordinates: { x: number; y: number; z: number }) => {

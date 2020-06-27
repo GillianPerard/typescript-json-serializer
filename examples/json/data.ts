@@ -114,6 +114,25 @@ export const data: any = {
                 }
             ],
             bestEmployeeOfTheMonth: undefined
+        },
+        {
+            id: 16,
+            name: 'Zoo Zoo',
+            city: 'Paris',
+            coordinates: [4, 2, 3],
+            country: 'France',
+            boss: {
+                id: 2,
+                name: 'Sully',
+                birthDate: '1984-08-03T22:00:00.000Z',
+                email: 'sully.razowsky@tgzoo.fr',
+                gender: 1
+            },
+            employees: [],
+            Animals: [],
+            mascot: null,
+            unknownAnimals: [],
+            bestEmployeeOfTheMonth: undefined
         }
     ],
     mainShareholder: {
@@ -122,21 +141,25 @@ export const data: any = {
         birthDate: '1971-06-28T22:00:00.000Z',
         gender: 1
     },
-    secondaryShareholder: {
-        id: 101,
-        name: 'Bill Gates',
-        birthDate: '1955-10-28T22:00:00.000Z',
-        gender: 1
-    }
+    secondaryShareholder: null,
+    thirdShareholder: undefined
 };
 
-const boss = new Employee(
+const bob = new Employee(
     data.zoos[0].boss.name,
     data.zoos[0].boss.id,
     Gender.Male,
     new Date(data.zoos[0].boss.birthDate)
 );
-boss.email = data.zoos[0].boss.email;
+bob.email = data.zoos[0].boss.email;
+
+const sully = new Employee(
+    data.zoos[1].boss.name,
+    data.zoos[1].boss.id,
+    Gender.Male,
+    new Date(data.zoos[1].boss.birthDate)
+);
+sully.email = data.zoos[1].boss.email;
 
 const mikasa = new Employee(
     data.zoos[0].employees[1].name,
@@ -189,7 +212,7 @@ ka.status = Status.Alive;
 
 const schrodinger = new Panther(data.zoos[0].Animals[3].name, data.zoos[0].Animals[3].isSpeckled);
 schrodinger.color = data.zoos[0].Animals[3].color;
-schrodinger.birthDate = undefined;
+schrodinger.birthDate = data.zoos[0].Animals[3].birthDate;
 schrodinger.gender = Gender.Male;
 schrodinger.id = data.zoos[0].Animals[3].id;
 schrodinger.numberOfPaws = data.zoos[0].Animals[3].numberOfPaws;
@@ -197,22 +220,39 @@ schrodinger.status = Status.DeadAndAlive;
 
 const unknownAnimal = new UnknownAnimal(data.zoos[0].unknownAnimals[0].name);
 
-const zoo = new Zoo();
-zoo.animals = [bagheera, jolene, ka, schrodinger];
-zoo.boss = boss;
-zoo.city = data.zoos[0].city;
-zoo.coordinates = {
+const greatZoo = new Zoo();
+greatZoo.animals = [bagheera, jolene, ka, schrodinger];
+greatZoo.boss = bob;
+greatZoo.city = data.zoos[0].city;
+greatZoo.coordinates = {
     x: data.zoos[0].coordinates[0],
     y: data.zoos[0].coordinates[1],
     z: data.zoos[0].coordinates[2]
 };
-zoo.country = data.zoos[0].country;
-zoo.employees = [boss, mikasa, red, fried];
-zoo.id = data.zoos[0].id;
-zoo.mascot = bagheera;
-zoo.name = data.zoos[0].name;
-zoo.bestEmployeeOfTheMonth = data.zoos[0].bestEmployeeOfTheMonth;
-zoo.unknownAnimals = [unknownAnimal];
+greatZoo.country = data.zoos[0].country;
+greatZoo.employees = [bob, mikasa, red, fried];
+greatZoo.id = data.zoos[0].id;
+greatZoo.mascot = bagheera;
+greatZoo.name = data.zoos[0].name;
+greatZoo.bestEmployeeOfTheMonth = data.zoos[0].bestEmployeeOfTheMonth;
+greatZoo.unknownAnimals = [unknownAnimal];
+
+const zooZoo = new Zoo();
+zooZoo.animals = [];
+zooZoo.boss = sully;
+zooZoo.city = data.zoos[1].city;
+zooZoo.coordinates = {
+    x: data.zoos[1].coordinates[0],
+    y: data.zoos[1].coordinates[1],
+    z: data.zoos[1].coordinates[2]
+};
+zooZoo.country = data.zoos[1].country;
+zooZoo.employees = [];
+zooZoo.id = data.zoos[1].id;
+zooZoo.mascot = data.zoos[1].mascot;
+zooZoo.name = data.zoos[1].name;
+zooZoo.bestEmployeeOfTheMonth = data.zoos[1].bestEmployeeOfTheMonth;
+zooZoo.unknownAnimals = [];
 
 const elonMusk = new Human(
     data.mainShareholder.name,
@@ -221,17 +261,10 @@ const elonMusk = new Human(
     new Date(data.mainShareholder.birthDate)
 );
 
-const billGates = new Human(
-    data.secondaryShareholder.name,
-    data.secondaryShareholder.id,
-    data.secondaryShareholder.gender,
-    new Date(data.secondaryShareholder.birthDate)
-);
-
 const organization = new Organization();
 organization.id = data.id;
 organization.name = data.name;
-organization.zoos = [zoo];
-organization.shareholders = [elonMusk, billGates];
+organization.zoos = [greatZoo, zooZoo];
+organization.shareholders = [elonMusk, null, undefined];
 
 export const deserializedData = organization;
