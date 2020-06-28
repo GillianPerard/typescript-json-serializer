@@ -207,6 +207,10 @@ export function deserialize<T>(json: object, type: new (...params: Array<any>) =
         return json as never;
     }
 
+    if (type === undefined) {
+        return castSimpleData(typeof json, json);
+    }
+
     const instance: any = new type();
     const instanceName = instance.constructor.name;
     const baseClassNames: Array<string> = Reflect.getMetadata(apiMapSerializable, type);
@@ -249,7 +253,13 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
         apiMapSerializable,
         instance.constructor
     );
+
     const apiMapInstanceName = `${apiMap}${instanceName}`;
+
+    if (typeof instance !== 'object') {
+        return instance;
+    }
+
     const hasMap = Reflect.hasMetadata(apiMapInstanceName, instance);
     let instanceMap: { [id: string]: Metadata } = {};
 

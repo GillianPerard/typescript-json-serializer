@@ -7,6 +7,7 @@ import { Snake } from '../models/snake';
 import { Status } from '../models/status';
 import { UnknownAnimal } from '../models/unknown-animal';
 import { Zoo } from '../models/zoo';
+import { PhoneNumber } from '../models/phone-number';
 
 export const data: any = {
     id: '1',
@@ -23,7 +24,8 @@ export const data: any = {
                 name: 'Bob Razowsky',
                 birthDate: '1984-04-03T22:00:00.000Z',
                 email: 'bob.razowsky@tgzoo.fr',
-                gender: 1
+                gender: 1,
+                phoneNumber: '111-111-1111'
             },
             employees: [
                 {
@@ -31,28 +33,32 @@ export const data: any = {
                     name: 'Bob Razowsky',
                     birthDate: '1984-04-03T22:00:00.000Z',
                     email: 'bob.razowsky@tgzoo.fr',
-                    gender: 1
+                    gender: 1,
+                    phoneNumber: '111-111-1111'
                 },
                 {
                     id: 2,
                     name: 'Mikasa Ackerman',
                     birthDate: '1984-01-11T22:00:00.000Z',
                     email: 'mikasa.ackerman@tgzoo.fr',
-                    gender: 0
+                    gender: 0,
+                    phoneNumber: '222-222-2222'
                 },
                 {
                     id: 3,
                     name: 'Red Redington',
                     birthDate: '1970-12-04T22:00:00.000Z',
                     email: 'red.redington@tgzoo.fr',
-                    gender: 1
+                    gender: 1,
+                    phoneNumber: '333-333-3333'
                 },
                 {
                     id: 4,
                     name: 'Fried Richter',
                     birthDate: '1994-04-01T22:00:00.000Z',
                     email: 'fried.richter@tgzoo.fr',
-                    gender: 1
+                    gender: 1,
+                    phoneNumber: undefined
                 }
             ],
             Animals: [
@@ -126,7 +132,11 @@ export const data: any = {
                 name: 'Sully',
                 birthDate: '1984-08-03T22:00:00.000Z',
                 email: 'sully.razowsky@tgzoo.fr',
-                gender: 1
+                gender: 1,
+                phoneNumber: {
+                    countryCode: '33',
+                    value: '0111111111'
+                }
             },
             employees: [],
             Animals: [],
@@ -152,6 +162,7 @@ const bob = new Employee(
     new Date(data.zoos[0].boss.birthDate)
 );
 bob.email = data.zoos[0].boss.email;
+bob.phoneNumber = data.zoos[0].boss.phoneNumber;
 
 const sully = new Employee(
     data.zoos[1].boss.name,
@@ -160,6 +171,10 @@ const sully = new Employee(
     new Date(data.zoos[1].boss.birthDate)
 );
 sully.email = data.zoos[1].boss.email;
+const phoneNumber = new PhoneNumber();
+phoneNumber.countryCode = data.zoos[1].boss.phoneNumber.countryCode;
+phoneNumber.value = data.zoos[1].boss.phoneNumber.value;
+sully.phoneNumber = phoneNumber;
 
 const mikasa = new Employee(
     data.zoos[0].employees[1].name,
@@ -168,6 +183,7 @@ const mikasa = new Employee(
     new Date(data.zoos[0].employees[1].birthDate)
 );
 mikasa.email = data.zoos[0].employees[1].email;
+mikasa.phoneNumber = data.zoos[0].employees[1].phoneNumber;
 
 const red = new Employee(
     data.zoos[0].employees[2].name,
@@ -176,6 +192,7 @@ const red = new Employee(
     new Date(data.zoos[0].employees[2].birthDate)
 );
 red.email = data.zoos[0].employees[2].email;
+red.phoneNumber = data.zoos[0].employees[2].phoneNumber;
 
 const fried = new Employee(
     data.zoos[0].employees[3].name,
@@ -184,6 +201,7 @@ const fried = new Employee(
     new Date(data.zoos[0].employees[3].birthDate)
 );
 fried.email = data.zoos[0].employees[3].email;
+fried.phoneNumber = data.zoos[0].employees[3].phoneNumber;
 
 const bagheera = new Panther(data.zoos[0].Animals[0].name, data.zoos[0].Animals[0].isSpeckled);
 bagheera.color = data.zoos[0].Animals[0].color;
