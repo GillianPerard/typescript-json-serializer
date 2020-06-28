@@ -162,13 +162,31 @@ export class Human extends LivingBeing {
 }
 
 
+// Create a serializable class: PhoneNumber
+
+@Serializable()
+export class PhoneNumber {
+    @JsonProperty() countryCode: string;
+    @JsonProperty() value: string;
+}
+
+
 // Create a serializable class that extends Human: Employee
 
 @Serializable()
 export class Employee extends Human {
     /** The employee's email */
-    @JsonProperty()
-    email: string;
+    @JsonProperty() email: string;
+
+    /** Predicate function to determine if the property type is PhoneNumber or a primitive type */
+    @JsonProperty({
+        predicate: property => {
+            if (property && property.value !== undefined) {
+                return PhoneNumber;
+            }
+        }
+    })
+    phoneNumber: PhoneNumber | string;
 
     constructor(
         public name: string,

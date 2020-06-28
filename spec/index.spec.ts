@@ -45,9 +45,9 @@ describe('serialize', () => {
         expect(count).toBe(1);
     });
 
-    it('empty zoo should return an empty object', () => {
-        const zoo = new Organization();
-        expect(serialize(zoo)).toEqual({});
+    it('empty organization should return an empty object', () => {
+        const organization = new Organization();
+        expect(serialize(organization)).toEqual({});
     });
 
     it('{} should return an empty object', () => {
@@ -57,16 +57,21 @@ describe('serialize', () => {
     const organizationWithUndefinedValue = new Organization();
     organizationWithUndefinedValue.id = '4';
     organizationWithUndefinedValue.name = undefined;
+    const zoo = new Zoo();
+    zoo.id = 2;
+    zoo.name = undefined;
+    organizationWithUndefinedValue.zoos = [zoo];
 
     it('organizationWithUndefinedValue should return an object with undefined value', () => {
         expect(serialize(organizationWithUndefinedValue, false)).toEqual({
             id: '4',
-            name: undefined
+            name: undefined,
+            zoos: [{ id: 2, name: undefined }]
         });
     });
 
     it('organizationWithUndefinedValue should return an object without undefined value', () => {
-        expect(serialize(organizationWithUndefinedValue)).toEqual({ id: '4' });
+        expect(serialize(organizationWithUndefinedValue)).toEqual({ id: '4', zoos: [{ id: 2 }] });
     });
 });
 
@@ -93,5 +98,15 @@ describe('deserialize', () => {
         const object = deserialize<Animal>({ name: 'My beautiful animal' }, Animal);
         const isAnimal = object instanceof Animal;
         expect(isAnimal).toBeTruthy();
+    });
+});
+
+describe('stringify/parse', () => {
+    it('should return true', () => {
+        const json = serialize(deserializedData);
+        const jsonString = JSON.stringify(json, null, 4);
+        const jsonObj = JSON.parse(jsonString);
+        const obj = deserialize<Organization>(jsonObj, Organization);
+        expect(obj).toEqual(deserializedData);
     });
 });
