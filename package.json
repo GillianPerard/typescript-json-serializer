@@ -33,8 +33,7 @@
         "metadata"
     ],
     "dependencies": {
-        "reflect-metadata": "^0.1.13",
-        "tslib": "^2.0.0"
+        "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {
         "@commitlint/cli": "^9.0.1",
