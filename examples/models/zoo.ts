@@ -5,6 +5,7 @@ import { Employee } from './employee';
 import { Panther } from './panther';
 import { Snake } from './snake';
 import { UnknownAnimal } from './unknown-animal';
+import { PhoneNumber } from './phone-number';
 
 const snakeOrPanther = (animal: any) => {
     return animal && animal['isPoisonous'] !== undefined ? Snake : Panther;
@@ -48,6 +49,8 @@ export class Zoo {
     bestEmployeeOfTheMonth: Employee;
     @JsonProperty({ type: UnknownAnimal })
     unknownAnimals: Array<UnknownAnimal>;
+    @JsonProperty({ isDictionary: true })
+    phoneBook: { [id: string]: PhoneNumber };
 
     isOpen = true;
 

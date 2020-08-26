@@ -116,7 +116,18 @@ export const data: any = {
                 {
                     name: null
                 }
-            ]
+            ],
+            phoneBook: {
+                '1': {
+                    value: '111-111-1111'
+                },
+                '2': {
+                    value: '222-222-2222'
+                },
+                '3': {
+                    value: '333-333-3333'
+                }
+            }
         },
         {
             id: 16,
@@ -249,6 +260,11 @@ greatZoo.mascot = bagheera;
 greatZoo.name = data.zoos[0].name;
 greatZoo.bestEmployeeOfTheMonth = data.zoos[0].bestEmployeeOfTheMonth;
 greatZoo.unknownAnimals = [unknownAnimal];
+greatZoo.phoneBook = {
+    '1': new PhoneNumber(data.zoos[0].phoneBook['1'].value),
+    '2': new PhoneNumber(data.zoos[0].phoneBook['2'].value),
+    '3': new PhoneNumber(data.zoos[0].phoneBook['3'].value)
+};
 
 const zooZoo = new Zoo();
 zooZoo.animals = [];

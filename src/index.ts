@@ -11,6 +11,7 @@ enum Type {
     Boolean = 'boolean',
     Date = 'date',
     Number = 'number',
+    Object = 'object',
     String = 'string'
 }
 
@@ -23,6 +24,7 @@ type Args =
           onSerialize?: Function;
           onDeserialize?: Function;
           postDeserialize?: Function;
+          isDictionary?: boolean;
       }
     | {
           name?: string;
@@ -30,6 +32,7 @@ type Args =
           onSerialize?: Function;
           onDeserialize?: Function;
           postDeserialize?: Function;
+          isDictionary?: boolean;
       }
     | {
           names: Array<string>;
@@ -53,6 +56,7 @@ type Metadata =
           onSerialize: Function;
           onDeserialize: Function;
           postDeserialize: Function;
+          isDictionary: boolean;
       }
     | {
           name: string;
@@ -60,6 +64,7 @@ type Metadata =
           onSerialize: Function;
           onDeserialize: Function;
           postDeserialize: Function;
+          isDictionary: boolean;
       }
     | {
           names: Array<string>;
@@ -247,37 +252,34 @@ export function deserialize<T>(json: object, type: new (...params: Array<any>) =
  * @returns {any} The json object
  */
 export function serialize(instance: any, removeUndefined: boolean = true): any {
-    if ([undefined, null].includes(instance)) {
+    if ([undefined, null].includes(instance) || typeof instance !== Type.Object) {
         return instance;
     }
 
-    const json: any = {};
     const instanceName = instance.constructor.name;
+    const apiMapInstanceName = `${apiMap}${instanceName}`;
     const baseClassNames: Array<string> = Reflect.getMetadata(
         apiMapSerializable,
         instance.constructor
     );
-
-    const apiMapInstanceName = `${apiMap}${instanceName}`;
-
-    if (typeof instance !== 'object') {
-        return instance;
-    }
+    const hasBaseClasses = baseClassNames && baseClassNames.length;
 
     const hasMap = Reflect.hasMetadata(apiMapInstanceName, instance);
     let instanceMap: { [id: string]: Metadata } = {};
 
-    if (!hasMap && (!baseClassNames || !baseClassNames.length)) {
-        return json;
+    if (!hasMap && !hasBaseClasses) {
+        return instance;
     }
 
     instanceMap = Reflect.getMetadata(apiMapInstanceName, instance);
 
-    if (baseClassNames && baseClassNames.length) {
+    if (hasBaseClasses) {
         instanceMap = { ...instanceMap, ...getBaseClassMaps(baseClassNames, instance) };
     }
 
+    const json: any = {};
     const instanceKeys = Object.keys(instance);
+
     Object.keys(instanceMap).forEach(key => {
         const onSerialize: Function = instanceMap[key]['onSerialize'];
 
@@ -337,6 +339,15 @@ function convertPropertyToData(
             return array;
         }
 
+        if (metadata['isDictionary']) {
+            const obj = {};
+            Object.keys(property).forEach(k => {
+                obj[k] = serialize(property[k], removeUndefined);
+            });
+
+            return obj;
+        }
+
         return serialize(property, removeUndefined);
     }
 
@@ -375,6 +386,7 @@ function convertDataToProperty(instance: Function, key: string, metadata: Metada
 
     const type: any = Reflect.getMetadata(designType, instance, key);
     const isArray = type.name.toLowerCase() === Type.Array;
+    const isDictionary = metadata['isDictionary'];
     const predicate: Function = metadata['predicate'];
     const onDeserialize: Function = metadata['onDeserialize'];
     const postDeserialize: Function = metadata['postDeserialize'];
@@ -392,7 +404,7 @@ function convertDataToProperty(instance: Function, key: string, metadata: Metada
         const array = [];
 
         if (!Array.isArray(data)) {
-            console.error(`${data} is not and array.`);
+            console.error(`${data} is not an array.`);
             result = undefined;
         } else {
             data.forEach((d: any) => {
@@ -402,6 +414,21 @@ function convertDataToProperty(instance: Function, key: string, metadata: Metada
                 array.push(deserialize(d, propertyType));
             });
             result = array;
+        }
+    } else if (isDictionary) {
+        const obj = {};
+
+        if (typeof data !== Type.Object) {
+            console.error(`${data} is not an object.`);
+            result = undefined;
+        } else {
+            Object.keys(data).forEach(k => {
+                if (predicate) {
+                    propertyType = predicate(data[k]);
+                }
+                obj[k] = deserialize(data[k], propertyType);
+            });
+            result = obj;
         }
     } else {
         propertyType = predicate ? predicate(data) : propertyType;
@@ -439,7 +466,8 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
             type: undefined,
             onDeserialize: undefined,
             onSerialize: undefined,
-            postDeserialize: undefined
+            postDeserialize: undefined,
+            isDictionary: false
         };
     }
 
@@ -460,14 +488,16 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
               predicate: args['predicate'],
               onDeserialize: args['onDeserialize'],
               onSerialize: args['onSerialize'],
-              postDeserialize: args['postDeserialize']
+              postDeserialize: args['postDeserialize'],
+              isDictionary: !!args['isDictionary']
           }
         : {
               ...metadata,
               type: args['type'],
               onDeserialize: args['onDeserialize'],
               onSerialize: args['onSerialize'],
-              postDeserialize: args['postDeserialize']
+              postDeserialize: args['postDeserialize'],
+              isDictionary: !!args['isDictionary']
           };
 }
 
