@@ -64,14 +64,16 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
         name?: string,
         type?: Function,
         onDeserialize?: (property: any, currentInstance: any) => {}, onSerialize?: (property: any, currentInstance: any) => {},
-        postDeserialize?: (property: any, currentInstance: any) => {}
+        postDeserialize?: (property: any, currentInstance: any) => {},
+        isDictionary?: boolean
       }
     | {
         name?: string,
         predicate?: (property: any) => {},
         onDeserialize?: (property: any, currentInstance: any) => {},
         onSerialize?: (property: any, currentInstance: any) => {},
-        postDeserialize?: (property: any, currentInstance: any) => {}
+        postDeserialize?: (property: any, currentInstance: any) => {},
+        isDictionary?: boolean
       }
     | {
         names?: Array<string>,
@@ -114,8 +116,6 @@ deserialize<T>(json: any, type: new (...params) => T): T
 ### Classes
 
 ```typescript
-// zoo.ts
-
 // Import decorators from library
 import { Serializable, JsonProperty } from 'typescript-json-serializer';
 
@@ -329,6 +329,10 @@ export class Zoo {
 
     @JsonProperty() bestEmployeeOfTheMonth: Employee;
 
+    // Dictionary of PhoneNumber
+    @JsonProperty({ type: PhoneNumber, isDictionary: true })
+    phoneBook: {[id: string]: PhoneNumber};
+
     // Property which will be not serialized and deserialized
     // but event accessible and editable from Zoo class.
     public isFree: boolean = true;
@@ -453,7 +457,6 @@ export const data: any = {
                 {
                     id: 4,
                     name: 'Schrodinger',
-                    birthDate: undefined,
                     numberOfPaws: 4,
                     gender: 1,
                     color: 'brown',
@@ -477,7 +480,17 @@ export const data: any = {
                     name: null
                 }
             ],
-            bestEmployeeOfTheMonth: undefined
+            phoneBook: {
+                '1': {
+                    value: '111-111-1111'
+                },
+                '2': {
+                    value: '222-222-2222'
+                },
+                '3': {
+                    value: '333-333-3333'
+                }
+            }
         },
         {
             id: 16,
@@ -495,8 +508,7 @@ export const data: any = {
             employees: [],
             Animals: [],
             mascot: null,
-            unknownAnimals: [],
-            bestEmployeeOfTheMonth: undefined
+            unknownAnimals: []
         }
     ],
     mainShareholder: {
@@ -506,7 +518,6 @@ export const data: any = {
         gender: 1
     },
     secondaryShareholder: null,
-    thirdShareholder: undefined
 };
 ```
 
