@@ -229,7 +229,11 @@ export function deserialize<T>(json: object, type: new (...params: Array<any>) =
     }
 
     Object.keys(instanceMap).forEach(key => {
-        instance[key] = convertDataToProperty(instance, key, instanceMap[key], json);
+        const property = convertDataToProperty(instance, key, instanceMap[key], json);
+
+        if (property !== undefined) {
+            instance[key] = property;
+        }
     });
 
     return instance;
