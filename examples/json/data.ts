@@ -57,8 +57,7 @@ export const data: any = {
                     name: 'Fried Richter',
                     birthDate: '1994-04-01T22:00:00.000Z',
                     email: 'fried.richter@tgzoo.fr',
-                    gender: 1,
-                    phoneNumber: undefined
+                    gender: 1
                 }
             ],
             Animals: [
@@ -95,7 +94,6 @@ export const data: any = {
                 {
                     id: 4,
                     name: 'Schrodinger',
-                    birthDate: undefined,
                     numberOfPaws: 4,
                     gender: 1,
                     color: 'brown',
@@ -118,8 +116,7 @@ export const data: any = {
                 {
                     name: null
                 }
-            ],
-            bestEmployeeOfTheMonth: undefined
+            ]
         },
         {
             id: 16,
@@ -141,8 +138,7 @@ export const data: any = {
             employees: [],
             Animals: [],
             mascot: null,
-            unknownAnimals: [],
-            bestEmployeeOfTheMonth: undefined
+            unknownAnimals: []
         }
     ],
     mainShareholder: {
@@ -151,8 +147,7 @@ export const data: any = {
         birthDate: '1971-06-28T22:00:00.000Z',
         gender: 1
     },
-    secondaryShareholder: null,
-    thirdShareholder: undefined
+    secondaryShareholder: null
 };
 
 const bob = new Employee(
