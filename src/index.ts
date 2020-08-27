@@ -15,70 +15,73 @@ enum Type {
     String = 'string'
 }
 
+type IOProto = (property: any, currentInstance: any) => {};
+type PredicateProto = (property: any) => {};
+
 // Types
 type Args =
     | string
     | {
           name?: string;
           type?: Function;
-          onSerialize?: Function;
-          onDeserialize?: Function;
-          postDeserialize?: Function;
+          onSerialize?: IOProto;
+          onDeserialize?: IOProto;
+          postDeserialize?: IOProto;
           isDictionary?: boolean;
       }
     | {
           name?: string;
-          predicate?: Function;
-          onSerialize?: Function;
-          onDeserialize?: Function;
-          postDeserialize?: Function;
+          predicate?: PredicateProto;
+          onSerialize?: IOProto;
+          onDeserialize?: IOProto;
+          postDeserialize?: IOProto;
           isDictionary?: boolean;
       }
     | {
           names: Array<string>;
           type?: Function;
-          onSerialize?: Function;
-          onDeserialize?: Function;
-          postDeserialize?: Function;
+          onSerialize?: IOProto;
+          onDeserialize?: IOProto;
+          postDeserialize?: IOProto;
       }
     | {
           names: Array<string>;
-          predicate?: Function;
-          onSerialize?: Function;
-          onDeserialize?: Function;
-          postDeserialize?: Function;
+          predicate?: PredicateProto;
+          onSerialize?: IOProto;
+          onDeserialize?: IOProto;
+          postDeserialize?: IOProto;
       };
 
 type Metadata =
     | {
           name: string;
           type: Function;
-          onSerialize: Function;
-          onDeserialize: Function;
-          postDeserialize: Function;
+          onSerialize: IOProto;
+          onDeserialize: IOProto;
+          postDeserialize: IOProto;
           isDictionary: boolean;
       }
     | {
           name: string;
-          predicate: Function;
-          onSerialize: Function;
-          onDeserialize: Function;
-          postDeserialize: Function;
+          predicate: PredicateProto;
+          onSerialize: IOProto;
+          onDeserialize: IOProto;
+          postDeserialize: IOProto;
           isDictionary: boolean;
       }
     | {
           names: Array<string>;
           type: Function;
-          onSerialize: Function;
-          onDeserialize: Function;
-          postDeserialize: Function;
+          onSerialize: IOProto;
+          onDeserialize: IOProto;
+          postDeserialize: IOProto;
       }
     | {
           names: Array<string>;
-          predicate: Function;
-          onSerialize: Function;
-          onDeserialize: Function;
-          postDeserialize: Function;
+          predicate: PredicateProto;
+          onSerialize: IOProto;
+          onDeserialize: IOProto;
+          postDeserialize: IOProto;
       };
 
 /**
@@ -281,7 +284,7 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
     const instanceKeys = Object.keys(instance);
 
     Object.keys(instanceMap).forEach(key => {
-        const onSerialize: Function = instanceMap[key]['onSerialize'];
+        const onSerialize: IOProto = instanceMap[key]['onSerialize'];
 
         if (instanceKeys.includes(key)) {
             let data = convertPropertyToData(instance, key, instanceMap[key], removeUndefined);
@@ -325,7 +328,7 @@ function convertPropertyToData(
     const property: any = instance[key];
     const type: any = Reflect.getMetadata(designType, instance, key);
     const isArray = type.name.toLocaleLowerCase() === Type.Array;
-    const predicate: Function = metadata['predicate'];
+    const predicate: PredicateProto = metadata['predicate'];
     const propertyType: any = metadata['type'] || type;
     const isSerializableProperty = isSerializable(propertyType);
 
@@ -387,9 +390,9 @@ function convertDataToProperty(instance: Function, key: string, metadata: Metada
     const type: any = Reflect.getMetadata(designType, instance, key);
     const isArray = type.name.toLowerCase() === Type.Array;
     const isDictionary = metadata['isDictionary'];
-    const predicate: Function = metadata['predicate'];
-    const onDeserialize: Function = metadata['onDeserialize'];
-    const postDeserialize: Function = metadata['postDeserialize'];
+    const predicate: PredicateProto = metadata['predicate'];
+    const onDeserialize: IOProto = metadata['onDeserialize'];
+    const postDeserialize: IOProto = metadata['postDeserialize'];
     let propertyType: any = metadata['type'] || type;
     const isSerializableProperty = isSerializable(propertyType);
     let result: any;
