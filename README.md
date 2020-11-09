@@ -57,37 +57,42 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
 // - a predicate function that return a type (if needed)
 // - a function to transform data on deserialize
 // - a function to transform data on serialize
+// - the names of properties to merge
+// - a boolean to tell that the property is a dictionary
+
+type IOProto = (property: any, currentInstance: any) => {};
+type PredicateProto = (property: any) => {};
 
 @JsonProperty(args?:
     | string
     | {
         name?: string,
         type?: Function,
-        onDeserialize?: (property: any, currentInstance: any) => {}, onSerialize?: (property: any, currentInstance: any) => {},
-        postDeserialize?: (property: any, currentInstance: any) => {},
+        onDeserialize?: IOProto, onSerialize?: IOProto,
+        postDeserialize?: IOProto,
         isDictionary?: boolean
       }
     | {
         name?: string,
-        predicate?: (property: any) => {},
-        onDeserialize?: (property: any, currentInstance: any) => {},
-        onSerialize?: (property: any, currentInstance: any) => {},
-        postDeserialize?: (property: any, currentInstance: any) => {},
+        predicate?: PredicateProto,
+        onDeserialize?: IOProto,
+        onSerialize?: IOProto,
+        postDeserialize?: IOProto,
         isDictionary?: boolean
       }
     | {
         names?: Array<string>,
         type?: Function,
-        onDeserialize?: (property: any, currentInstance: any) => {},
-        onSerialize?: (property: any, currentInstance: any) => {},
-        postDeserialize?: (property: any, currentInstance: any) => {}
+        onDeserialize?: IOProto,
+        onSerialize?: IOProto,
+        postDeserialize?: IOProto
       }
     | {
         names?: Array<string>,
-        predicate?: (property: any) => {},
-        onDeserialize?: (property: any, currentInstance: any) => {},
-        onSerialize?: (property: any, currentInstance: any) => {},
-        postDeserialize?: (property: any, currentInstance: any) => {}
+        predicate?: PredicateProto,
+        onDeserialize?: IOProto,
+        onSerialize?: IOProto,
+        postDeserialize?: IOProto
     })
 ```
 
