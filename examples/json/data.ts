@@ -88,8 +88,7 @@ export const data: any = {
                     birthDate: '2018-09-09T00:00:00.000Z',
                     numberOfPaws: 0,
                     gender: 1,
-                    isPoisonous: true,
-                    status: 'Alive'
+                    isPoisonous: true
                 },
                 {
                     id: 4,
@@ -232,7 +231,7 @@ ka.gender = Gender.Male;
 ka.id = data.zoos[0].Animals[2].id;
 ka.isPoisonous = data.zoos[0].Animals[2].isPoisonous;
 ka.numberOfPaws = data.zoos[0].Animals[2].numberOfPaws;
-ka.status = Status.Alive;
+ka.status = undefined;
 
 const schrodinger = new Panther(data.zoos[0].Animals[3].name, data.zoos[0].Animals[3].isSpeckled);
 schrodinger.color = data.zoos[0].Animals[3].color;
