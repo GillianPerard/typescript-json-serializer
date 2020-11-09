@@ -327,7 +327,7 @@ function convertPropertyToData(
 ): any {
     const property: any = instance[key];
     const type: any = Reflect.getMetadata(designType, instance, key);
-    const isArray = type.name.toLocaleLowerCase() === Type.Array;
+    const isArray = type.name ? type.name.toLocaleLowerCase() === Type.Array : false;
     const predicate: PredicateProto = metadata['predicate'];
     const propertyType: any = metadata['type'] || type;
     const isSerializableProperty = isSerializable(propertyType);
@@ -388,7 +388,7 @@ function convertDataToProperty(instance: Function, key: string, metadata: Metada
     }
 
     const type: any = Reflect.getMetadata(designType, instance, key);
-    const isArray = type.name.toLowerCase() === Type.Array;
+    const isArray = type.name ? type.name.toLowerCase() === Type.Array : false;
     const isDictionary = metadata['isDictionary'];
     const predicate: PredicateProto = metadata['predicate'];
     const onDeserialize: IOProto = metadata['onDeserialize'];
@@ -512,6 +512,10 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
  * @returns {any} The casted data
  */
 function castSimpleData(type: string, data: any): any {
+    if (type === undefined || type === null) {
+        return data;
+    }
+
     type = type.toLowerCase();
 
     if ((typeof data).toLowerCase() === type) {
