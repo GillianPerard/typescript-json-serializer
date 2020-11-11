@@ -1,23 +1,24 @@
 import { JsonProperty, Serializable } from '../../src';
 import { Human } from './human';
+import { Society } from './society';
 import { Zoo } from './zoo';
 
-@Serializable()
-export class Organization {
-    @JsonProperty() id: string;
-    @JsonProperty() name: string;
-    @JsonProperty({ type: Zoo }) zoos: Array<Zoo>;
+const prefixWithUnderscore = (propertyName: string) => {
+    return `_${propertyName}`;
+};
+
+@Serializable({ formatPropertyNames: prefixWithUnderscore })
+export class Organization extends Society {
+    @JsonProperty({ name: 'zoos', type: Zoo }) zoos: Array<Zoo>;
     @JsonProperty({
-        names: ['mainShareholder', 'secondaryShareholder', 'thirdShareholder'],
+        names: ['_mainShareholder', '_secondaryShareholder', '_thirdShareholder'],
         type: Human,
         onDeserialize: value => Object.values(value),
-        onSerialize: value => {
-            return {
-                mainShareholder: value[0],
-                secondaryShareholder: value[1],
-                thirdShareholder: value[2]
-            };
-        }
+        onSerialize: value => ({
+            _mainShareholder: value[0],
+            _secondaryShareholder: value[1],
+            _thirdShareholder: value[2]
+        })
     })
     shareholders: Array<Human>;
 }
