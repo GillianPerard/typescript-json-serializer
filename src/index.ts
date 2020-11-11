@@ -15,8 +15,18 @@ enum Type {
     String = 'string'
 }
 
+interface SerializableMetadata {
+    baseClassNames: Array<string>;
+    options?: SerializableOptions;
+}
+
+interface SerializableOptions {
+    formatPropertyNames: FormatPropertyNameProto;
+}
+
 type IOProto = (property: any, currentInstance: any) => {};
 type PredicateProto = (property: any) => {};
+type FormatPropertyNameProto = (propertyName: string) => string;
 
 // Types
 type Args =
@@ -60,6 +70,7 @@ type Metadata =
           onDeserialize: IOProto;
           postDeserialize: IOProto;
           isDictionary: boolean;
+          isNameOverridden: boolean;
       }
     | {
           name: string;
@@ -68,6 +79,7 @@ type Metadata =
           onDeserialize: IOProto;
           postDeserialize: IOProto;
           isDictionary: boolean;
+          isNameOverridden: boolean;
       }
     | {
           names: Array<string>;
@@ -142,7 +154,7 @@ function getPropertyNames(ctor: object): Map<number, string> {
 
 /**
  * Decorator to take the property in account during the serialize and deserialize function
- * @param {Args} args Arguments to describe the property
+ * @param {Args=} args Arguments to describe the property
  */
 
 export function JsonProperty(args?: Args): Function {
@@ -170,13 +182,14 @@ export function JsonProperty(args?: Args): Function {
 
 /**
  * Decorator to make a class Serializable
+ * @param {{formatPropertyNames: FormatPropertyNameProto}=} options The options of the serializable class
  *
  * BREAKING CHANGE: Since version 2.0.0 the parameter `baseClassName` is not needed anymore
  */
-export function Serializable(): Function {
+export function Serializable(options?: SerializableOptions): Function {
     return (target: Object) => {
         const baseClassNames = getBaseClassNames(target);
-        Reflect.defineMetadata(apiMapSerializable, baseClassNames, target);
+        Reflect.defineMetadata(apiMapSerializable, { baseClassNames, options }, target);
     };
 }
 
@@ -221,7 +234,8 @@ export function deserialize<T>(json: object, type: new (...params: Array<any>) =
 
     const instance: any = new type();
     const instanceName = instance.constructor.name;
-    const baseClassNames: Array<string> = Reflect.getMetadata(apiMapSerializable, type);
+    const { baseClassNames, options } =
+        (Reflect.getMetadata(apiMapSerializable, type) as SerializableMetadata) ?? {};
     const apiMapInstanceName = `${apiMap}${instanceName}`;
     const hasMap = Reflect.hasMetadata(apiMapInstanceName, instance);
     let instanceMap: { [id: string]: Metadata } = {};
@@ -237,7 +251,13 @@ export function deserialize<T>(json: object, type: new (...params: Array<any>) =
     }
 
     Object.keys(instanceMap).forEach(key => {
-        const property = convertDataToProperty(instance, key, instanceMap[key], json);
+        const property = convertDataToProperty(
+            instance,
+            key,
+            instanceMap[key],
+            json,
+            options?.formatPropertyNames
+        );
 
         if (property !== undefined) {
             instance[key] = property;
@@ -261,10 +281,9 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
 
     const instanceName = instance.constructor.name;
     const apiMapInstanceName = `${apiMap}${instanceName}`;
-    const baseClassNames: Array<string> = Reflect.getMetadata(
-        apiMapSerializable,
-        instance.constructor
-    );
+    const { baseClassNames, options } =
+        (Reflect.getMetadata(apiMapSerializable, instance.constructor) as SerializableMetadata) ??
+        {};
     const hasBaseClasses = baseClassNames && baseClassNames.length;
 
     const hasMap = Reflect.hasMetadata(apiMapInstanceName, instance);
@@ -287,21 +306,27 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
         const onSerialize: IOProto = instanceMap[key]['onSerialize'];
 
         if (instanceKeys.includes(key)) {
-            let data = convertPropertyToData(instance, key, instanceMap[key], removeUndefined);
+            const metadata = instanceMap[key];
+            let data = convertPropertyToData(instance, key, metadata, removeUndefined);
 
             if (onSerialize) {
                 data = onSerialize(data, instance);
             }
 
-            if (instanceMap[key]['names']) {
-                instanceMap[key]['names'].forEach((name: string) => {
+            if (metadata['names']) {
+                metadata['names'].forEach((name: string) => {
                     if (!removeUndefined || (removeUndefined && data[name] !== undefined)) {
                         json[name] = data[name];
                     }
                 });
             } else {
                 if (!removeUndefined || (removeUndefined && data !== undefined)) {
-                    json[instanceMap[key]['name']] = data;
+                    if (!metadata['isNameOverridden'] && options?.formatPropertyNames) {
+                        const name = options.formatPropertyNames(metadata['name']);
+                        json[name] = data;
+                    } else {
+                        json[metadata['name']] = data;
+                    }
                 }
             }
         }
@@ -368,19 +393,28 @@ function convertPropertyToData(
  * @param {Metadata} metadata The metadata of the property to convert
  * @param {any} json Json containing the values
  */
-function convertDataToProperty(instance: Function, key: string, metadata: Metadata, json: any) {
+function convertDataToProperty(
+    instance: Function,
+    key: string,
+    metadata: Metadata,
+    json: any,
+    formatPropertyName: FormatPropertyNameProto
+) {
     let data: any;
 
     if ([null, undefined].includes(json)) {
         return json;
     }
 
-    if (metadata['names']) {
+    if ('names' in metadata) {
         const object = {};
-        metadata['names'].forEach((name: string) => (object[name] = json[name]));
+        metadata.names.forEach((name: string) => (object[name] = json[name]));
         data = object;
+    } else if ('name' in metadata && !metadata.isNameOverridden && formatPropertyName) {
+        const name = formatPropertyName(metadata.name);
+        data = json[name];
     } else {
-        data = json[metadata['name']];
+        data = json[metadata.name];
     }
 
     if ([null, undefined].includes(data)) {
@@ -470,19 +504,20 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
             onDeserialize: undefined,
             onSerialize: undefined,
             postDeserialize: undefined,
-            isDictionary: false
+            isDictionary: false,
+            isNameOverridden: false
         };
     }
 
     let metadata: any;
     if (typeof args === Type.String) {
-        metadata = { name: args };
+        metadata = { name: args, isNameOverridden: true };
     } else if (args['name']) {
-        metadata = { name: args['name'] };
+        metadata = { name: args['name'], isNameOverridden: true };
     } else if (args['names'] && args['names'].length) {
         metadata = { names: args['names'] };
     } else {
-        metadata = { name: key.toString() };
+        metadata = { name: key.toString(), isNameOverridden: false };
     }
 
     return args['predicate']

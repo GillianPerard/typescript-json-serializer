@@ -10,8 +10,8 @@ import { Zoo } from '../models/zoo';
 import { PhoneNumber } from '../models/phone-number';
 
 export const data: any = {
-    id: '1',
-    name: 'Zoos Organization',
+    _id: '1',
+    _name: 'Zoos Organization',
     zoos: [
         {
             id: 15,
@@ -151,13 +151,13 @@ export const data: any = {
             unknownAnimals: []
         }
     ],
-    mainShareholder: {
+    _mainShareholder: {
         id: 100,
         name: 'Elon Musk',
         birthDate: '1971-06-28T22:00:00.000Z',
         gender: 1
     },
-    secondaryShareholder: null
+    _secondaryShareholder: null
 };
 
 const bob = new Employee(
@@ -283,15 +283,15 @@ zooZoo.bestEmployeeOfTheMonth = data.zoos[1].bestEmployeeOfTheMonth;
 zooZoo.unknownAnimals = [];
 
 const elonMusk = new Human(
-    data.mainShareholder.name,
-    data.mainShareholder.id,
-    data.mainShareholder.gender,
-    new Date(data.mainShareholder.birthDate)
+    data._mainShareholder.name,
+    data._mainShareholder.id,
+    data._mainShareholder.gender,
+    new Date(data._mainShareholder.birthDate)
 );
 
 const organization = new Organization();
-organization.id = data.id;
-organization.name = data.name;
+organization.id = data._id;
+organization.name = data._name;
 organization.zoos = [greatZoo, zooZoo];
 organization.shareholders = [elonMusk, null, undefined];
 

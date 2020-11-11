@@ -15,18 +15,33 @@ describe('Serializable', () => {
         expect(hasMetadata).toBe(false);
     });
 
-    it('should return true with one value', () => {
+    it('should return true with no base class names and no options', () => {
+        const hasMetadata = Reflect.hasOwnMetadata('api:map:serializable', Zoo);
+        const metadata = Reflect.getOwnMetadata('api:map:serializable', Zoo);
+        expect(hasMetadata).toBe(true);
+        expect(metadata).toEqual({ baseClassNames: [], options: undefined });
+    });
+
+    it('should return true with 1 base class name and no options', () => {
         const hasMetadata = Reflect.hasOwnMetadata('api:map:serializable', Animal);
         const metadata = Reflect.getOwnMetadata('api:map:serializable', Animal);
         expect(hasMetadata).toBe(true);
-        expect(metadata).toEqual(['LivingBeing']);
+        expect(metadata).toEqual({ baseClassNames: ['LivingBeing'], options: undefined });
     });
 
-    it('should return true with multiple values', () => {
+    it('should return true with 2 base class names and no options', () => {
         const hasMetadata = Reflect.hasOwnMetadata('api:map:serializable', Panther);
         const metadata = Reflect.getOwnMetadata('api:map:serializable', Panther);
         expect(hasMetadata).toBe(true);
-        expect(metadata).toEqual(['Animal', 'LivingBeing']);
+        expect(metadata).toEqual({ baseClassNames: ['Animal', 'LivingBeing'], options: undefined });
+    });
+
+    it('should return true with 1 base class name and formatPropertyNames option', () => {
+        const hasMetadata = Reflect.hasOwnMetadata('api:map:serializable', Organization);
+        const metadata = Reflect.getOwnMetadata('api:map:serializable', Organization);
+        expect(hasMetadata).toBe(true);
+        expect(metadata.baseClassNames).toEqual(['Society']);
+        expect(metadata?.options?.formatPropertyNames).not.toBeUndefined();
     });
 });
 
@@ -64,14 +79,14 @@ describe('serialize', () => {
 
     it('organizationWithUndefinedValue should return an object with undefined value', () => {
         expect(serialize(organizationWithUndefinedValue, false)).toEqual({
-            id: '4',
-            name: undefined,
+            _id: '4',
+            _name: undefined,
             zoos: [{ id: 2, name: undefined }]
         });
     });
 
     it('organizationWithUndefinedValue should return an object without undefined value', () => {
-        expect(serialize(organizationWithUndefinedValue)).toEqual({ id: '4', zoos: [{ id: 2 }] });
+        expect(serialize(organizationWithUndefinedValue)).toEqual({ _id: '4', zoos: [{ id: 2 }] });
     });
 });
 
