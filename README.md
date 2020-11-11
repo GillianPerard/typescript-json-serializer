@@ -43,21 +43,34 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
 
 ```typescript
 // Serializable decorator set a class as serializable.
+// It can take options as parameter:
+// - formatPropertyNames function to format the property names
+//   provided by the json you want to serialize to match
+//   with your class property names
+//
 // BREAKING CHANGE: Since version 2.0.0 the
 // parameter `baseClassName` is not needed anymore
 
-@Serializable()
+type FormatPropertyNameProto = (propertyName: string) => string;
+type SerializableOptions = {
+    formatPropertyNames: FormatPropertyNameProto
+}
+
+@Serializable(options?: SerializableOptions)
 ```
 
 ```typescript
 // JsonProperty decorator set metadata to the property.
 // It can take some optional parameters like:
-// - the name of json property
+// - the name of json property if diverge from the class property
+//   (this value override the `formatPropertyNames` option from
+//   `Serializable` decorator)
 // - the type of the property (if needed)
 // - a predicate function that return a type (if needed)
 // - a function to transform data on deserialize
 // - a function to transform data on serialize
-// - the names of properties to merge
+// - the names of properties to merge (the `formatPropertyNames`
+//   from `Serializable` decorator is ignored)
 // - a boolean to tell that the property is a dictionary
 
 type IOProto = (property: any, currentInstance: any) => {};
@@ -68,7 +81,8 @@ type PredicateProto = (property: any) => {};
     | {
         name?: string,
         type?: Function,
-        onDeserialize?: IOProto, onSerialize?: IOProto,
+        onDeserialize?: IOProto,
+        onSerialize?: IOProto,
         postDeserialize?: IOProto,
         isDictionary?: boolean
       }
@@ -347,13 +361,17 @@ export class Zoo {
 }
 
 
-// Create a serializable class: Organization
+// Create a serializable class that extends Society: Organization
 
-@Serializable()
-export class Organization {
-    @JsonProperty() id: string;
-    @JsonProperty() name: string;
-    @JsonProperty({ type: Zoo }) zoos: Array<Zoo>;
+const prefixWithUnderscore = (propertyName: string) => `_${propertyName}`
+
+// Instead of defining the JsonProperty name for each property
+// just use a function to do it for all of them.
+// Warning: The properties of the base class will be formatted as well
+@Serializable({ formatPropertyNames: prefixWithUnderscore })
+export class Organization extends Society {
+    // Override `formatPropertyNames`
+    @JsonProperty({ name: 'zoos', type: Zoo }) zoos: Array<Zoo>;
 
     // To merge multiple properties in a single one
     // use the property `names`.
@@ -362,18 +380,27 @@ export class Organization {
     // one when using `deserialize` and split back
     // when using `serialize`
     @JsonProperty({
-        names: ['mainShareholder', 'secondaryShareholder', 'thirdShareholder'],
+        names: ['_mainShareholder', '_secondaryShareholder', '_thirdShareholder'],
         type: Human,
         onDeserialize: value => Object.values(value),
         onSerialize: value => {
             return {
-                mainShareholder: value[0],
-                secondaryShareholder: value[1],
-                thirdShareholder: value[2]
+                _mainShareholder: value[0],
+                _secondaryShareholder: value[1],
+                _thirdShareholder: value[2]
             };
         }
     })
     shareholders: Array<Human>;
+}
+
+
+// Create a serializable class: Society
+
+@Serializable()
+export class Organization {
+    @JsonProperty() id: string;
+    @JsonProperty() name: string;
 }
 ```
 
@@ -382,8 +409,8 @@ export class Organization {
 ```typescript
 // data.ts
 export const data: any = {
-    id: '1',
-    name: 'Zoos Organization',
+    _id: '1',
+    _name: 'Zoos Organization',
     zoos: [
         {
             id: 15,
@@ -516,13 +543,13 @@ export const data: any = {
             unknownAnimals: []
         }
     ],
-    mainShareholder: {
+    _mainShareholder: {
         id: 100,
         name: 'Elon Musk',
         birthDate: '1971-06-28T22:00:00.000Z',
         gender: 1
     },
-    secondaryShareholder: null,
+    _secondaryShareholder: null,
 };
 ```
 
