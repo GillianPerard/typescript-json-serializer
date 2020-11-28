@@ -11,6 +11,9 @@
         "typeRoots": ["node_modules/@types"],
         "lib": ["es2015", "dom"],
         "esModuleInterop": true,
-        "removeComments": true
+        "removeComments": true,
+        "strict": true,
+        "noImplicitAny": false,
+        "strictPropertyInitialization": false
     }
 }

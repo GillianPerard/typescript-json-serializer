@@ -231,7 +231,6 @@ ka.gender = Gender.Male;
 ka.id = data.zoos[0].Animals[2].id;
 ka.isPoisonous = data.zoos[0].Animals[2].isPoisonous;
 ka.numberOfPaws = data.zoos[0].Animals[2].numberOfPaws;
-ka.status = undefined;
 
 const schrodinger = new Panther(data.zoos[0].Animals[3].name, data.zoos[0].Animals[3].isSpeckled);
 schrodinger.color = data.zoos[0].Animals[3].color;
