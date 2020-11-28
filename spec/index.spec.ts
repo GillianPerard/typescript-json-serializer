@@ -53,7 +53,7 @@ describe('serialize', () => {
     it('should return 1 childrenIdentifiers', () => {
         const result = serialize(deserializedData, false);
         const count = result.zoos
-            .find(x => x.id === 15)
+            .find((x: Zoo) => x.id === 15)
             .Animals.filter((animal: any) => {
                 return animal.hasOwnProperty('childrenIdentifiers');
             }).length;
@@ -71,10 +71,8 @@ describe('serialize', () => {
 
     const organizationWithUndefinedValue = new Organization();
     organizationWithUndefinedValue.id = '4';
-    organizationWithUndefinedValue.name = undefined;
     const zoo = new Zoo();
     zoo.id = 2;
-    zoo.name = undefined;
     organizationWithUndefinedValue.zoos = [zoo];
 
     it('organizationWithUndefinedValue should return an object with undefined value', () => {

@@ -24,8 +24,8 @@ interface SerializableOptions {
     formatPropertyNames: FormatPropertyNameProto;
 }
 
-type IOProto = (property: any, currentInstance: any) => {};
-type PredicateProto = (property: any) => {};
+type IOProto = (property: any, currentInstance: any) => any;
+type PredicateProto = (property: any) => any;
 type FormatPropertyNameProto = (propertyName: string) => string;
 
 // Types
@@ -65,10 +65,10 @@ type Args =
 type Metadata =
     | {
           name: string;
-          type: Function;
-          onSerialize: IOProto;
-          onDeserialize: IOProto;
-          postDeserialize: IOProto;
+          type?: Function;
+          onSerialize?: IOProto;
+          onDeserialize?: IOProto;
+          postDeserialize?: IOProto;
           isDictionary: boolean;
           isNameOverridden: boolean;
       }
@@ -137,9 +137,9 @@ function getPropertyNames(ctor: object): Map<number, string> {
     }
 
     const params = paramsExecArray[1].replace(/ /g, '').split(',');
-    let match: RegExpExecArray;
 
     // Get params
+    let match: RegExpExecArray | null;
     while ((match = propertyPattern.exec(ctorWithoutSuccessiveWhiteSpaces))) {
         const matchResult = match[1].replace(/ /g, '').split('=');
         const index = params.findIndex(param => param === matchResult[1]);
@@ -162,7 +162,7 @@ export function JsonProperty(args?: Args): Function {
         if (key === undefined && target['prototype']) {
             const type: Function = Reflect.getMetadata(designParamTypes, target)[index];
             const keys = getPropertyNames(target['prototype'].constructor);
-            key = keys.get(index);
+            key = keys.get(index) as string;
             target = target['prototype'];
             Reflect.defineMetadata(designType, type, target, key);
         }
@@ -175,7 +175,7 @@ export function JsonProperty(args?: Args): Function {
             map = Reflect.getMetadata(apiMapTargetName, target);
         }
 
-        map[key] = getJsonPropertyValue(key, args);
+        map[key] = getJsonPropertyValue(key, args as Args);
         Reflect.defineMetadata(apiMapTargetName, map, target);
     };
 }
@@ -223,7 +223,7 @@ function getBaseClassMaps(
  * @param {new (...params: Array<any>) => T} type The class in which we want to deserialize
  * @returns {T} The instance of the specified type containing all deserialized properties
  */
-export function deserialize<T>(json: object, type: new (...params: Array<any>) => T): T {
+export function deserialize<T>(json: any, type: new (...params: Array<any>) => T): T {
     if ([null, undefined].includes(json)) {
         return json as never;
     }
@@ -303,7 +303,7 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
     const instanceKeys = Object.keys(instance);
 
     Object.keys(instanceMap).forEach(key => {
-        const onSerialize: IOProto = instanceMap[key]['onSerialize'];
+        const onSerialize: IOProto | undefined = instanceMap[key]['onSerialize'];
 
         if (instanceKeys.includes(key)) {
             const metadata = instanceMap[key];
@@ -359,7 +359,7 @@ function convertPropertyToData(
 
     if (property && (isSerializableProperty || predicate)) {
         if (isArray) {
-            const array = [];
+            const array: Array<any> = [];
             property.forEach((d: any) => {
                 array.push(serialize(d, removeUndefined));
             });
@@ -398,7 +398,7 @@ function convertDataToProperty(
     key: string,
     metadata: Metadata,
     json: any,
-    formatPropertyName: FormatPropertyNameProto
+    formatPropertyName?: FormatPropertyNameProto
 ) {
     let data: any;
 
@@ -425,8 +425,8 @@ function convertDataToProperty(
     const isArray = type.name ? type.name.toLowerCase() === Type.Array : false;
     const isDictionary = metadata['isDictionary'];
     const predicate: PredicateProto = metadata['predicate'];
-    const onDeserialize: IOProto = metadata['onDeserialize'];
-    const postDeserialize: IOProto = metadata['postDeserialize'];
+    const onDeserialize: IOProto | undefined = metadata['onDeserialize'];
+    const postDeserialize: IOProto | undefined = metadata['postDeserialize'];
     let propertyType: any = metadata['type'] || type;
     const isSerializableProperty = isSerializable(propertyType);
     let result: any;
@@ -500,10 +500,6 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
     if (!args) {
         return {
             name: key.toString(),
-            type: undefined,
-            onDeserialize: undefined,
-            onSerialize: undefined,
-            postDeserialize: undefined,
             isDictionary: false,
             isNameOverridden: false
         };

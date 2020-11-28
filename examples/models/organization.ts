@@ -20,5 +20,5 @@ export class Organization extends Society {
             _thirdShareholder: value[2]
         })
     })
-    shareholders: Array<Human>;
+    shareholders: Array<Human | null | undefined>;
 }
