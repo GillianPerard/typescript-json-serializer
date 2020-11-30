@@ -435,38 +435,61 @@ function convertDataToProperty(
         data = onDeserialize(data, instance);
     }
 
-    if (!isSerializableProperty && !predicate) {
-        result = castSimpleData(propertyType.name, data);
-    } else if (isArray) {
-        const array = [];
-
-        if (!Array.isArray(data)) {
-            console.error(`${data} is not an array.`);
-            result = undefined;
-        } else {
-            data.forEach((d: any) => {
-                if (predicate) {
-                    propertyType = predicate(d);
-                }
-                array.push(deserialize(d, propertyType));
-            });
-            result = array;
-        }
-    } else if (isDictionary) {
+    if (isDictionary) {
         const obj = {};
 
         if (typeof data !== Type.Object) {
-            console.error(`${data} is not an object.`);
+            console.error(
+                `Type '${typeof data}' is not assignable to type 'Dictionary' for property '${key}' in '${
+                    instance.constructor.name
+                }'.\n`,
+                `Received: ${JSON.stringify(data)}`
+            );
             result = undefined;
         } else {
             Object.keys(data).forEach(k => {
-                if (predicate) {
-                    propertyType = predicate(data[k]);
+                if (!isSerializableProperty && !predicate) {
+                    obj[k] = castSimpleData(
+                        typeof data[k],
+                        data[k],
+                        key,
+                        instance.constructor.name
+                    );
+                } else {
+                    if (predicate) {
+                        propertyType = predicate(data[k]);
+                    }
+                    obj[k] = deserialize(data[k], propertyType);
                 }
-                obj[k] = deserialize(data[k], propertyType);
             });
             result = obj;
         }
+    } else if (isArray) {
+        const array: Array<any> = [];
+
+        if (!Array.isArray(data)) {
+            console.error(
+                `Type '${typeof data}' is not assignable to type 'Array' for property '${key}' in '${
+                    instance.constructor.name
+                }'.\n`,
+                `Received: ${JSON.stringify(data)}`
+            );
+            result = undefined;
+        } else {
+            data.forEach((d: any) => {
+                if (!isSerializableProperty && !predicate) {
+                    array.push(castSimpleData(typeof d, d, key, instance.constructor.name));
+                } else {
+                    if (predicate) {
+                        propertyType = predicate(d);
+                    }
+                    array.push(deserialize(d, propertyType));
+                }
+            });
+            result = array;
+        }
+    } else if (!isSerializableProperty && !predicate) {
+        result = castSimpleData(propertyType.name, data, key, instance.constructor.name);
     } else {
         propertyType = predicate ? predicate(data) : propertyType;
         result = deserialize(data, propertyType);
@@ -542,7 +565,7 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
  * @param {any} data The data to cast
  * @returns {any} The casted data
  */
-function castSimpleData(type: string, data: any): any {
+function castSimpleData(type: string, data: any, propertyName?: string, className?: string): any {
     if (type === undefined || type === null) {
         return data;
     }
@@ -553,24 +576,41 @@ function castSimpleData(type: string, data: any): any {
         return data;
     }
 
+    const logError = () => {
+        console.error(
+            `Type '${typeof data}' is not assignable to type '${type}' for property '${propertyName}' in '${className}'.\n`,
+            `Received: ${JSON.stringify(data)}`
+        );
+    };
+
     switch (type) {
         case Type.String:
-            return data ? data.toString() : data;
-        case Type.Number:
-            const number: number = +data;
-            if (isNaN(number)) {
-                console.error(`${data}: Type ${typeof data} is not assignable to type ${type}.`);
+            const string = data.toString();
+
+            if (string === '[object Object]') {
+                logError();
                 return undefined;
             }
+
+            return string;
+        case Type.Number:
+            const number: number = +data;
+
+            if (isNaN(number)) {
+                logError();
+                return undefined;
+            }
+
             return number;
         case Type.Boolean:
-            console.error(`${data}: Type ${typeof data} is not assignable to type ${type}.`);
+            logError();
             return undefined;
         case Type.Date:
             if (isNaN(Date.parse(data))) {
-                console.error(`${data}: Type ${typeof data} is not assignable to type ${type}.`);
+                logError();
                 return undefined;
             }
+
             return new Date(data);
         default:
             return data;
