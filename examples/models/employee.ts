@@ -20,7 +20,7 @@ export class Employee extends Human {
 
     constructor(
         public name: string,
-        public id: number,
+        @JsonProperty('employeeId') public id: number,
         public gender: Gender,
         public birthDate: Date
     ) {

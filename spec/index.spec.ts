@@ -33,7 +33,7 @@ describe('Serializable', () => {
         const hasMetadata = Reflect.hasOwnMetadata('api:map:serializable', Panther);
         const metadata = Reflect.getOwnMetadata('api:map:serializable', Panther);
         expect(hasMetadata).toBe(true);
-        expect(metadata).toEqual({ baseClassNames: ['Animal', 'LivingBeing'], options: undefined });
+        expect(metadata).toEqual({ baseClassNames: ['LivingBeing', 'Animal'], options: undefined });
     });
 
     it('should return true with 1 base class name and formatPropertyNames option', () => {

@@ -169,7 +169,8 @@ export class LivingBeing {
 export class Human extends LivingBeing {
     constructor(
         // This comment works
-        @JsonProperty() public name: string,
+        // Override LivingBeing id property name
+        @JsonProperty('humanId') public name: string,
         public id: number,
         @JsonProperty() public gender: Gender,
         /** This comment works */
@@ -209,7 +210,8 @@ export class Employee extends Human {
 
     constructor(
         public name: string,
-        public id: number,
+        // Override human id property name
+        @JsonProperty('employeeId') public id: number,
         public gender: Gender,
         public birthDate: Date
     ) {
@@ -346,8 +348,6 @@ export class Zoo {
     @JsonProperty({ type: UnknownAnimal })
     unknownAnimals: Array<UnknownAnimal>;
 
-    @JsonProperty() bestEmployeeOfTheMonth: Employee;
-
     // Dictionary of PhoneNumber
     @JsonProperty({ type: PhoneNumber, isDictionary: true })
     phoneBook: {[id: string]: PhoneNumber};
@@ -419,36 +419,40 @@ export const data: any = {
             coordinates: [1, 2, 3],
             country: 'France',
             boss: {
-                id: 1,
+                employeeId: 1,
                 name: 'Bob Razowsky',
                 birthDate: '1984-04-03T22:00:00.000Z',
                 email: 'bob.razowsky@tgzoo.fr',
-                gender: 1
+                gender: 1,
+                phoneNumber: '111-111-1111'
             },
             employees: [
                 {
-                    id: 1,
+                    employeeId: 1,
                     name: 'Bob Razowsky',
                     birthDate: '1984-04-03T22:00:00.000Z',
                     email: 'bob.razowsky@tgzoo.fr',
-                    gender: 1
+                    gender: 1,
+                    phoneNumber: '111-111-1111'
                 },
                 {
-                    id: 2,
+                    employeeId: 2,
                     name: 'Mikasa Ackerman',
                     birthDate: '1984-01-11T22:00:00.000Z',
                     email: 'mikasa.ackerman@tgzoo.fr',
-                    gender: 0
+                    gender: 0,
+                    phoneNumber: '222-222-2222'
                 },
                 {
-                    id: 3,
+                    employeeId: 3,
                     name: 'Red Redington',
                     birthDate: '1970-12-04T22:00:00.000Z',
                     email: 'red.redington@tgzoo.fr',
-                    gender: 1
+                    gender: 1,
+                    phoneNumber: '333-333-3333'
                 },
                 {
-                    id: 4,
+                    employeeId: 4,
                     name: 'Fried Richter',
                     birthDate: '1994-04-01T22:00:00.000Z',
                     email: 'fried.richter@tgzoo.fr',
@@ -483,8 +487,7 @@ export const data: any = {
                     birthDate: '2018-09-09T00:00:00.000Z',
                     numberOfPaws: 0,
                     gender: 1,
-                    isPoisonous: true,
-                    status: 'Alive'
+                    isPoisonous: true
                 },
                 {
                     id: 4,
@@ -531,11 +534,15 @@ export const data: any = {
             coordinates: [4, 2, 3],
             country: 'France',
             boss: {
-                id: 2,
+                employeeId: 2,
                 name: 'Sully',
                 birthDate: '1984-08-03T22:00:00.000Z',
                 email: 'sully.razowsky@tgzoo.fr',
-                gender: 1
+                gender: 1,
+                phoneNumber: {
+                    countryCode: '33',
+                    value: '0111111111'
+                }
             },
             employees: [],
             Animals: [],
@@ -544,12 +551,12 @@ export const data: any = {
         }
     ],
     _mainShareholder: {
-        id: 100,
+        humanId: 100,
         name: 'Elon Musk',
         birthDate: '1971-06-28T22:00:00.000Z',
         gender: 1
     },
-    _secondaryShareholder: null,
+    _secondaryShareholder: null
 };
 ```
 
