@@ -103,15 +103,13 @@ type Metadata =
  * @returns {Array<string>} All the base class names
  */
 function getBaseClassNames(target: Object): Array<string> {
-    const names: Array<string> = [];
     const baseClass = Reflect.getPrototypeOf(target);
 
     if (!baseClass || !baseClass['name']) {
-        return names;
+        return [];
     }
 
-    names.push(baseClass['name']);
-    return [...names, ...getBaseClassNames(baseClass)];
+    return [...getBaseClassNames(baseClass), baseClass['name']];
 }
 
 /**
@@ -247,7 +245,7 @@ export function deserialize<T>(json: any, type: new (...params: Array<any>) => T
     instanceMap = Reflect.getMetadata(apiMapInstanceName, instance);
 
     if (baseClassNames && baseClassNames.length) {
-        instanceMap = { ...instanceMap, ...getBaseClassMaps(baseClassNames, instance) };
+        instanceMap = { ...getBaseClassMaps(baseClassNames, instance), ...instanceMap };
     }
 
     Object.keys(instanceMap).forEach(key => {
@@ -296,7 +294,7 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
     instanceMap = Reflect.getMetadata(apiMapInstanceName, instance);
 
     if (hasBaseClasses) {
-        instanceMap = { ...instanceMap, ...getBaseClassMaps(baseClassNames, instance) };
+        instanceMap = { ...getBaseClassMaps(baseClassNames, instance), ...instanceMap };
     }
 
     const json: any = {};

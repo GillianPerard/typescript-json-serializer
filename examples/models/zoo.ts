@@ -45,8 +45,6 @@ export class Zoo {
     animals: Array<Animal>;
     @JsonProperty({ predicate: snakeOrPanther })
     mascot: Panther | Snake;
-    @JsonProperty()
-    bestEmployeeOfTheMonth: Employee;
     @JsonProperty({ type: UnknownAnimal })
     unknownAnimals: Array<UnknownAnimal>;
     @JsonProperty({ isDictionary: true })

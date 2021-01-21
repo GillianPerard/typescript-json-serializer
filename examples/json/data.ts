@@ -20,7 +20,7 @@ export const data: any = {
             coordinates: [1, 2, 3],
             country: 'France',
             boss: {
-                id: 1,
+                employeeId: 1,
                 name: 'Bob Razowsky',
                 birthDate: '1984-04-03T22:00:00.000Z',
                 email: 'bob.razowsky@tgzoo.fr',
@@ -29,7 +29,7 @@ export const data: any = {
             },
             employees: [
                 {
-                    id: 1,
+                    employeeId: 1,
                     name: 'Bob Razowsky',
                     birthDate: '1984-04-03T22:00:00.000Z',
                     email: 'bob.razowsky@tgzoo.fr',
@@ -37,7 +37,7 @@ export const data: any = {
                     phoneNumber: '111-111-1111'
                 },
                 {
-                    id: 2,
+                    employeeId: 2,
                     name: 'Mikasa Ackerman',
                     birthDate: '1984-01-11T22:00:00.000Z',
                     email: 'mikasa.ackerman@tgzoo.fr',
@@ -45,7 +45,7 @@ export const data: any = {
                     phoneNumber: '222-222-2222'
                 },
                 {
-                    id: 3,
+                    employeeId: 3,
                     name: 'Red Redington',
                     birthDate: '1970-12-04T22:00:00.000Z',
                     email: 'red.redington@tgzoo.fr',
@@ -53,7 +53,7 @@ export const data: any = {
                     phoneNumber: '333-333-3333'
                 },
                 {
-                    id: 4,
+                    employeeId: 4,
                     name: 'Fried Richter',
                     birthDate: '1994-04-01T22:00:00.000Z',
                     email: 'fried.richter@tgzoo.fr',
@@ -135,7 +135,7 @@ export const data: any = {
             coordinates: [4, 2, 3],
             country: 'France',
             boss: {
-                id: 2,
+                employeeId: 2,
                 name: 'Sully',
                 birthDate: '1984-08-03T22:00:00.000Z',
                 email: 'sully.razowsky@tgzoo.fr',
@@ -152,7 +152,7 @@ export const data: any = {
         }
     ],
     _mainShareholder: {
-        id: 100,
+        humanId: 100,
         name: 'Elon Musk',
         birthDate: '1971-06-28T22:00:00.000Z',
         gender: 1
@@ -162,7 +162,7 @@ export const data: any = {
 
 const bob = new Employee(
     data.zoos[0].boss.name,
-    data.zoos[0].boss.id,
+    data.zoos[0].boss.employeeId,
     Gender.Male,
     new Date(data.zoos[0].boss.birthDate)
 );
@@ -171,7 +171,7 @@ bob.phoneNumber = data.zoos[0].boss.phoneNumber;
 
 const sully = new Employee(
     data.zoos[1].boss.name,
-    data.zoos[1].boss.id,
+    data.zoos[1].boss.employeeId,
     Gender.Male,
     new Date(data.zoos[1].boss.birthDate)
 );
@@ -183,7 +183,7 @@ sully.phoneNumber = phoneNumber;
 
 const mikasa = new Employee(
     data.zoos[0].employees[1].name,
-    data.zoos[0].employees[1].id,
+    data.zoos[0].employees[1].employeeId,
     Gender.Female,
     new Date(data.zoos[0].employees[1].birthDate)
 );
@@ -192,7 +192,7 @@ mikasa.phoneNumber = data.zoos[0].employees[1].phoneNumber;
 
 const red = new Employee(
     data.zoos[0].employees[2].name,
-    data.zoos[0].employees[2].id,
+    data.zoos[0].employees[2].employeeId,
     Gender.Male,
     new Date(data.zoos[0].employees[2].birthDate)
 );
@@ -201,7 +201,7 @@ red.phoneNumber = data.zoos[0].employees[2].phoneNumber;
 
 const fried = new Employee(
     data.zoos[0].employees[3].name,
-    data.zoos[0].employees[3].id,
+    data.zoos[0].employees[3].employeeId,
     Gender.Male,
     new Date(data.zoos[0].employees[3].birthDate)
 );
@@ -256,7 +256,6 @@ greatZoo.employees = [bob, mikasa, red, fried];
 greatZoo.id = data.zoos[0].id;
 greatZoo.mascot = bagheera;
 greatZoo.name = data.zoos[0].name;
-greatZoo.bestEmployeeOfTheMonth = data.zoos[0].bestEmployeeOfTheMonth;
 greatZoo.unknownAnimals = [unknownAnimal];
 greatZoo.phoneBook = {
     '1': new PhoneNumber(data.zoos[0].phoneBook['1'].value),
@@ -278,12 +277,11 @@ zooZoo.employees = [];
 zooZoo.id = data.zoos[1].id;
 zooZoo.mascot = data.zoos[1].mascot;
 zooZoo.name = data.zoos[1].name;
-zooZoo.bestEmployeeOfTheMonth = data.zoos[1].bestEmployeeOfTheMonth;
 zooZoo.unknownAnimals = [];
 
 const elonMusk = new Human(
     data._mainShareholder.name,
-    data._mainShareholder.id,
+    data._mainShareholder.humanId,
     data._mainShareholder.gender,
     new Date(data._mainShareholder.birthDate)
 );
