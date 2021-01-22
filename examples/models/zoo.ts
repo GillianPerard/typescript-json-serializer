@@ -31,7 +31,7 @@ export class Zoo {
     city: string;
     @JsonProperty()
     country: string;
-    @JsonProperty({ onDeserialize: arrayToCoordinates, onSerialize: coordinatesToArray })
+    @JsonProperty({ beforeDeserialize: arrayToCoordinates, afterSerialize: coordinatesToArray })
     coordinates: { x: number; y: number; z: number };
     @JsonProperty()
     description: string;

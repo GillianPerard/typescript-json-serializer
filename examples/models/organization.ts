@@ -13,8 +13,8 @@ export class Organization extends Society {
     @JsonProperty({
         names: ['_mainShareholder', '_secondaryShareholder', '_thirdShareholder'],
         type: Human,
-        onDeserialize: value => Object.values(value),
-        onSerialize: value => ({
+        beforeDeserialize: value => Object.values(value),
+        afterSerialize: value => ({
             _mainShareholder: value[0],
             _secondaryShareholder: value[1],
             _thirdShareholder: value[2]
