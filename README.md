@@ -47,9 +47,6 @@ import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-j
 // - formatPropertyNames function to format the property names
 //   provided by the json you want to serialize to match
 //   with your class property names
-//
-// BREAKING CHANGE: Since version 2.0.0 the
-// parameter `baseClassName` is not needed anymore
 
 type FormatPropertyNameProto = (propertyName: string) => string;
 type SerializableOptions = {
@@ -67,11 +64,18 @@ type SerializableOptions = {
 //   `Serializable` decorator)
 // - the type of the property (if needed)
 // - a predicate function that return a type (if needed)
-// - a function to transform data on deserialize
-// - a function to transform data on serialize
+// - a function to transform data before serialize
+// - a function to transform data after serialize
+// - a function to transform data before deserialize
+// - a function to transform data after deserialize
 // - the names of properties to merge (the `formatPropertyNames`
 //   from `Serializable` decorator is ignored)
 // - a boolean to tell that the property is a dictionary
+
+// BREAKING CHANGES: since version 3.0.0
+// - onSerialize has become afterSerialize
+// - onDeserialize has become beforeDeserialize
+// - postDeserialize has become afterDeserialize
 
 type IOProto = (property: any, currentInstance: any) => {};
 type PredicateProto = (property: any) => {};
@@ -81,32 +85,36 @@ type PredicateProto = (property: any) => {};
     | {
         name?: string,
         type?: Function,
-        onDeserialize?: IOProto,
-        onSerialize?: IOProto,
-        postDeserialize?: IOProto,
+        beforeSerialize?: IOProto,
+        afterSerialize?: IOProto,
+        beforeDeserialize?: IOProto,
+        afterDeserialize?: IOProto,
         isDictionary?: boolean
       }
     | {
         name?: string,
         predicate?: PredicateProto,
-        onDeserialize?: IOProto,
-        onSerialize?: IOProto,
-        postDeserialize?: IOProto,
+        beforeSerialize?: IOProto,
+        afterSerialize?: IOProto,
+        beforeDeserialize?: IOProto,
+        afterDeserialize?: IOProto,
         isDictionary?: boolean
       }
     | {
         names?: Array<string>,
         type?: Function,
-        onDeserialize?: IOProto,
-        onSerialize?: IOProto,
-        postDeserialize?: IOProto
+        beforeSerialize?: IOProto,
+        afterSerialize?: IOProto,
+        beforeDeserialize?: IOProto,
+        afterDeserialize?: IOProto
       }
     | {
         names?: Array<string>,
         predicate?: PredicateProto,
-        onDeserialize?: IOProto,
-        onSerialize?: IOProto,
-        postDeserialize?: IOProto
+        beforeSerialize?: IOProto,
+        afterSerialize?: IOProto,
+        beforeDeserialize?: IOProto,
+        afterDeserialize?: IOProto
     })
 ```
 
@@ -322,7 +330,7 @@ export class Zoo {
 
     // Property with transform functions executed respectively
     // on serialize and on deserialize
-    @JsonProperty({ onDeserialize: arrayToCoordinates, onSerialize: coordinatesToArray })
+    @JsonProperty({ beforeDeserialize: arrayToCoordinates, afterSerialize: coordinatesToArray })
     coordinates: { x: number; y: number; z: number };
 
     // Array of none-basic type elements
@@ -375,15 +383,15 @@ export class Organization extends Society {
 
     // To merge multiple properties in a single one
     // use the property `names`.
-    // If you don't create your own merge with the `onDeserialize`
-    // and `onSerialize` function, it will just merge properties in this
+    // If you don't create your own merge with the `beforeDeserialize`
+    // and `afterSerialize` function, it will just merge properties in this
     // one when using `deserialize` and split back
     // when using `serialize`
     @JsonProperty({
         names: ['_mainShareholder', '_secondaryShareholder', '_thirdShareholder'],
         type: Human,
-        onDeserialize: value => Object.values(value),
-        onSerialize: value => {
+        beforeDeserialize: value => Object.values(value),
+        afterSerialize: value => {
             return {
                 _mainShareholder: value[0],
                 _secondaryShareholder: value[1],

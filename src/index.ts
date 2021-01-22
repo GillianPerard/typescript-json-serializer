@@ -34,66 +34,74 @@ type Args =
     | {
           name?: string;
           type?: Function;
-          onSerialize?: IOProto;
-          onDeserialize?: IOProto;
-          postDeserialize?: IOProto;
+          beforeSerialize?: IOProto;
+          afterSerialize?: IOProto;
+          beforeDeserialize?: IOProto;
+          afterDeserialize?: IOProto;
           isDictionary?: boolean;
       }
     | {
           name?: string;
           predicate?: PredicateProto;
-          onSerialize?: IOProto;
-          onDeserialize?: IOProto;
-          postDeserialize?: IOProto;
+          beforeSerialize?: IOProto;
+          afterSerialize?: IOProto;
+          beforeDeserialize?: IOProto;
+          afterDeserialize?: IOProto;
           isDictionary?: boolean;
       }
     | {
           names: Array<string>;
           type?: Function;
-          onSerialize?: IOProto;
-          onDeserialize?: IOProto;
-          postDeserialize?: IOProto;
+          beforeSerialize?: IOProto;
+          afterSerialize?: IOProto;
+          beforeDeserialize?: IOProto;
+          afterDeserialize?: IOProto;
       }
     | {
           names: Array<string>;
           predicate?: PredicateProto;
-          onSerialize?: IOProto;
-          onDeserialize?: IOProto;
-          postDeserialize?: IOProto;
+          beforeSerialize?: IOProto;
+          afterSerialize?: IOProto;
+          beforeDeserialize?: IOProto;
+          afterDeserialize?: IOProto;
       };
 
 type Metadata =
     | {
           name: string;
           type?: Function;
-          onSerialize?: IOProto;
-          onDeserialize?: IOProto;
-          postDeserialize?: IOProto;
+          beforeSerialize?: IOProto;
+          afterSerialize?: IOProto;
+          beforeDeserialize?: IOProto;
+          afterDeserialize?: IOProto;
           isDictionary: boolean;
           isNameOverridden: boolean;
       }
     | {
           name: string;
           predicate: PredicateProto;
-          onSerialize: IOProto;
-          onDeserialize: IOProto;
-          postDeserialize: IOProto;
+          beforeSerialize?: IOProto;
+          afterSerialize: IOProto;
+          beforeDeserialize: IOProto;
+          afterDeserialize: IOProto;
           isDictionary: boolean;
           isNameOverridden: boolean;
       }
     | {
           names: Array<string>;
           type: Function;
-          onSerialize: IOProto;
-          onDeserialize: IOProto;
-          postDeserialize: IOProto;
+          beforeSerialize?: IOProto;
+          afterSerialize: IOProto;
+          beforeDeserialize: IOProto;
+          afterDeserialize: IOProto;
       }
     | {
           names: Array<string>;
           predicate: PredicateProto;
-          onSerialize: IOProto;
-          onDeserialize: IOProto;
-          postDeserialize: IOProto;
+          beforeSerialize?: IOProto;
+          afterSerialize: IOProto;
+          beforeDeserialize: IOProto;
+          afterDeserialize: IOProto;
       };
 
 /**
@@ -301,14 +309,19 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
     const instanceKeys = Object.keys(instance);
 
     Object.keys(instanceMap).forEach(key => {
-        const onSerialize: IOProto | undefined = instanceMap[key]['onSerialize'];
-
         if (instanceKeys.includes(key)) {
             const metadata = instanceMap[key];
+            const beforeSerialize: IOProto | undefined = metadata['beforeSerialize'];
+            const afterSerialize: IOProto | undefined = metadata['afterSerialize'];
+
+            if (beforeSerialize) {
+                instance[key] = beforeSerialize(instance[key], instance);
+            }
+
             let data = convertPropertyToData(instance, key, metadata, removeUndefined);
 
-            if (onSerialize) {
-                data = onSerialize(data, instance);
+            if (afterSerialize) {
+                data = afterSerialize(data, instance);
             }
 
             if (metadata['names']) {
@@ -357,12 +370,7 @@ function convertPropertyToData(
 
     if (property && (isSerializableProperty || predicate)) {
         if (isArray) {
-            const array: Array<any> = [];
-            property.forEach((d: any) => {
-                array.push(serialize(d, removeUndefined));
-            });
-
-            return array;
+            return property.map((d: any) => serialize(d, removeUndefined));
         }
 
         if (metadata['isDictionary']) {
@@ -377,8 +385,8 @@ function convertPropertyToData(
         return serialize(property, removeUndefined);
     }
 
-    if (propertyType.name.toLocaleLowerCase() === Type.Date) {
-        return property ? property.toISOString() : property;
+    if (propertyType.name.toLocaleLowerCase() === Type.Date && typeof property === Type.Object) {
+        return property.toISOString();
     }
 
     return property;
@@ -423,14 +431,14 @@ function convertDataToProperty(
     const isArray = type.name ? type.name.toLowerCase() === Type.Array : false;
     const isDictionary = metadata['isDictionary'];
     const predicate: PredicateProto = metadata['predicate'];
-    const onDeserialize: IOProto | undefined = metadata['onDeserialize'];
-    const postDeserialize: IOProto | undefined = metadata['postDeserialize'];
+    const beforeDeserialize: IOProto | undefined = metadata['beforeDeserialize'];
+    const afterDeserialize: IOProto | undefined = metadata['afterDeserialize'];
     let propertyType: any = metadata['type'] || type;
     const isSerializableProperty = isSerializable(propertyType);
     let result: any;
 
-    if (onDeserialize) {
-        data = onDeserialize(data, instance);
+    if (beforeDeserialize) {
+        data = beforeDeserialize(data, instance);
     }
 
     if (isDictionary) {
@@ -493,8 +501,8 @@ function convertDataToProperty(
         result = deserialize(data, propertyType);
     }
 
-    if (postDeserialize) {
-        result = postDeserialize(result, instance);
+    if (afterDeserialize) {
+        result = afterDeserialize(result, instance);
     }
 
     return result;
@@ -541,17 +549,19 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
         ? {
               ...metadata,
               predicate: args['predicate'],
-              onDeserialize: args['onDeserialize'],
-              onSerialize: args['onSerialize'],
-              postDeserialize: args['postDeserialize'],
+              beforeSerialize: args['beforeSerialize'],
+              afterSerialize: args['afterSerialize'],
+              beforeDeserialize: args['beforeDeserialize'],
+              afterDeserialize: args['afterDeserialize'],
               isDictionary: !!args['isDictionary']
           }
         : {
               ...metadata,
               type: args['type'],
-              onDeserialize: args['onDeserialize'],
-              onSerialize: args['onSerialize'],
-              postDeserialize: args['postDeserialize'],
+              beforeSerialize: args['beforeSerialize'],
+              afterSerialize: args['afterSerialize'],
+              beforeDeserialize: args['beforeDeserialize'],
+              afterDeserialize: args['afterDeserialize'],
               isDictionary: !!args['isDictionary']
           };
 }
