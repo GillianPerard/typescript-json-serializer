@@ -24,8 +24,8 @@ interface SerializableOptions {
     formatPropertyNames: FormatPropertyNameProto;
 }
 
-type IOProto = (property: any, currentInstance: any) => any;
-type PredicateProto = (property: any) => any;
+type IOProto = (property: any, currentInstance?: any) => any;
+type PredicateProto = (property: any, parentProperty?: any) => any;
 type FormatPropertyNameProto = (propertyName: string) => string;
 
 // Types
@@ -463,7 +463,7 @@ function convertDataToProperty(
                     );
                 } else {
                     if (predicate) {
-                        propertyType = predicate(data[k]);
+                        propertyType = predicate(data[k], data);
                     }
                     obj[k] = deserialize(data[k], propertyType);
                 }
@@ -487,7 +487,7 @@ function convertDataToProperty(
                     array.push(castSimpleData(typeof d, d, key, instance.constructor.name));
                 } else {
                     if (predicate) {
-                        propertyType = predicate(d);
+                        propertyType = predicate(d, data);
                     }
                     array.push(deserialize(d, propertyType));
                 }
@@ -497,7 +497,7 @@ function convertDataToProperty(
     } else if (!isSerializableProperty && !predicate) {
         result = castSimpleData(propertyType.name, data, key, instance.constructor.name);
     } else {
-        propertyType = predicate ? predicate(data) : propertyType;
+        propertyType = predicate ? predicate(data, json) : propertyType;
         result = deserialize(data, propertyType);
     }
 
