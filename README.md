@@ -77,8 +77,8 @@ type SerializableOptions = {
 // - onDeserialize has become beforeDeserialize
 // - postDeserialize has become afterDeserialize
 
-type IOProto = (property: any, currentInstance: any) => {};
-type PredicateProto = (property: any) => {};
+type IOProto = (property: any, currentInstance?: any) => {};
+type PredicateProto = (property: any, parentProperty?: any) => {};
 
 @JsonProperty(args?:
     | string
