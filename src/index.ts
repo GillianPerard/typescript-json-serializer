@@ -545,25 +545,18 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
         metadata = { name: key.toString(), isNameOverridden: false };
     }
 
+    metadata = {
+        ...metadata,
+        beforeSerialize: args['beforeSerialize'],
+        afterSerialize: args['afterSerialize'],
+        beforeDeserialize: args['beforeDeserialize'],
+        afterDeserialize: args['afterDeserialize'],
+        isDictionary: !!args['isDictionary']
+    };
+
     return args['predicate']
-        ? {
-              ...metadata,
-              predicate: args['predicate'],
-              beforeSerialize: args['beforeSerialize'],
-              afterSerialize: args['afterSerialize'],
-              beforeDeserialize: args['beforeDeserialize'],
-              afterDeserialize: args['afterDeserialize'],
-              isDictionary: !!args['isDictionary']
-          }
-        : {
-              ...metadata,
-              type: args['type'],
-              beforeSerialize: args['beforeSerialize'],
-              afterSerialize: args['afterSerialize'],
-              beforeDeserialize: args['beforeDeserialize'],
-              afterDeserialize: args['afterDeserialize'],
-              isDictionary: !!args['isDictionary']
-          };
+        ? { ...metadata, predicate: args['predicate'] }
+        : { ...metadata, type: args['type'] };
 }
 
 /**
