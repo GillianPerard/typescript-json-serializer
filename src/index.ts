@@ -314,7 +314,10 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
             const beforeSerialize: IOProto | undefined = metadata['beforeSerialize'];
             const afterSerialize: IOProto | undefined = metadata['afterSerialize'];
 
+            let initialValue: any;
+
             if (beforeSerialize) {
+                initialValue = instance[key];
                 instance[key] = beforeSerialize(instance[key], instance);
             }
 
@@ -323,6 +326,8 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
             if (afterSerialize) {
                 data = afterSerialize(data, instance);
             }
+
+            instance[key] = initialValue || instance[key];
 
             if (metadata['names']) {
                 metadata['names'].forEach((name: string) => {
