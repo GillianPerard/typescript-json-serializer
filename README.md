@@ -71,6 +71,7 @@ type SerializableOptions = {
 // - the names of properties to merge (the `formatPropertyNames`
 //   from `Serializable` decorator is ignored)
 // - a boolean to tell that the property is a dictionary
+// - a boolean to tell that the property is required (throw an error if undefined, null or missing)
 
 // BREAKING CHANGES: since version 3.0.0
 // - onSerialize has become afterSerialize
@@ -89,7 +90,8 @@ type PredicateProto = (property: any, parentProperty?: any) => {};
         afterSerialize?: IOProto,
         beforeDeserialize?: IOProto,
         afterDeserialize?: IOProto,
-        isDictionary?: boolean
+        isDictionary?: boolean,
+        required?: boolean
       }
     | {
         name?: string,
@@ -98,7 +100,8 @@ type PredicateProto = (property: any, parentProperty?: any) => {};
         afterSerialize?: IOProto,
         beforeDeserialize?: IOProto,
         afterDeserialize?: IOProto,
-        isDictionary?: boolean
+        isDictionary?: boolean,
+        required?: boolean
       }
     | {
         names?: Array<string>,
@@ -106,7 +109,8 @@ type PredicateProto = (property: any, parentProperty?: any) => {};
         beforeSerialize?: IOProto,
         afterSerialize?: IOProto,
         beforeDeserialize?: IOProto,
-        afterDeserialize?: IOProto
+        afterDeserialize?: IOProto,
+        required?: boolean
       }
     | {
         names?: Array<string>,
@@ -114,7 +118,8 @@ type PredicateProto = (property: any, parentProperty?: any) => {};
         beforeSerialize?: IOProto,
         afterSerialize?: IOProto,
         beforeDeserialize?: IOProto,
-        afterDeserialize?: IOProto
+        afterDeserialize?: IOProto,
+        required?: boolean
     })
 ```
 
@@ -178,7 +183,8 @@ export class Human extends LivingBeing {
     constructor(
         // This comment works
         // Override LivingBeing id property name
-        @JsonProperty('humanId') public name: string,
+        // and set required to true
+        @JsonProperty({name: 'humanId', required: true}) public name: string,
         public id: number,
         @JsonProperty() public gender: Gender,
         /** This comment works */
@@ -204,7 +210,7 @@ export class PhoneNumber {
 @Serializable()
 export class Employee extends Human {
     /** The employee's email */
-    @JsonProperty() email: string;
+    @JsonProperty({required: true}) email: string;
 
     /** Predicate function to determine if the property type is PhoneNumber or a primitive type */
     @JsonProperty({
@@ -219,6 +225,7 @@ export class Employee extends Human {
     constructor(
         public name: string,
         // Override human id property name
+        // (keep the require to true from Human id)
         @JsonProperty('employeeId') public id: number,
         public gender: Gender,
         public birthDate: Date
