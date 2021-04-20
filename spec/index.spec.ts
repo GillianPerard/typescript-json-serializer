@@ -8,6 +8,7 @@ import { Dummy } from '../examples/models/dummy';
 import { Organization } from '../examples/models/organization';
 import { Panther } from '../examples/models/panther';
 import { Zoo } from '../examples/models/zoo';
+import { Employee } from '../examples/models/employee';
 
 describe('Serializable', () => {
     it('should return false', () => {
@@ -111,6 +112,60 @@ describe('deserialize', () => {
         const object = deserialize<Animal>({ name: 'My beautiful animal' }, Animal);
         const isAnimal = object instanceof Animal;
         expect(isAnimal).toBeTruthy();
+    });
+
+    it('should throw an error if required property is missing', () => {
+        const fn = () => deserialize<Employee>(fried, Employee);
+        const fried = {
+            employeeId: 4,
+            name: 'Fried Richter',
+            birthDate: '1994-04-01T22:00:00.000Z',
+            gender: 1
+        };
+        expect(fn).toThrowError(
+            `Property 'email' is required in Employee {"employeeId":4,"name":"Fried Richter","birthDate":"1994-04-01T22:00:00.000Z","gender":1}.`
+        );
+    });
+
+    it('should throw an error if required property is null', () => {
+        const fn = () => deserialize<Employee>(fried, Employee);
+        const fried = {
+            employeeId: 4,
+            name: 'Fried Richter',
+            birthDate: '1994-04-01T22:00:00.000Z',
+            email: null,
+            gender: 1
+        };
+        expect(fn).toThrowError(
+            `Property 'email' is required in Employee {"employeeId":4,"name":"Fried Richter","birthDate":"1994-04-01T22:00:00.000Z","email":null,"gender":1}.`
+        );
+    });
+
+    it('should throw an error if required property is undefined', () => {
+        const fn = () => deserialize<Employee>(fried, Employee);
+        const fried = {
+            employeeId: 4,
+            name: 'Fried Richter',
+            birthDate: '1994-04-01T22:00:00.000Z',
+            email: undefined,
+            gender: 1
+        };
+        expect(fn).toThrowError(
+            `Property 'email' is required in Employee {"employeeId":4,"name":"Fried Richter","birthDate":"1994-04-01T22:00:00.000Z","gender":1}.`
+        );
+    });
+
+    it('should throw an error if extended required property is missing', () => {
+        const fn = () => deserialize<Employee>(fried, Employee);
+        const fried = {
+            name: 'Fried Richter',
+            birthDate: '1994-04-01T22:00:00.000Z',
+            gender: 1,
+            email: 'fried.richter@tgzoo.fr'
+        };
+        expect(fn).toThrowError(
+            `Property 'id' is required in Employee {"name":"Fried Richter","birthDate":"1994-04-01T22:00:00.000Z","gender":1,"email":"fried.richter@tgzoo.fr"}.`
+        );
     });
 });
 

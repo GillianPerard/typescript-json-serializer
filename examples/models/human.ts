@@ -8,7 +8,7 @@ export class Human extends LivingBeing {
     constructor(
         // This comment works
         @JsonProperty() public name: string,
-        @JsonProperty('humanId') public id: number,
+        @JsonProperty({ name: 'humanId', required: true }) public id: number,
         @JsonProperty() public gender: Gender,
         /** The birth date of the employee (readonly) */
         @JsonProperty() public readonly birthDate: Date
