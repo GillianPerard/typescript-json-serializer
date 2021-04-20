@@ -7,7 +7,7 @@ import { PhoneNumber } from './phone-number';
 @Serializable()
 export class Employee extends Human {
     /** The employee's email */
-    @JsonProperty() email: string;
+    @JsonProperty({ required: true }) email: string;
 
     @JsonProperty({
         predicate: property => {

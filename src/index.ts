@@ -27,82 +27,63 @@ interface SerializableOptions {
 type IOProto = (property: any, currentInstance?: any) => any;
 type PredicateProto = (property: any, parentProperty?: any) => any;
 type FormatPropertyNameProto = (propertyName: string) => string;
+interface BeforeAfterProto {
+    beforeSerialize?: IOProto;
+    afterSerialize?: IOProto;
+    beforeDeserialize?: IOProto;
+    afterDeserialize?: IOProto;
+}
+type BaseMetadata = {
+    required?: boolean;
+} & BeforeAfterProto;
 
 // Types
 type Args =
     | string
-    | {
+    | ({
           name?: string;
           type?: Function;
-          beforeSerialize?: IOProto;
-          afterSerialize?: IOProto;
-          beforeDeserialize?: IOProto;
-          afterDeserialize?: IOProto;
           isDictionary?: boolean;
-      }
-    | {
+      } & BaseMetadata)
+    | ({
           name?: string;
           predicate?: PredicateProto;
-          beforeSerialize?: IOProto;
-          afterSerialize?: IOProto;
-          beforeDeserialize?: IOProto;
-          afterDeserialize?: IOProto;
           isDictionary?: boolean;
-      }
-    | {
+      } & BaseMetadata)
+    | ({
           names: Array<string>;
           type?: Function;
-          beforeSerialize?: IOProto;
-          afterSerialize?: IOProto;
-          beforeDeserialize?: IOProto;
-          afterDeserialize?: IOProto;
-      }
-    | {
+      } & BaseMetadata)
+    | ({
           names: Array<string>;
           predicate?: PredicateProto;
-          beforeSerialize?: IOProto;
-          afterSerialize?: IOProto;
-          beforeDeserialize?: IOProto;
-          afterDeserialize?: IOProto;
-      };
+      } & BaseMetadata);
 
 type Metadata =
-    | {
+    | ({
           name: string;
           type?: Function;
-          beforeSerialize?: IOProto;
-          afterSerialize?: IOProto;
-          beforeDeserialize?: IOProto;
-          afterDeserialize?: IOProto;
-          isDictionary: boolean;
+          isDictionary?: boolean;
           isNameOverridden: boolean;
-      }
-    | {
+      } & BaseMetadata)
+    | ({
           name: string;
           predicate: PredicateProto;
-          beforeSerialize?: IOProto;
-          afterSerialize: IOProto;
-          beforeDeserialize: IOProto;
-          afterDeserialize: IOProto;
-          isDictionary: boolean;
+          isDictionary?: boolean;
           isNameOverridden: boolean;
-      }
-    | {
+      } & BaseMetadata)
+    | ({
           names: Array<string>;
           type: Function;
-          beforeSerialize?: IOProto;
-          afterSerialize: IOProto;
-          beforeDeserialize: IOProto;
-          afterDeserialize: IOProto;
-      }
-    | {
+      } & BaseMetadata)
+    | ({
           names: Array<string>;
           predicate: PredicateProto;
-          beforeSerialize?: IOProto;
-          afterSerialize: IOProto;
-          beforeDeserialize: IOProto;
-          afterDeserialize: IOProto;
-      };
+      } & BaseMetadata);
+
+interface MetadataMap {
+    [id: string]: Metadata;
+}
 
 /**
  * Function to get all base class names recursively
@@ -173,7 +154,7 @@ export function JsonProperty(args?: Args): Function {
             Reflect.defineMetadata(designType, type, target, key);
         }
 
-        let map: { [id: string]: Metadata } = {};
+        let map: MetadataMap = {};
         const targetName = target.constructor.name;
         const apiMapTargetName = `${apiMap}${targetName}`;
 
@@ -181,7 +162,7 @@ export function JsonProperty(args?: Args): Function {
             map = Reflect.getMetadata(apiMapTargetName, target);
         }
 
-        map[key] = getJsonPropertyValue(key, args as Args);
+        map[key] = getMetadata(key, args as Args);
         Reflect.defineMetadata(apiMapTargetName, map, target);
     };
 }
@@ -200,26 +181,39 @@ export function Serializable(options?: SerializableOptions): Function {
 }
 
 /**
- * Function to retrieve and merge all base class properties
+ * Function to retrieve all base class metadata
  *
  * @param baseClassNames The base classe names of the instance provided
  * @param {any} instance The instance target from which the parents metadata are extracted
- * @returns {{ [id: string]: Metadata }} All base class metadata properties
+ * @returns {MetadataMap} All base class metadata
  */
-function getBaseClassMaps(
+function getBaseClassMetadataMaps(
     baseClassNames: Array<string>,
     instance: any
-): { [id: string]: Metadata } {
-    let baseClassMaps: { [id: string]: Metadata } = {};
+): Array<MetadataMap> {
+    return baseClassNames.map(baseClassName =>
+        Reflect.getMetadata(`${apiMap}${baseClassName}`, instance)
+    );
+}
 
-    baseClassNames.forEach(baseClassName => {
-        baseClassMaps = {
-            ...baseClassMaps,
-            ...Reflect.getMetadata(`${apiMap}${baseClassName}`, instance)
-        };
+/**
+ * Function to merge metadata maps
+ *
+ * @param metadataMaps The metadata maps to merge
+ * @returns The new metadata map created from the merge of all metadata maps provided
+ */
+function mergeMetadataMap(...metadataMaps: Array<MetadataMap>): MetadataMap {
+    const mergedMetadataMap: MetadataMap = {};
+
+    metadataMaps.forEach(metadataMap => {
+        if (metadataMap) {
+            Object.keys(metadataMap).forEach(key => {
+                mergedMetadataMap[key] = { ...mergedMetadataMap[key], ...metadataMap[key] };
+            });
+        }
     });
 
-    return baseClassMaps;
+    return mergedMetadataMap;
 }
 
 /**
@@ -244,7 +238,7 @@ export function deserialize<T>(json: any, type: new (...params: Array<any>) => T
         (Reflect.getMetadata(apiMapSerializable, type) as SerializableMetadata) ?? {};
     const apiMapInstanceName = `${apiMap}${instanceName}`;
     const hasMap = Reflect.hasMetadata(apiMapInstanceName, instance);
-    let instanceMap: { [id: string]: Metadata } = {};
+    let instanceMap: MetadataMap = {};
 
     if (!hasMap && (!baseClassNames || !baseClassNames.length)) {
         return instance;
@@ -253,7 +247,8 @@ export function deserialize<T>(json: any, type: new (...params: Array<any>) => T
     instanceMap = Reflect.getMetadata(apiMapInstanceName, instance);
 
     if (baseClassNames && baseClassNames.length) {
-        instanceMap = { ...getBaseClassMaps(baseClassNames, instance), ...instanceMap };
+        const baseClassMetadataMaps = getBaseClassMetadataMaps(baseClassNames, instance);
+        instanceMap = mergeMetadataMap(...baseClassMetadataMaps, instanceMap);
     }
 
     Object.keys(instanceMap).forEach(key => {
@@ -264,6 +259,12 @@ export function deserialize<T>(json: any, type: new (...params: Array<any>) => T
             json,
             options?.formatPropertyNames
         );
+
+        if ((property === undefined || property === null) && instanceMap[key].required) {
+            throw new Error(
+                `Property '${key}' is required in ${instanceName} ${JSON.stringify(json)}.`
+            );
+        }
 
         if (property !== undefined) {
             instance[key] = property;
@@ -293,7 +294,7 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
     const hasBaseClasses = baseClassNames && baseClassNames.length;
 
     const hasMap = Reflect.hasMetadata(apiMapInstanceName, instance);
-    let instanceMap: { [id: string]: Metadata } = {};
+    let instanceMap: MetadataMap = {};
 
     if (!hasMap && !hasBaseClasses) {
         return instance;
@@ -302,7 +303,8 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
     instanceMap = Reflect.getMetadata(apiMapInstanceName, instance);
 
     if (hasBaseClasses) {
-        instanceMap = { ...getBaseClassMaps(baseClassNames, instance), ...instanceMap };
+        const baseClassMetadataMaps = getBaseClassMetadataMaps(baseClassNames, instance);
+        instanceMap = mergeMetadataMap(...baseClassMetadataMaps, instanceMap);
     }
 
     const json: any = {};
@@ -530,13 +532,12 @@ function isSerializable(type: any): boolean {
  * @param {Args} args Arguments to describe the property
  * @returns {Metadata} The metadata object
  */
-function getJsonPropertyValue(key: string, args: Args): Metadata {
+function getMetadata(key: string, args: Args): Metadata {
     if (!args) {
         return {
             name: key.toString(),
-            isDictionary: false,
             isNameOverridden: false
-        };
+        } as Metadata;
     }
 
     let metadata: any;
@@ -550,18 +551,28 @@ function getJsonPropertyValue(key: string, args: Args): Metadata {
         metadata = { name: key.toString(), isNameOverridden: false };
     }
 
-    metadata = {
-        ...metadata,
-        beforeSerialize: args['beforeSerialize'],
-        afterSerialize: args['afterSerialize'],
-        beforeDeserialize: args['beforeDeserialize'],
-        afterDeserialize: args['afterDeserialize'],
-        isDictionary: !!args['isDictionary']
-    };
+    const optionalArgKeys = [
+        'isDictionary',
+        'required',
+        'beforeSerialize',
+        'afterSerialize',
+        'beforeDeserialize',
+        'afterDeserialize'
+    ];
 
-    return args['predicate']
-        ? { ...metadata, predicate: args['predicate'] }
-        : { ...metadata, type: args['type'] };
+    optionalArgKeys.forEach(k => {
+        if (args[k] !== undefined && args[k] !== null) {
+            metadata[k] = args[k];
+        }
+    });
+
+    if (args['predicate']) {
+        metadata.predicate = args['predicate'];
+    } else if (args['type']) {
+        metadata.type = args['type'];
+    }
+
+    return metadata as Metadata;
 }
 
 /**
