@@ -601,6 +601,53 @@ npm run test
 yarn test
 ```
 
+## Using with Create React App
+If you are using [CRA](https://create-react-app.dev/) to create your React App you will need to add [craco](https://github.com/gsoft-inc/craco) in order to add rules to your `.babelrc`. Follow the [instruction](https://github.com/gsoft-inc/craco/blob/master/packages/craco/README.md#installation) from here to include craco to your project.
+
+- Install craco support for babel
+```sh
+npm install -D @jackwilsdon/craco-use-babelrc
+
+# or
+
+yarn add -D @jackwilsdon/craco-use-babelrc
+```
+- Create the `.babelrc` file in the root of your project
+- Add this configuration to `.babelrc` file
+```json
+{
+  "presets": ["react-app"],
+  "plugins": [
+    "babel-plugin-transform-typescript-metadata",
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+    ["@babel/plugin-proposal-class-properties", { "loose": true }]
+  ]
+}
+```
+- Install the necessary dependencies listed in the `.babelrc` configuration
+```sh
+npm install -D babel-plugin-transform-typescript-metadata
+npm install -D @babel/plugin-proposal-decorators
+npm install -D @babel/plugin-proposal-class-properties
+
+# or
+
+yarn add -D babel-plugin-transform-typescript-metadata
+yarn add -D @babel/plugin-proposal-decorators
+yarn add -D @babel/plugin-proposal-class-properties
+```
+- Let craco use the `.babelrc` by adding to the `craco.config.js` so it looks like this
+```js
+const BabelRcPlugin = require('@jackwilsdon/craco-use-babelrc');
+
+module.exports = {
+  plugins: [
+    { plugin: BabelRcPlugin },
+  ],
+  ...
+}
+```
+
 ## Author
 
 Gillian Pérard - [@GillianPerard](https://github.com/GillianPerard)
