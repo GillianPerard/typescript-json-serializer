@@ -12,17 +12,17 @@ export default [
             {
                 file: pkg.main,
                 format: 'cjs',
-                sourcemap: true
+                sourcemap: false
             },
             {
                 file: pkg.module,
                 format: 'esm',
-                sourcemap: true
+                sourcemap: false
             }
         ],
         plugins: [
             resolve(),
-            typescript({ sourceMap: true }),
+            typescript({ sourceMap: false }),
             commonjs({
                 exclude: 'node_modules',
                 ignoreGlobal: true
