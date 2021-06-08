@@ -94,6 +94,11 @@ describe('deserialize', () => {
         expect(deserialize<Organization>(data, Organization)).toEqual(deserializedData);
     });
 
+    it('should return true for json format', () => {
+        const json = JSON.stringify(data);
+        expect(deserialize<Organization>(json, Organization)).toEqual(deserializedData);
+    });
+
     it('should return true even if there are fake data included', () => {
         const alteredData = { ...data };
         alteredData['fake'] = 'fake';

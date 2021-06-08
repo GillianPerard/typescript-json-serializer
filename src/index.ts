@@ -232,6 +232,10 @@ export function deserialize<T>(json: any, type: new (...params: Array<any>) => T
         return castSimpleData(typeof json, json);
     }
 
+    if (typeof json === Type.String) {
+        json = JSON.parse(json);
+    }
+
     const instance: any = new type();
     const instanceName = instance.constructor.name;
     const { baseClassNames, options } =
