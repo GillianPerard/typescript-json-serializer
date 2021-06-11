@@ -1,3 +1,11 @@
+<a name="3.4.1"></a>
+# 3.4.1 (2021-06-11)
+
+### Bug fixes
+
+* **getPropertyNames:** improve regex to take in account Angular and React builds ([#132](https://github.com/GillianPerard/typescript-json-serializer/issues/132)) ([#135](https://github.com/GillianPerard/typescript-json-serializer/issues/135)) ([8470679](https://github.com/GillianPerard/typescript-json-serializer/commit/84706799a9e51aea17ddb6d42200af5bdcc3ed05))
+* **docs:** add a section to explain how to use the library with CRA (create-react-app) ([#132](https://github.com/GillianPerard/typescript-json-serializer/issues/132)) ([2c0ddbc](https://github.com/GillianPerard/typescript-json-serializer/commit/2c0ddbc8793e44e1d8a6db00720e16df6a203df0))
+
 <a name="3.4.0"></a>
 # 3.4.0 (2021-06-08)
 
