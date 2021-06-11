@@ -115,7 +115,7 @@ function getPropertyNames(ctor: object): Map<number, string> {
 
     // Parse function body
     const constructorParamPattern = /(?:.*(?:constructor|function).*?(?=\())(?:\()(.+?(?=\)))/m;
-    const propertyPattern = /(?:this\.)([^\n\r\t\f\v;]+)([\s;])/gm;
+    const propertyPattern = /(?:this\.)([^,;\n}]+)/gm;
     const propertyNames = new Map<number, string>();
     const paramsExecArray = constructorParamPattern.exec(ctorWithoutSuccessiveWhiteSpaces);
 
