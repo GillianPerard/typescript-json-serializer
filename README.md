@@ -2,7 +2,7 @@
 
 ![](https://github.com/GillianPerard/typescript-json-serializer/workflows/Build/badge.svg)
 ![npm](https://img.shields.io/npm/dt/typescript-json-serializer)
-![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/3.4.0)
+![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/3.4.1)
 [![Coverage Status](https://coveralls.io/repos/github/GillianPerard/typescript-json-serializer/badge.svg)](https://coveralls.io/github/GillianPerard/typescript-json-serializer)
 [![Known Vulnerabilities](https://snyk.io/test/github/gillianperard/typescript-json-serializer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/gillianperard/typescript-json-serializer?targetFile=package.json)
 
@@ -31,12 +31,19 @@ For example:
 }
 ```
 
+**WARNING:** If you use CRA (create-react-app) please refer to the [Using with Create React App](#using-with-create-react-app) section.
+
 ## Import
 
 There are two decorators and two functions that you can import inside a typescript file.
 
 ```typescript
-import { JsonProperty, Serializable, deserialize, serialize } from 'typescript-json-serializer';
+import {
+    JsonProperty,
+    Serializable,
+    deserialize,
+    serialize
+} from 'typescript-json-serializer';
 ```
 
 ## Library
@@ -73,7 +80,8 @@ type SerializableOptions = {
 // - the names of properties to merge (the `formatPropertyNames`
 //   from `Serializable` decorator is ignored)
 // - a boolean to tell that the property is a dictionary
-// - a boolean to tell that the property is required (throw an error if undefined, null or missing)
+// - a boolean to tell that the property is required
+//   (throw an error if undefined, null or missing)
 
 // BREAKING CHANGES: since version 3.0.0
 // - onSerialize has become afterSerialize
@@ -186,7 +194,8 @@ export class Human extends LivingBeing {
         // This comment works
         // Override LivingBeing id property name
         // and set required to true
-        @JsonProperty({name: 'humanId', required: true}) public name: string,
+        @JsonProperty({name: 'humanId', required: true})
+        public name: string,
         public id: number,
         @JsonProperty() public gender: Gender,
         /** This comment works */
@@ -214,7 +223,8 @@ export class Employee extends Human {
     /** The employee's email */
     @JsonProperty({required: true}) email: string;
 
-    /** Predicate function to determine if the property type is PhoneNumber or a primitive type */
+    /** Predicate function to determine if the property type
+      * is PhoneNumber or a primitive type */
     @JsonProperty({
         predicate: property => {
             if (property && property.value !== undefined) {
@@ -281,7 +291,8 @@ export class Panther extends Animal {
 }
 
 
-// Create a serializable class that extends Animal (which extends LivingBeing): Snake
+// Create a serializable class that extends Animal
+// (which extends LivingBeing): Snake
 
 @Serializable()
 export class Snake extends Animal {
@@ -295,7 +306,8 @@ export class Snake extends Animal {
 }
 
 
-// Create a serializable empty class that extends Animal (which extends LivingBeing): UnknownAnimal
+// Create a serializable empty class that extends Animal
+// (which extends LivingBeing): UnknownAnimal
 
 @Serializable()
 export class UnknownAnimal extends Animal {
@@ -308,12 +320,20 @@ export class UnknownAnimal extends Animal {
 // Create a serializable class: Zoo
 
 // Function to transform coordinates into an array
-const coordinatesToArray = (coordinates: { x: number; y: number; z: number }): Array<number> => {
+const coordinatesToArray = (coordinates: {
+    x: number;
+    y: number;
+    z: number;
+}): Array<number> => {
     return Object.values(coordinates);
 };
 
 // Function to transform an array into coordinates
-const arrayToCoordinates = (array: Array<number>): { x: number; y: number; z: number } => {
+const arrayToCoordinates = (array: Array<number>): {
+    x: number;
+    y: number;
+    z: number
+} => {
     return {
         x: array[0],
         y: array[1],
@@ -324,7 +344,9 @@ const arrayToCoordinates = (array: Array<number>): { x: number; y: number; z: nu
 // A predicate function use to determine what is the
 // right type of the data (Snake or Panther)
 const snakeOrPanther = animal => {
-    return animal && animal['isPoisonous'] !== undefined ? Snake : Panther;
+    return animal && animal['isPoisonous'] !== undefined
+        ? Snake
+        : Panther;
 };
 
 @Serializable()
@@ -339,7 +361,10 @@ export class Zoo {
 
     // Property with transform functions executed respectively
     // on serialize and on deserialize
-    @JsonProperty({ beforeDeserialize: arrayToCoordinates, afterSerialize: coordinatesToArray })
+    @JsonProperty({
+        beforeDeserialize: arrayToCoordinates,
+        afterSerialize: coordinatesToArray
+    })
     coordinates: { x: number; y: number; z: number };
 
     // Array of none-basic type elements
@@ -393,11 +418,15 @@ export class Organization extends Society {
     // To merge multiple properties in a single one
     // use the property `names`.
     // If you don't create your own merge with the `beforeDeserialize`
-    // and `afterSerialize` function, it will just merge properties in this
-    // one when using `deserialize` and split back
+    // and `afterSerialize` function, it will just merge properties
+    // in this one when using `deserialize` and split back
     // when using `serialize`
     @JsonProperty({
-        names: ['_mainShareholder', '_secondaryShareholder', '_thirdShareholder'],
+        names: [
+            '_mainShareholder',
+            '_secondaryShareholder',
+            '_thirdShareholder'
+        ],
         type: Human,
         beforeDeserialize: value => Object.values(value),
         afterSerialize: value => {
@@ -593,6 +622,71 @@ const organization = deserialize<Organization>(json, Organization);
 const data = serialize(organization);
 // or
 const data = serialize(organization, false);
+```
+
+## Using with Create React App
+
+If you are using [CRA](https://create-react-app.dev/) to create your React App you will need to add a custom configuration in order to add `Decorator` and `Metadata` features (not supported by React) using [customize-cra](https://github.com/arackaf/customize-cra) and [react-app-rewired](https://github.com/timarney/react-app-rewired/).
+
+First, don't forget to add `emitDecoratorMetadata` and `experimentalDecorators` inside the `tsconfig.json` file (explain in the [Installation](#installation) section).
+
+Next install the dependencies to override the React build config:
+
+```sh
+npm install -D customize-cra react-app-rewired
+# or
+yarn add -D customize-cra react-app-rewired
+```
+
+Replace the scripts using `react-scripts` in the `package.json` file by `react-app-rewired`:
+
+```json
+// example
+{
+    ...
+    "scripts": {
+        ...
+        "start": "react-app-rewired start",
+        "build": "react-app-rewired build",
+        "test": "react-app-rewired test",
+        "eject": "react-app-rewired eject"
+        ...
+    },
+    ...
+}
+```
+
+Install dependencies to add support for `Decorator` and `Metadata`:
+
+```sh
+npm install -D @babel/plugin-proposal-decorators \
+@babel/preset-typescript \
+babel-plugin-parameter-decorator \
+babel-plugin-transform-typescript-metadata
+# or
+yarn add -D @babel/plugin-proposal-decorators \
+@babel/preset-typescript \
+babel-plugin-parameter-decorator \
+babel-plugin-transform-typescript-metadata
+```
+
+Create the `config-overrides.js` file in the root of your project  
+with the following content:
+
+```js
+const {
+  override,
+  addDecoratorsLegacy,
+  addBabelPlugin,
+  addBabelPreset,
+} = require("customize-cra");
+
+module.exports = override(
+  addDecoratorsLegacy(),
+  addBabelPlugin("babel-plugin-parameter-decorator"),
+  addBabelPlugin("babel-plugin-transform-typescript-metadata"),
+  addBabelPreset(["@babel/preset-typescript"])
+);
 ```
 
 ## Test
