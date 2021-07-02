@@ -109,7 +109,8 @@ function getBaseClassNames(target: Object): Array<string> {
  */
 function getPropertyNames(ctor: object): Map<number, string> {
     // Remove all kind of comments
-    const ctorWithoutComments = ctor.toString().replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, '');
+    const ctorWithoutClassBody = ctor.toString().split('}')[0];
+    const ctorWithoutComments = ctorWithoutClassBody.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, '');
     const ctorOnSingleLine = ctorWithoutComments.replace(/[\r\t\n\v\f]/g, '');
     const ctorWithoutSuccessiveWhiteSpaces = ctorOnSingleLine.replace(/( +)/g, ' ');
 
