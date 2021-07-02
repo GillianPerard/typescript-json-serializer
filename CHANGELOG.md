@@ -1,3 +1,10 @@
+<a name="3.4.2"></a>
+# 3.4.2 (2021-07-02)
+
+### Bug fixes
+
+* **getPropertyNames:** remove class body before parsing ctor ([#145](https://github.com/GillianPerard/typescript-json-serializer/issues/145)) ([6ff839f](https://github.com/GillianPerard/typescript-json-serializer/commit/6ff839f0a252b8c7dd71485d3ee357447dfa8895))
+
 <a name="3.4.1"></a>
 # 3.4.1 (2021-06-11)
 
