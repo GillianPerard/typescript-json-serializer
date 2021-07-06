@@ -3,9 +3,7 @@ import { Human } from './human';
 import { Society } from './society';
 import { Zoo } from './zoo';
 
-const prefixWithUnderscore = (propertyName: string) => {
-    return `_${propertyName}`;
-};
+const prefixWithUnderscore = (propertyName: string) => `_${propertyName}`;
 
 @Serializable({ formatPropertyNames: prefixWithUnderscore })
 export class Organization extends Society {

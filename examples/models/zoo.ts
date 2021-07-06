@@ -7,21 +7,17 @@ import { Snake } from './snake';
 import { UnknownAnimal } from './unknown-animal';
 import { PhoneNumber } from './phone-number';
 
-const snakeOrPanther = (animal: any) => {
-    return animal && animal['isPoisonous'] !== undefined ? Snake : Panther;
-};
+const snakeOrPanther = (animal: any) =>
+    animal && animal['isPoisonous'] !== undefined ? Snake : Panther;
 
-const coordinatesToArray = (coordinates: { x: number; y: number; z: number }) => {
-    return Object.values(coordinates);
-};
+const coordinatesToArray = (coordinates: { x: number; y: number; z: number }) =>
+    Object.values(coordinates);
 
-const arrayToCoordinates = (array: Array<number>) => {
-    return {
-        x: array[0],
-        y: array[1],
-        z: array[2]
-    };
-};
+const arrayToCoordinates = (array: Array<number>) => ({
+    x: array[0],
+    y: array[1],
+    z: array[2]
+});
 
 @Serializable()
 export class Zoo {

@@ -55,9 +55,7 @@ describe('serialize', () => {
         const result = serialize(deserializedData, false);
         const count = result.zoos
             .find((x: Zoo) => x.id === 15)
-            .Animals.filter((animal: any) => {
-                return animal.hasOwnProperty('childrenIdentifiers');
-            }).length;
+            .Animals.filter((animal: any) => animal.hasOwnProperty('childrenIdentifiers')).length;
         expect(count).toBe(1);
     });
 

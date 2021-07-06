@@ -1,15 +1,8 @@
 {
+    "endOfLine": "auto",
     "printWidth": 100,
     "singleQuote": true,
     "tabWidth": 4,
     "trailingComma": "none",
-    "arrowParens": "avoid",
-    "overrides": [
-        {
-            "files": "*.yml",
-            "options": {
-                "tabWidth": 2
-            }
-        }
-    ]
+    "arrowParens": "avoid"
 }

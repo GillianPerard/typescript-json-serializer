@@ -91,7 +91,7 @@ interface MetadataMap {
  * @param {Object} target The target class from which the parent classes are extracted
  * @returns {Array<string>} All the base class names
  */
-function getBaseClassNames(target: Object): Array<string> {
+const getBaseClassNames = (target: Object): Array<string> => {
     const baseClass = Reflect.getPrototypeOf(target);
 
     if (!baseClass || !baseClass['name']) {
@@ -99,7 +99,7 @@ function getBaseClassNames(target: Object): Array<string> {
     }
 
     return [...getBaseClassNames(baseClass), baseClass['name']];
-}
+};
 
 /**
  * Function to find the name of function properties
@@ -107,7 +107,7 @@ function getBaseClassNames(target: Object): Array<string> {
  * @param {object} ctor The constructor from which the properties are extracted
  * @returns {Array<string>} All the property names
  */
-function getPropertyNames(ctor: object): Map<number, string> {
+const getPropertyNames = (ctor: object): Map<number, string> => {
     // Remove all kind of comments
     const ctorWithoutClassBody = ctor.toString().split('}')[0];
     const ctorWithoutComments = ctorWithoutClassBody.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, '');
@@ -138,15 +138,17 @@ function getPropertyNames(ctor: object): Map<number, string> {
     }
 
     return propertyNames;
-}
+};
 
 /**
  * Decorator to take the property in account during the serialize and deserialize function
+ *
  * @param {Args=} args Arguments to describe the property
  */
 
-export function JsonProperty(args?: Args): Function {
-    return (target: Object | Function, key: string, index: number): void => {
+export const JsonProperty =
+    (args?: Args): Function =>
+    (target: Object | Function, key: string, index: number): void => {
         if (key === undefined && target['prototype']) {
             const type: Function = Reflect.getMetadata(designParamTypes, target)[index];
             const keys = getPropertyNames(target['prototype'].constructor);
@@ -166,20 +168,20 @@ export function JsonProperty(args?: Args): Function {
         map[key] = getMetadata(key, args as Args);
         Reflect.defineMetadata(apiMapTargetName, map, target);
     };
-}
 
 /**
  * Decorator to make a class Serializable
+ *
  * @param {{formatPropertyNames: FormatPropertyNameProto}=} options The options of the serializable class
  *
  * BREAKING CHANGE: Since version 2.0.0 the parameter `baseClassName` is not needed anymore
  */
-export function Serializable(options?: SerializableOptions): Function {
-    return (target: Object) => {
+export const Serializable =
+    (options?: SerializableOptions): Function =>
+    (target: Object) => {
         const baseClassNames = getBaseClassNames(target);
         Reflect.defineMetadata(apiMapSerializable, { baseClassNames, options }, target);
     };
-}
 
 /**
  * Function to retrieve all base class metadata
@@ -188,14 +190,11 @@ export function Serializable(options?: SerializableOptions): Function {
  * @param {any} instance The instance target from which the parents metadata are extracted
  * @returns {MetadataMap} All base class metadata
  */
-function getBaseClassMetadataMaps(
+const getBaseClassMetadataMaps = (
     baseClassNames: Array<string>,
     instance: any
-): Array<MetadataMap> {
-    return baseClassNames.map(baseClassName =>
-        Reflect.getMetadata(`${apiMap}${baseClassName}`, instance)
-    );
-}
+): Array<MetadataMap> =>
+    baseClassNames.map(baseClassName => Reflect.getMetadata(`${apiMap}${baseClassName}`, instance));
 
 /**
  * Function to merge metadata maps
@@ -203,7 +202,7 @@ function getBaseClassMetadataMaps(
  * @param metadataMaps The metadata maps to merge
  * @returns The new metadata map created from the merge of all metadata maps provided
  */
-function mergeMetadataMap(...metadataMaps: Array<MetadataMap>): MetadataMap {
+const mergeMetadataMap = (...metadataMaps: Array<MetadataMap>): MetadataMap => {
     const mergedMetadataMap: MetadataMap = {};
 
     metadataMaps.forEach(metadataMap => {
@@ -215,7 +214,7 @@ function mergeMetadataMap(...metadataMaps: Array<MetadataMap>): MetadataMap {
     });
 
     return mergedMetadataMap;
-}
+};
 
 /**
  * Function to deserialize json into a class
@@ -224,7 +223,7 @@ function mergeMetadataMap(...metadataMaps: Array<MetadataMap>): MetadataMap {
  * @param {new (...params: Array<any>) => T} type The class in which we want to deserialize
  * @returns {T} The instance of the specified type containing all deserialized properties
  */
-export function deserialize<T>(json: any, type: new (...params: Array<any>) => T): T {
+export const deserialize = <T>(json: any, type: new (...params: Array<any>) => T): T => {
     if ([null, undefined].includes(json)) {
         return json as never;
     }
@@ -238,7 +237,7 @@ export function deserialize<T>(json: any, type: new (...params: Array<any>) => T
     }
 
     const instance: any = new type();
-    const instanceName = instance.constructor.name;
+    const instanceName: string = instance.constructor.name;
     const { baseClassNames, options } =
         (Reflect.getMetadata(apiMapSerializable, type) as SerializableMetadata) ?? {};
     const apiMapInstanceName = `${apiMap}${instanceName}`;
@@ -277,7 +276,7 @@ export function deserialize<T>(json: any, type: new (...params: Array<any>) => T
     });
 
     return instance;
-}
+};
 
 /**
  * Function to serialize a class into json
@@ -286,7 +285,7 @@ export function deserialize<T>(json: any, type: new (...params: Array<any>) => T
  * @param {boolean} removeUndefined Indicates if you want to keep or remove undefined values
  * @returns {any} The json object
  */
-export function serialize(instance: any, removeUndefined: boolean = true): any {
+export const serialize = (instance: any, removeUndefined: boolean = true): any => {
     if ([undefined, null].includes(instance) || typeof instance !== Type.Object) {
         return instance;
     }
@@ -356,7 +355,7 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
     });
 
     return json;
-}
+};
 
 /**
  * Function to convert class property to json data
@@ -367,12 +366,12 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
  * @param {boolean} removeUndefined Indicates if you want to keep or remove undefined value
  * @returns {any} The converted property
  */
-function convertPropertyToData(
+const convertPropertyToData = (
     instance: Function,
     key: string,
     metadata: Metadata,
     removeUndefined: boolean
-): any {
+): any => {
     const property: any = instance[key];
     const type: any = Reflect.getMetadata(designType, instance, key);
     const isArray = type.name ? type.name.toLocaleLowerCase() === Type.Array : false;
@@ -402,22 +401,23 @@ function convertPropertyToData(
     }
 
     return property;
-}
+};
 
 /**
  * Function to convert json data to the class property
+ *
  * @param {Function} instance The instance containing the property to convert
  * @param {string} key The name of the property to convert
  * @param {Metadata} metadata The metadata of the property to convert
  * @param {any} json Json containing the values
  */
-function convertDataToProperty(
+const convertDataToProperty = (
     instance: Function,
     key: string,
     metadata: Metadata,
     json: any,
     formatPropertyName?: FormatPropertyNameProto
-) {
+) => {
     let data: any;
 
     if ([null, undefined].includes(json)) {
@@ -518,7 +518,7 @@ function convertDataToProperty(
     }
 
     return result;
-}
+};
 
 /**
  * Function to test if a class is serializable
@@ -526,9 +526,7 @@ function convertDataToProperty(
  * @param {any} type The type to test
  * @returns {boolean} If the type is serializable or not
  */
-function isSerializable(type: any): boolean {
-    return Reflect.hasOwnMetadata(apiMapSerializable, type);
-}
+const isSerializable = (type: any): boolean => Reflect.hasOwnMetadata(apiMapSerializable, type);
 
 /**
  * Function to transform the JsonProperty value into Metadata
@@ -537,7 +535,7 @@ function isSerializable(type: any): boolean {
  * @param {Args} args Arguments to describe the property
  * @returns {Metadata} The metadata object
  */
-function getMetadata(key: string, args: Args): Metadata {
+const getMetadata = (key: string, args: Args): Metadata => {
     if (!args) {
         return {
             name: key.toString(),
@@ -578,7 +576,7 @@ function getMetadata(key: string, args: Args): Metadata {
     }
 
     return metadata as Metadata;
-}
+};
 
 /**
  * Function to cast simple type data into the real class property type
@@ -587,7 +585,12 @@ function getMetadata(key: string, args: Args): Metadata {
  * @param {any} data The data to cast
  * @returns {any} The casted data
  */
-function castSimpleData(type: string, data: any, propertyName?: string, className?: string): any {
+const castSimpleData = (
+    type: string,
+    data: any,
+    propertyName?: string,
+    className?: string
+): any => {
     if (type === undefined || type === null) {
         return data;
     }
@@ -637,4 +640,4 @@ function castSimpleData(type: string, data: any, propertyName?: string, classNam
         default:
             return data;
     }
-}
+};
