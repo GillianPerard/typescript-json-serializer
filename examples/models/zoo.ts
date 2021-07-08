@@ -41,10 +41,17 @@ export class Zoo {
     animals: Array<Animal>;
     @JsonProperty({ predicate: snakeOrPanther })
     mascot: Panther | Snake;
-    @JsonProperty({ type: UnknownAnimal })
-    unknownAnimals: Array<UnknownAnimal>;
-    @JsonProperty({ isDictionary: true })
-    phoneBook: { [id: string]: PhoneNumber };
+    @JsonProperty({ isDictionary: true, type: UnknownAnimal })
+    unknownAnimals: { [id: string]: UnknownAnimal };
+    @JsonProperty({
+        isDictionary: true,
+        predicate: property => {
+            if (property && property.value !== undefined) {
+                return PhoneNumber;
+            }
+        }
+    })
+    phoneBook: { [id: string]: PhoneNumber | string };
 
     isOpen = true;
 

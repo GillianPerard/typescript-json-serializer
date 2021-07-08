@@ -111,11 +111,11 @@ export const data: any = {
                 isSpeckled: false,
                 status: 'Sick'
             },
-            unknownAnimals: [
-                {
+            unknownAnimals: {
+                '1': {
                     name: null
                 }
-            ],
+            },
             phoneBook: {
                 '1': {
                     value: '111-111-1111'
@@ -123,9 +123,7 @@ export const data: any = {
                 '2': {
                     value: '222-222-2222'
                 },
-                '3': {
-                    value: '333-333-3333'
-                }
+                '3': '333-333-3333'
             }
         },
         {
@@ -148,9 +146,13 @@ export const data: any = {
             employees: [],
             Animals: [],
             mascot: null,
-            unknownAnimals: []
+            unknownAnimals: {}
         }
     ],
+    _zoosName: {
+        '15': 'The Greatest Zoo',
+        '16': 'Zoo Zoo'
+    },
     _mainShareholder: {
         humanId: 100,
         name: 'Elon Musk',
@@ -240,7 +242,7 @@ schrodinger.id = data.zoos[0].Animals[3].id;
 schrodinger.numberOfPaws = data.zoos[0].Animals[3].numberOfPaws;
 schrodinger.status = Status.DeadAndAlive;
 
-const unknownAnimal = new UnknownAnimal(data.zoos[0].unknownAnimals[0].name);
+const unknownAnimal = new UnknownAnimal(data.zoos[0].unknownAnimals['1'].name);
 
 const greatZoo = new Zoo();
 greatZoo.animals = [bagheera, jolene, ka, schrodinger];
@@ -256,11 +258,11 @@ greatZoo.employees = [bob, mikasa, red, fried];
 greatZoo.id = data.zoos[0].id;
 greatZoo.mascot = bagheera;
 greatZoo.name = data.zoos[0].name;
-greatZoo.unknownAnimals = [unknownAnimal];
+greatZoo.unknownAnimals = { '1': unknownAnimal };
 greatZoo.phoneBook = {
     '1': new PhoneNumber(data.zoos[0].phoneBook['1'].value),
     '2': new PhoneNumber(data.zoos[0].phoneBook['2'].value),
-    '3': new PhoneNumber(data.zoos[0].phoneBook['3'].value)
+    '3': data.zoos[0].phoneBook['3']
 };
 
 const zooZoo = new Zoo();
@@ -277,7 +279,7 @@ zooZoo.employees = [];
 zooZoo.id = data.zoos[1].id;
 zooZoo.mascot = data.zoos[1].mascot;
 zooZoo.name = data.zoos[1].name;
-zooZoo.unknownAnimals = [];
+zooZoo.unknownAnimals = {};
 
 const elonMusk = new Human(
     data._mainShareholder.name,
@@ -290,6 +292,9 @@ const organization = new Organization();
 organization.id = data._id;
 organization.name = data._name;
 organization.zoos = [greatZoo, zooZoo];
+organization.zoosName = {};
+organization.zoosName[greatZoo.id] = greatZoo.name;
+organization.zoosName[zooZoo.id] = zooZoo.name;
 organization.shareholders = [elonMusk, null, undefined];
 
 export const deserializedData = organization;
