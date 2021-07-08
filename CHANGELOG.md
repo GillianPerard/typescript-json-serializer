@@ -1,3 +1,10 @@
+<a name="3.4.3"></a>
+# 3.4.3 (2021-07-08)
+
+### Refactors
+
+* **getPropertyNames:** remove complexity by removing two loops ([6dd896a](https://github.com/GillianPerard/typescript-json-serializer/commit/6dd896acb9548cb0c8b145450dc778dce684331f))
+
 <a name="3.4.2"></a>
 # 3.4.2 (2021-07-02)
 
