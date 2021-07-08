@@ -8,6 +8,8 @@ const prefixWithUnderscore = (propertyName: string) => `_${propertyName}`;
 @Serializable({ formatPropertyNames: prefixWithUnderscore })
 export class Organization extends Society {
     @JsonProperty({ name: 'zoos', type: Zoo }) zoos: Array<Zoo>;
+    @JsonProperty({ isDictionary: true })
+    zoosName: { [id: string]: string };
     @JsonProperty({
         names: ['_mainShareholder', '_secondaryShareholder', '_thirdShareholder'],
         type: Human,

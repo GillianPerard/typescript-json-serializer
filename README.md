@@ -386,13 +386,20 @@ export class Zoo {
     @JsonProperty({ predicate: snakeOrPanther })
     mascot: Panther | Snake;
 
-    // Array of empty child classes
-    @JsonProperty({ type: UnknownAnimal })
-    unknownAnimals: Array<UnknownAnimal>;
+    // Dictionary of empty child classes
+    @JsonProperty({ isDictionary: true, type: UnknownAnimal })
+    unknownAnimals: { [id: string]: UnknownAnimal };
 
-    // Dictionary of PhoneNumber
-    @JsonProperty({ type: PhoneNumber, isDictionary: true })
-    phoneBook: {[id: string]: PhoneNumber};
+    // Dictionary of PhoneNumber or string
+    @JsonProperty({
+        isDictionary: true,
+        predicate: property => {
+            if (property && property.value !== undefined) {
+                return PhoneNumber;
+            }
+        }
+    })
+    phoneBook: { [id: string]: PhoneNumber | string };
 
     // Property which will be not serialized and deserialized
     // but event accessible and editable from Zoo class.
@@ -414,6 +421,9 @@ const prefixWithUnderscore = (propertyName: string) => `_${propertyName}`
 export class Organization extends Society {
     // Override `formatPropertyNames`
     @JsonProperty({ name: 'zoos', type: Zoo }) zoos: Array<Zoo>;
+
+    @JsonProperty({ isDictionary: true })
+    zoosName: { [id: string]: string };
 
     // To merge multiple properties in a single one
     // use the property `names`.
@@ -457,6 +467,10 @@ export class Organization {
 export const data: any = {
     _id: '1',
     _name: 'Zoos Organization',
+    _zoosName: {
+        '15': 'The Greatest Zoo',
+        '16': 'Zoo Zoo'
+    },
     zoos: [
         {
             id: 15,
@@ -556,11 +570,11 @@ export const data: any = {
                 isSpeckled: false,
                 status: 'Sick'
             },
-            unknownAnimals: [
-                {
+            unknownAnimals: {
+                '1': {
                     name: null
                 }
-            ],
+            },
             phoneBook: {
                 '1': {
                     value: '111-111-1111'
@@ -568,9 +582,7 @@ export const data: any = {
                 '2': {
                     value: '222-222-2222'
                 },
-                '3': {
-                    value: '333-333-3333'
-                }
+                '3': '333-333-3333'
             }
         },
         {
@@ -593,7 +605,7 @@ export const data: any = {
             employees: [],
             Animals: [],
             mascot: null,
-            unknownAnimals: []
+            unknownAnimals: {}
         }
     ],
     _mainShareholder: {
