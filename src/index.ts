@@ -111,25 +111,24 @@ const getPropertyNames = (ctor: object): Map<number, string> => {
     // Remove all kind of comments
     const ctorWithoutClassBody = ctor.toString().split('}')[0];
     const ctorWithoutComments = ctorWithoutClassBody.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, '');
-    const ctorOnSingleLine = ctorWithoutComments.replace(/[\r\t\n\v\f]/g, '');
-    const ctorWithoutSuccessiveWhiteSpaces = ctorOnSingleLine.replace(/( +)/g, ' ');
+    const ctorOnSingleLine = ctorWithoutComments.replace(/[\r\t\n\v\f ]/g, '');
 
     // Parse function body
     const constructorParamPattern = /(?:.*(?:constructor|function).*?(?=\())(?:\()(.+?(?=\)))/m;
     const propertyPattern = /(?:this\.)([^,;\n}]+)/gm;
     const propertyNames = new Map<number, string>();
-    const paramsExecArray = constructorParamPattern.exec(ctorWithoutSuccessiveWhiteSpaces);
+    const paramsExecArray = constructorParamPattern.exec(ctorOnSingleLine);
 
     if (!paramsExecArray || !paramsExecArray.length) {
         return propertyNames;
     }
 
-    const params = paramsExecArray[1].replace(/ /g, '').split(',');
+    const params = paramsExecArray[1].split(',');
 
     // Get params
     let match: RegExpExecArray | null;
-    while ((match = propertyPattern.exec(ctorWithoutSuccessiveWhiteSpaces))) {
-        const matchResult = match[1].replace(/ /g, '').split('=');
+    while ((match = propertyPattern.exec(ctorOnSingleLine))) {
+        const matchResult = match[1].split('=');
         const index = params.findIndex(param => param === matchResult[1]);
 
         if (index > -1) {
