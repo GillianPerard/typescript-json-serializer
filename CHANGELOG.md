@@ -1,3 +1,10 @@
+<a name="3.4.4"></a>
+# 3.4.4 (2021-07-10)
+
+### Bug fixes
+
+* **deps:** move `tslib` from `devDependencies` to `dependencies` to avoid the following error: `"export '__spreadArray' (imported as 'e') was not found in 'tslib'` ([#148](https://github.com/GillianPerard/typescript-json-serializer/issues/148)) ([5895ccf](https://github.com/GillianPerard/typescript-json-serializer/commit/5895ccff349cb5af1b5c5f82f10c73382d322d2d))
+
 <a name="3.4.3"></a>
 # 3.4.3 (2021-07-08)
 
