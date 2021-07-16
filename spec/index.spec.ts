@@ -83,42 +83,45 @@ describe('serialize', () => {
     });
 
     it('should not have undefined value if removeUndefined param is not set', () => {
-        expect(serialize(organizationWithUndefinedValue)).toEqual({ _id: '4', zoos: [{ id: 2 }] });
+        expect(serialize(organizationWithUndefinedValue)).toEqual({
+            _id: '4',
+            zoos: [{ id: 2 }]
+        });
     });
 });
 
 describe('deserialize', () => {
     it('should return the deserialized object', () => {
-        expect(deserialize<Organization>(data, Organization)).toEqual(deserializedData);
+        expect(deserialize(data, Organization)).toEqual(deserializedData);
     });
 
     it('should return the deserialized object for json string', () => {
         const json = JSON.stringify(data);
-        expect(deserialize<Organization>(json, Organization)).toEqual(deserializedData);
+        expect(deserialize(json, Organization)).toEqual(deserializedData);
     });
 
     it('should return the deserialized object ignoring unknown properties', () => {
         const alteredData = { ...data };
         alteredData['fake'] = 'fake';
         alteredData.zoos[0]['Animals'][0]['fake'] = 'fake';
-        expect(deserialize<Organization>(alteredData, Organization)).toEqual(deserializedData);
+        expect(deserialize(alteredData, Organization)).toEqual(deserializedData);
     });
 
     it('should return object without properties except for the non-JsonProperty property', () => {
         const badData = {
             fake: 'fake'
         };
-        expect(deserialize<Zoo>(badData, Zoo)).toEqual({ isOpen: true });
+        expect(deserialize(badData, Zoo)).toEqual({ isOpen: true });
     });
 
     it('should return the right object type', () => {
-        const object = deserialize<Animal>({ name: 'My beautiful animal' }, Animal);
+        const object = deserialize({ name: 'My beautiful animal' }, Animal);
         const isAnimal = object instanceof Animal;
         expect(isAnimal).toBeTruthy();
     });
 
     it('should throw an error if required property is missing', () => {
-        const fn = () => deserialize<Employee>(fried, Employee);
+        const fn = () => deserialize(fried, Employee);
         const fried = {
             employeeId: 4,
             name: 'Fried Richter',
@@ -131,7 +134,7 @@ describe('deserialize', () => {
     });
 
     it('should throw an error if required property is null', () => {
-        const fn = () => deserialize<Employee>(fried, Employee);
+        const fn = () => deserialize(fried, Employee);
         const fried = {
             employeeId: 4,
             name: 'Fried Richter',
@@ -145,7 +148,7 @@ describe('deserialize', () => {
     });
 
     it('should throw an error if required property is undefined', () => {
-        const fn = () => deserialize<Employee>(fried, Employee);
+        const fn = () => deserialize(fried, Employee);
         const fried = {
             employeeId: 4,
             name: 'Fried Richter',
@@ -159,7 +162,7 @@ describe('deserialize', () => {
     });
 
     it('should throw an error if extended required property is missing', () => {
-        const fn = () => deserialize<Employee>(fried, Employee);
+        const fn = () => deserialize(fried, Employee);
         const fried = {
             name: 'Fried Richter',
             birthDate: '1994-04-01T22:00:00.000Z',
@@ -189,14 +192,14 @@ describe('stringify/parse', () => {
         const json = serialize(deserializedData);
         const jsonString = JSON.stringify(json, null, 4);
         const jsonObj = JSON.parse(jsonString);
-        const obj = deserialize<Organization>(jsonObj, Organization);
+        const obj = deserialize(jsonObj, Organization);
         expect(obj).toEqual(deserializedData);
     });
 
     it('should serialize and deserialize correctly even if data are stringified manually from json and parsed by deserialize function', () => {
         const json = serialize(deserializedData);
         const jsonString = JSON.stringify(json, null, 4);
-        const obj = deserialize<Organization>(jsonString, Organization);
+        const obj = deserialize(jsonString, Organization);
         expect(obj).toEqual(deserializedData);
     });
 });
