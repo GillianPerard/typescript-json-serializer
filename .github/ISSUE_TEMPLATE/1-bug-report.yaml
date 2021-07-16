@@ -93,6 +93,7 @@ body:
       attributes:
           label: On which OS the bug appears?
           placeholder: e.g. Windows 10, macOS 11.4, other
+      validations:
           required: true
 
     - type: input
@@ -100,6 +101,7 @@ body:
       attributes:
           label: What is your project type?
           placeholder: e.g. NodeJs, Angular, React, other
+      validations:
           required: true
 
     - type: input
