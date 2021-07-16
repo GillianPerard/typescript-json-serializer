@@ -1,0 +1,19 @@
+name: Feature Request
+description: Suggest a feature for typescript-json-serializer
+title: '[FEAT]: '
+labels: [enhancement]
+assignees:
+    - GillianPerard
+
+body:
+    - type: textarea
+      id: description
+      attributes:
+          label: Description
+      validations:
+          required: true
+
+    - type: textarea
+      id: proposed-solution
+      attributes:
+          label: Proposed solution
