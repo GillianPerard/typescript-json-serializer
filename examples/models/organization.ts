@@ -11,7 +11,7 @@ export class Organization extends Society {
     @JsonProperty({ isDictionary: true })
     zoosName: { [id: string]: string };
     @JsonProperty({
-        names: ['_mainShareholder', '_secondaryShareholder', '_thirdShareholder'],
+        name: ['_mainShareholder', '_secondaryShareholder', '_thirdShareholder'],
         type: Human,
         beforeDeserialize: value => Object.values(value),
         afterSerialize: value => ({

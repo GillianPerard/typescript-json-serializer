@@ -101,19 +101,19 @@ export const serialize = (instance: any, removeUndefined: boolean = true): any =
 
             instance[key] = initialValue || instance[key];
 
-            if (metadata['names']) {
-                metadata['names'].forEach((name: string) => {
+            if (Array.isArray(metadata.name)) {
+                metadata.name.forEach((name: string) => {
                     if (!removeUndefined || (removeUndefined && data[name] !== undefined)) {
                         json[name] = data[name];
                     }
                 });
             } else {
                 if (!removeUndefined || (removeUndefined && data !== undefined)) {
-                    if (!metadata['isNameOverridden'] && options?.formatPropertyNames) {
-                        const name = options.formatPropertyNames(metadata['name']);
+                    if (!metadata.isNameOverridden && options?.formatPropertyNames) {
+                        const name = options.formatPropertyNames(metadata.name);
                         json[name] = data;
                     } else {
-                        json[metadata['name']] = data;
+                        json[metadata.name] = data;
                     }
                 }
             }
@@ -176,11 +176,10 @@ const convertDataToProperty = (
         return json;
     }
 
-    if ('names' in metadata) {
-        const object = {};
-        metadata.names.forEach((name: string) => (object[name] = json[name]));
-        data = object;
-    } else if ('name' in metadata && !metadata.isNameOverridden && formatPropertyName) {
+    if (Array.isArray(metadata.name)) {
+        data = {};
+        metadata.name.forEach((name: string) => (data[name] = json[name]));
+    } else if (!metadata.isNameOverridden && formatPropertyName) {
         const name = formatPropertyName(metadata.name);
         data = json[name];
     } else {
