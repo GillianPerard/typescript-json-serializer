@@ -1,7 +1,7 @@
-import { JsonProperty, Serializable } from '../../src';
+import { JsonProperty, JsonObject } from '../../src';
 import { Animal } from './animal';
 
-@Serializable()
+@JsonObject()
 export class Snake extends Animal {
     @JsonProperty() isPoisonous: boolean;
 

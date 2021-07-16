@@ -1,8 +1,8 @@
-import { Serializable } from '../../src';
+import { JsonObject } from '../../src';
 
 import { Animal } from './animal';
 
-@Serializable()
+@JsonObject()
 export class UnknownAnimal extends Animal {
     constructor(name: string) {
         super(name);

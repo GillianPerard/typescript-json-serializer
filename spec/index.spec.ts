@@ -10,36 +10,36 @@ import { Panther } from '../examples/models/panther';
 import { Zoo } from '../examples/models/zoo';
 import { Employee } from '../examples/models/employee';
 
-describe('Serializable', () => {
+describe('JsonObject', () => {
     it('should return no metadata', () => {
-        const hasMetadata = Reflect.hasOwnMetadata('api:map:serializable', Dummy);
+        const hasMetadata = Reflect.hasOwnMetadata('api:map:jsonObject', Dummy);
         expect(hasMetadata).toBe(false);
     });
 
     it('should return metadata with no base class names and no options', () => {
-        const hasMetadata = Reflect.hasOwnMetadata('api:map:serializable', Zoo);
-        const metadata = Reflect.getOwnMetadata('api:map:serializable', Zoo);
+        const hasMetadata = Reflect.hasOwnMetadata('api:map:jsonObject', Zoo);
+        const metadata = Reflect.getOwnMetadata('api:map:jsonObject', Zoo);
         expect(hasMetadata).toBe(true);
         expect(metadata).toEqual({ baseClassNames: [], options: undefined });
     });
 
     it('should return metadata with 1 base class name and no options', () => {
-        const hasMetadata = Reflect.hasOwnMetadata('api:map:serializable', Animal);
-        const metadata = Reflect.getOwnMetadata('api:map:serializable', Animal);
+        const hasMetadata = Reflect.hasOwnMetadata('api:map:jsonObject', Animal);
+        const metadata = Reflect.getOwnMetadata('api:map:jsonObject', Animal);
         expect(hasMetadata).toBe(true);
         expect(metadata).toEqual({ baseClassNames: ['LivingBeing'], options: undefined });
     });
 
     it('should return metadata with 2 base class names and no options', () => {
-        const hasMetadata = Reflect.hasOwnMetadata('api:map:serializable', Panther);
-        const metadata = Reflect.getOwnMetadata('api:map:serializable', Panther);
+        const hasMetadata = Reflect.hasOwnMetadata('api:map:jsonObject', Panther);
+        const metadata = Reflect.getOwnMetadata('api:map:jsonObject', Panther);
         expect(hasMetadata).toBe(true);
         expect(metadata).toEqual({ baseClassNames: ['LivingBeing', 'Animal'], options: undefined });
     });
 
     it('should return metadata with 1 base class name and formatPropertyNames option', () => {
-        const hasMetadata = Reflect.hasOwnMetadata('api:map:serializable', Organization);
-        const metadata = Reflect.getOwnMetadata('api:map:serializable', Organization);
+        const hasMetadata = Reflect.hasOwnMetadata('api:map:jsonObject', Organization);
+        const metadata = Reflect.getOwnMetadata('api:map:jsonObject', Organization);
         expect(hasMetadata).toBe(true);
         expect(metadata.baseClassNames).toEqual(['Society']);
         expect(metadata?.options?.formatPropertyNames).not.toBeUndefined();

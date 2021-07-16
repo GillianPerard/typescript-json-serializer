@@ -1,3 +1,3 @@
 export { deserialize, serialize } from './serialization';
-export { Serializable } from './serializable';
+export { JsonObject } from './json-object';
 export { JsonProperty } from './json-property';

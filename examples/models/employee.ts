@@ -1,10 +1,10 @@
-import { JsonProperty, Serializable } from '../../src';
+import { JsonProperty, JsonObject } from '../../src';
 
 import { Gender } from './gender';
 import { Human } from './human';
 import { PhoneNumber } from './phone-number';
 
-@Serializable()
+@JsonObject()
 export class Employee extends Human {
     /** The employee's email */
     @JsonProperty({ required: true }) email: string;
