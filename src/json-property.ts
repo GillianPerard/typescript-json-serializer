@@ -21,45 +21,29 @@ export interface JsonPropertiesMetadata {
 
 export type JsonPropertyMetadata =
     | ({
-          name: string;
+          name: string | Array<string>;
           type?: Function;
           isDictionary?: boolean;
           isNameOverridden: boolean;
       } & JsonPropertyBaseMetadata)
     | ({
-          name: string;
+          name: string | Array<string>;
           predicate: PredicateProto;
           isDictionary?: boolean;
           isNameOverridden: boolean;
-      } & JsonPropertyBaseMetadata)
-    | ({
-          names: Array<string>;
-          type: Function;
-      } & JsonPropertyBaseMetadata)
-    | ({
-          names: Array<string>;
-          predicate: PredicateProto;
       } & JsonPropertyBaseMetadata);
 
 type JsonPropertyOptions =
     | string
     | ({
-          name?: string;
+          name?: string | Array<string>;
           type?: Function;
           isDictionary?: boolean;
       } & JsonPropertyBaseMetadata)
     | ({
-          name?: string;
+          name?: string | Array<string>;
           predicate?: PredicateProto;
           isDictionary?: boolean;
-      } & JsonPropertyBaseMetadata)
-    | ({
-          names: Array<string>;
-          type?: Function;
-      } & JsonPropertyBaseMetadata)
-    | ({
-          names: Array<string>;
-          predicate?: PredicateProto;
       } & JsonPropertyBaseMetadata);
 
 const extractPropertiesFromConstructor = (ctor: object): Map<number, string> => {
@@ -105,13 +89,12 @@ const buildJsonPropertyMetadata = (
         } as JsonPropertyMetadata;
     }
 
-    let metadata: any;
+    let metadata: JsonPropertyMetadata;
+
     if (typeof options === PropertyType.String) {
-        metadata = { name: options, isNameOverridden: true };
-    } else if (options['name']) {
+        metadata = { name: options as string, isNameOverridden: true };
+    } else if (typeof options === PropertyType.Object && options['name']) {
         metadata = { name: options['name'], isNameOverridden: true };
-    } else if (options['names'] && options['names'].length) {
-        metadata = { names: options['names'] };
     } else {
         metadata = { name: key.toString(), isNameOverridden: false };
     }
@@ -132,7 +115,7 @@ const buildJsonPropertyMetadata = (
     });
 
     if (options['predicate']) {
-        metadata.predicate = options['predicate'];
+        metadata['predicate'] = options['predicate'];
     } else if (options['type']) {
         metadata.type = options['type'];
     }
