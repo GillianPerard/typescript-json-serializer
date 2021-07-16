@@ -1,11 +1,11 @@
-import { JsonProperty, Serializable } from '../../src';
+import { JsonProperty, JsonObject } from '../../src';
 import { Human } from './human';
 import { Society } from './society';
 import { Zoo } from './zoo';
 
 const prefixWithUnderscore = (propertyName: string) => `_${propertyName}`;
 
-@Serializable({ formatPropertyNames: prefixWithUnderscore })
+@JsonObject({ formatPropertyNames: prefixWithUnderscore })
 export class Organization extends Society {
     @JsonProperty({ name: 'zoos', type: Zoo }) zoos: Array<Zoo>;
     @JsonProperty({ isDictionary: true })

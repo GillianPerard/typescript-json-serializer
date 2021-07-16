@@ -1,10 +1,10 @@
 import 'reflect-metadata';
-import { SerializableMetadata } from './serializable';
+import { JsonObjectMetadata } from './json-object';
 import { JsonPropertiesMetadata } from './json-property';
 
 export class Reflection {
     static apiMap = 'api:map:';
-    static apiMapSerializable = `${Reflection.apiMap}serializable`;
+    static apiMapJsonObject = `${Reflection.apiMap}jsonObject`;
     static designType = 'design:type';
     static designParamTypes = 'design:paramtypes';
 
@@ -21,16 +21,16 @@ export class Reflection {
         return Reflect.getMetadata(Reflection.designParamTypes, target);
     }
 
-    static getSerializableMetadata(type: object): SerializableMetadata {
-        return Reflect.getMetadata(Reflection.apiMapSerializable, type) as SerializableMetadata;
+    static getJsonObjectMetadata(type: object): JsonObjectMetadata {
+        return Reflect.getMetadata(Reflection.apiMapJsonObject, type) as JsonObjectMetadata;
     }
 
     static getType(instance: object, key: string) {
         return Reflect.getMetadata(Reflection.designType, instance, key);
     }
 
-    static isSerializable(type: object): boolean {
-        return Reflect.hasOwnMetadata(Reflection.apiMapSerializable, type);
+    static isJsonObject(type: object): boolean {
+        return Reflect.hasOwnMetadata(Reflection.apiMapJsonObject, type);
     }
 
     static setJsonPropertiesMetadata(value: any, instance: object): any {
@@ -38,8 +38,8 @@ export class Reflection {
         return Reflect.defineMetadata(key, value, instance);
     }
 
-    static setSerializable(value: any, target: object): void {
-        Reflect.defineMetadata(Reflection.apiMapSerializable, value, target);
+    static setJsonObject(value: any, target: object): void {
+        Reflect.defineMetadata(Reflection.apiMapJsonObject, value, target);
     }
 
     static setType(type: any, target: object, key: string): void {

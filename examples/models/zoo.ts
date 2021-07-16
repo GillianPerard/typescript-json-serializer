@@ -1,4 +1,4 @@
-import { JsonProperty, Serializable } from '../../src';
+import { JsonProperty, JsonObject } from '../../src';
 
 import { Animal } from './animal';
 import { Employee } from './employee';
@@ -19,7 +19,7 @@ const arrayToCoordinates = (array: Array<number>) => ({
     z: array[2]
 });
 
-@Serializable()
+@JsonObject()
 export class Zoo {
     @JsonProperty()
     boss: Employee;

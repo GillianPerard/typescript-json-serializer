@@ -1,6 +1,6 @@
-import { JsonProperty, Serializable } from '../../src';
+import { JsonProperty, JsonObject } from '../../src';
 
-@Serializable()
+@JsonObject()
 export class Society {
     @JsonProperty() id: string;
     @JsonProperty() name: string;
