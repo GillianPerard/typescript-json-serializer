@@ -2,13 +2,13 @@ import { Reflection } from './reflection';
 
 export type FormatPropertyNameProto = (propertyName: string) => string;
 
-export interface SerializableOptions {
+export interface JsonObjectOptions {
     formatPropertyNames: FormatPropertyNameProto;
 }
 
-export interface SerializableMetadata {
+export interface JsonObjectMetadata {
     baseClassNames: Array<string>;
-    options?: SerializableOptions;
+    options?: JsonObjectOptions;
 }
 
 const getBaseClassNames = (target: Object): Array<string> => {
@@ -16,9 +16,9 @@ const getBaseClassNames = (target: Object): Array<string> => {
     return baseClass && baseClass.name ? [...getBaseClassNames(baseClass), baseClass.name] : [];
 };
 
-export const Serializable =
-    (options?: SerializableOptions): Function =>
+export const JsonObject =
+    (options?: JsonObjectOptions): Function =>
     (target: Object) => {
         const baseClassNames = getBaseClassNames(target);
-        Reflection.setSerializable({ baseClassNames, options }, target);
+        Reflection.setJsonObject({ baseClassNames, options }, target);
     };

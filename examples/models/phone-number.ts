@@ -1,6 +1,6 @@
-import { JsonProperty, Serializable } from '../../src';
+import { JsonProperty, JsonObject } from '../../src';
 
-@Serializable()
+@JsonObject()
 export class PhoneNumber {
     @JsonProperty() countryCode: string;
     @JsonProperty() value: string | undefined;

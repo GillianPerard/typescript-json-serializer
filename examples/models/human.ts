@@ -1,9 +1,9 @@
-import { JsonProperty, Serializable } from '../../src';
+import { JsonProperty, JsonObject } from '../../src';
 
 import { Gender } from './gender';
 import { LivingBeing } from './living-being';
 
-@Serializable()
+@JsonObject()
 export class Human extends LivingBeing {
     constructor(
         // This comment works
