@@ -1,15 +1,19 @@
-import { FormatPropertyNameProto } from './json-object';
 import {
-    IOProto,
-    JsonPropertiesMetadata,
-    JsonPropertyMetadata,
-    PredicateProto
-} from './json-property';
-import { PropertyType } from './property-type';
+    isNullish,
+    isObject,
+    isString,
+    isArray,
+    isJsonObject,
+    isDateObject,
+    isNumber,
+    isDateValue
+} from './helpers';
+import { FormatPropertyNameProto } from './json-object';
+import { IOProto, JsonPropertiesMetadata, JsonPropertyMetadata } from './json-property';
 import { Reflection } from './reflection';
 
 export const deserialize = <T>(json: any, type: new (...params: Array<any>) => T): T => {
-    if ([null, undefined].includes(json)) {
+    if (isNullish(json)) {
         return json as never;
     }
 
@@ -17,7 +21,7 @@ export const deserialize = <T>(json: any, type: new (...params: Array<any>) => T
         return castSimpleData(typeof json, json);
     }
 
-    if (typeof json === PropertyType.String) {
+    if (isString(json)) {
         json = JSON.parse(json);
     }
 
@@ -43,7 +47,7 @@ export const deserialize = <T>(json: any, type: new (...params: Array<any>) => T
             options?.formatPropertyNames
         );
 
-        if ((property === undefined || property === null) && instanceMap[key].required) {
+        if (isNullish(property) && instanceMap[key].required) {
             const instanceName = instance.constructor.name;
             throw new Error(
                 `Property '${key}' is required in ${instanceName} ${JSON.stringify(json)}.`
@@ -59,7 +63,7 @@ export const deserialize = <T>(json: any, type: new (...params: Array<any>) => T
 };
 
 export const serialize = (instance: any, removeUndefined: boolean = true): any => {
-    if ([undefined, null].includes(instance) || typeof instance !== PropertyType.Object) {
+    if (isNullish(instance) || !isObject(instance)) {
         return instance;
     }
 
@@ -83,8 +87,8 @@ export const serialize = (instance: any, removeUndefined: boolean = true): any =
     Object.keys(instanceMap).forEach(key => {
         if (instanceKeys.includes(key)) {
             const metadata = instanceMap[key];
-            const beforeSerialize: IOProto | undefined = metadata['beforeSerialize'];
-            const afterSerialize: IOProto | undefined = metadata['afterSerialize'];
+            const beforeSerialize: IOProto | undefined = metadata.beforeSerialize;
+            const afterSerialize: IOProto | undefined = metadata.afterSerialize;
 
             let initialValue: any;
 
@@ -101,7 +105,7 @@ export const serialize = (instance: any, removeUndefined: boolean = true): any =
 
             instance[key] = initialValue || instance[key];
 
-            if (Array.isArray(metadata.name)) {
+            if (isArray(metadata.name)) {
                 metadata.name.forEach((name: string) => {
                     if (!removeUndefined || (removeUndefined && data[name] !== undefined)) {
                         json[name] = data[name];
@@ -124,24 +128,24 @@ export const serialize = (instance: any, removeUndefined: boolean = true): any =
 };
 
 const convertPropertyToData = (
-    instance: Function,
+    instance: object,
     key: string,
     metadata: JsonPropertyMetadata,
     removeUndefined: boolean
 ): any => {
     const property: any = instance[key];
     const type: any = Reflection.getType(instance, key);
-    const isArray = type.name ? type.name.toLocaleLowerCase() === PropertyType.Array : false;
-    const predicate: PredicateProto = metadata['predicate'];
+    const isArrayProperty = type?.name.toLocaleLowerCase() === 'array';
+    const predicate = metadata['predicate'];
     const propertyType: any = metadata['type'] || type;
-    const isJsonObject = Reflection.isJsonObject(propertyType);
+    const isJsonObjectProperty = isJsonObject(propertyType);
 
-    if (property && (isJsonObject || predicate)) {
-        if (isArray) {
+    if (property && (isJsonObjectProperty || predicate)) {
+        if (isArrayProperty) {
             return property.map((d: any) => serialize(d, removeUndefined));
         }
 
-        if (metadata['isDictionary']) {
+        if (metadata.isDictionary) {
             const obj = {};
             Object.keys(property).forEach(k => {
                 obj[k] = serialize(property[k], removeUndefined);
@@ -153,10 +157,7 @@ const convertPropertyToData = (
         return serialize(property, removeUndefined);
     }
 
-    if (
-        propertyType.name.toLocaleLowerCase() === PropertyType.Date &&
-        typeof property === PropertyType.Object
-    ) {
+    if (propertyType.name.toLocaleLowerCase() === 'date' && isDateObject(property)) {
         return property.toISOString();
     }
 
@@ -172,11 +173,11 @@ const convertDataToProperty = (
 ) => {
     let data: any;
 
-    if ([null, undefined].includes(json)) {
+    if (isNullish(json)) {
         return json;
     }
 
-    if (Array.isArray(metadata.name)) {
+    if (isArray(metadata.name)) {
         data = {};
         metadata.name.forEach((name: string) => (data[name] = json[name]));
     } else if (!metadata.isNameOverridden && formatPropertyName) {
@@ -186,18 +187,18 @@ const convertDataToProperty = (
         data = json[metadata.name];
     }
 
-    if ([null, undefined].includes(data)) {
+    if (isNullish(data)) {
         return data;
     }
 
     const type: any = Reflection.getType(instance, key);
-    const isArray = type.name ? type.name.toLowerCase() === PropertyType.Array : false;
-    const isDictionary = metadata['isDictionary'];
-    const predicate: PredicateProto = metadata['predicate'];
-    const beforeDeserialize: IOProto | undefined = metadata['beforeDeserialize'];
-    const afterDeserialize: IOProto | undefined = metadata['afterDeserialize'];
+    const isArrayProperty = type?.name.toLowerCase() === 'array';
+    const isDictionary = metadata.isDictionary;
+    const predicate = metadata['predicate'];
+    const beforeDeserialize: IOProto | undefined = metadata.beforeDeserialize;
+    const afterDeserialize: IOProto | undefined = metadata.afterDeserialize;
     let propertyType: any = metadata['type'] || type;
-    const isJsonObject = Reflection.isJsonObject(propertyType);
+    const isJsonObjectProperty = isJsonObject(propertyType);
     let result: any;
 
     if (beforeDeserialize) {
@@ -207,7 +208,7 @@ const convertDataToProperty = (
     if (isDictionary) {
         const obj = {};
 
-        if (typeof data !== PropertyType.Object) {
+        if (!isObject(data)) {
             console.error(
                 `Type '${typeof data}' is not assignable to type 'Dictionary' for property '${key}' in '${
                     instance.constructor.name
@@ -217,7 +218,7 @@ const convertDataToProperty = (
             result = undefined;
         } else {
             Object.keys(data).forEach(k => {
-                if (!isJsonObject && !predicate) {
+                if (!isJsonObjectProperty && !predicate) {
                     obj[k] = castSimpleData(
                         typeof data[k],
                         data[k],
@@ -233,10 +234,10 @@ const convertDataToProperty = (
             });
             result = obj;
         }
-    } else if (isArray) {
+    } else if (isArrayProperty) {
         const array: Array<any> = [];
 
-        if (!Array.isArray(data)) {
+        if (!isArray(data)) {
             console.error(
                 `Type '${typeof data}' is not assignable to type 'Array' for property '${key}' in '${
                     instance.constructor.name
@@ -246,7 +247,7 @@ const convertDataToProperty = (
             result = undefined;
         } else {
             data.forEach((d: any) => {
-                if (!isJsonObject && !predicate) {
+                if (!isJsonObjectProperty && !predicate) {
                     array.push(castSimpleData(typeof d, d, key, instance.constructor.name));
                 } else {
                     if (predicate) {
@@ -257,7 +258,7 @@ const convertDataToProperty = (
             });
             result = array;
         }
-    } else if (!isJsonObject && !predicate) {
+    } else if (!isJsonObjectProperty && !predicate) {
         result = castSimpleData(propertyType.name, data, key, instance.constructor.name);
     } else {
         propertyType = predicate ? predicate(data, json) : propertyType;
@@ -277,13 +278,13 @@ const castSimpleData = (
     propertyName?: string,
     className?: string
 ): any => {
-    if (type === undefined || type === null) {
+    if (isNullish(type)) {
         return data;
     }
 
     type = type.toLowerCase();
 
-    if ((typeof data).toLowerCase() === type) {
+    if (typeof data === type) {
         return data;
     }
 
@@ -295,7 +296,7 @@ const castSimpleData = (
     };
 
     switch (type) {
-        case PropertyType.String:
+        case 'string':
             const string = data.toString();
 
             if (string === '[object Object]') {
@@ -304,20 +305,18 @@ const castSimpleData = (
             }
 
             return string;
-        case PropertyType.Number:
-            const number: number = +data;
-
-            if (isNaN(number)) {
+        case 'number':
+            if (!isNumber(data)) {
                 logError();
                 return undefined;
             }
 
-            return number;
-        case PropertyType.Boolean:
+            return +data;
+        case 'boolean':
             logError();
             return undefined;
-        case PropertyType.Date:
-            if (isNaN(Date.parse(data))) {
+        case 'date':
+            if (!isDateValue(data)) {
                 logError();
                 return undefined;
             }
