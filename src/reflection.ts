@@ -12,12 +12,12 @@ export class Reflection {
         return Reflect.getPrototypeOf(target) as { name: string };
     }
 
-    static getJsonPropertiesMetadata(instance: object, name?: string): JsonPropertiesMetadata {
-        const key = `${Reflection.apiMap}${name || instance.constructor.name}`;
-        return Reflect.getMetadata(key, instance);
+    static getJsonPropertiesMetadata(target: object, name?: string): JsonPropertiesMetadata {
+        const key = `${Reflection.apiMap}${name || target.constructor.name}`;
+        return Reflect.getMetadata(key, target);
     }
 
-    static getParamTypes(target: object) {
+    static getParamTypes(target: object): any {
         return Reflect.getMetadata(Reflection.designParamTypes, target);
     }
 
@@ -25,20 +25,20 @@ export class Reflection {
         return Reflect.getMetadata(Reflection.apiMapJsonObject, type) as JsonObjectMetadata;
     }
 
-    static getType(instance: object, key: string) {
-        return Reflect.getMetadata(Reflection.designType, instance, key);
+    static getType(target: object, key: string) {
+        return Reflect.getMetadata(Reflection.designType, target, key);
     }
 
     static isJsonObject(type: object): boolean {
         return Reflect.hasOwnMetadata(Reflection.apiMapJsonObject, type);
     }
 
-    static setJsonPropertiesMetadata(value: any, instance: object): any {
-        const key = `${Reflection.apiMap}${instance.constructor.name}`;
-        return Reflect.defineMetadata(key, value, instance);
+    static setJsonPropertiesMetadata(value: JsonPropertiesMetadata, target: object): void {
+        const key = `${Reflection.apiMap}${target.constructor.name}`;
+        Reflect.defineMetadata(key, value, target);
     }
 
-    static setJsonObject(value: any, target: object): void {
+    static setJsonObject(value: JsonObjectMetadata, target: object): void {
         Reflect.defineMetadata(Reflection.apiMapJsonObject, value, target);
     }
 
