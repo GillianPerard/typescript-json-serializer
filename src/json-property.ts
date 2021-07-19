@@ -1,19 +1,17 @@
-import { PropertyType } from './property-type';
+import { isObject, isString } from './helpers';
 import { Reflection } from './reflection';
 
 export type IOProto = (property: any, currentInstance?: any) => any;
 export type PredicateProto = (property: any, parentProperty?: any) => any;
 
-export interface BeforeAfterProto {
+export interface JsonPropertyBaseMetadata {
+    isDictionary?: boolean;
+    required?: boolean;
     beforeSerialize?: IOProto;
     afterSerialize?: IOProto;
     beforeDeserialize?: IOProto;
     afterDeserialize?: IOProto;
 }
-
-export type JsonPropertyBaseMetadata = {
-    required?: boolean;
-} & BeforeAfterProto;
 
 export interface JsonPropertiesMetadata {
     [id: string]: JsonPropertyMetadata;
@@ -23,28 +21,39 @@ export type JsonPropertyMetadata =
     | ({
           name: string | Array<string>;
           type?: Function;
-          isDictionary?: boolean;
-          isNameOverridden: boolean;
+          isNameOverridden?: boolean;
       } & JsonPropertyBaseMetadata)
     | ({
           name: string | Array<string>;
-          predicate: PredicateProto;
-          isDictionary?: boolean;
-          isNameOverridden: boolean;
+          predicate?: PredicateProto;
+          isNameOverridden?: boolean;
       } & JsonPropertyBaseMetadata);
 
 type JsonPropertyOptions =
-    | string
     | ({
           name?: string | Array<string>;
           type?: Function;
-          isDictionary?: boolean;
       } & JsonPropertyBaseMetadata)
     | ({
           name?: string | Array<string>;
           predicate?: PredicateProto;
-          isDictionary?: boolean;
       } & JsonPropertyBaseMetadata);
+
+export const JsonProperty =
+    (options?: string | JsonPropertyOptions): Function =>
+    (target: object | Function, key: string, index: number): void => {
+        if (key === undefined && target['prototype']) {
+            const type: Function = Reflection.getParamTypes(target)[index];
+            const keys = extractPropertiesFromConstructor(target['prototype'].constructor);
+            key = keys.get(index) as string;
+            target = target['prototype'];
+            Reflection.setType(type, target, key);
+        }
+
+        const metadata = Reflection.getJsonPropertiesMetadata(target) ?? {};
+        metadata[key] = buildJsonPropertyMetadata(key, options);
+        Reflection.setJsonPropertiesMetadata(metadata, target);
+    };
 
 const extractPropertiesFromConstructor = (ctor: object): Map<number, string> => {
     // Clean constructor
@@ -80,61 +89,28 @@ const extractPropertiesFromConstructor = (ctor: object): Map<number, string> => 
 
 const buildJsonPropertyMetadata = (
     key: string,
-    options?: JsonPropertyOptions
+    options?: string | JsonPropertyOptions
 ): JsonPropertyMetadata => {
+    let metadata: JsonPropertyMetadata = { name: key.toString() };
+
     if (!options) {
-        return {
-            name: key.toString(),
-            isNameOverridden: false
-        } as JsonPropertyMetadata;
+        return metadata;
     }
 
-    let metadata: JsonPropertyMetadata;
-
-    if (typeof options === PropertyType.String) {
-        metadata = { name: options as string, isNameOverridden: true };
-    } else if (typeof options === PropertyType.Object && options['name']) {
-        metadata = { name: options['name'], isNameOverridden: true };
-    } else {
-        metadata = { name: key.toString(), isNameOverridden: false };
+    if (isString(options)) {
+        metadata.name = options;
+        metadata.isNameOverridden = true;
+        return metadata;
     }
 
-    const optionalMetadataKeys = [
-        'isDictionary',
-        'required',
-        'beforeSerialize',
-        'afterSerialize',
-        'beforeDeserialize',
-        'afterDeserialize'
-    ];
+    if (isObject(options)) {
+        metadata = { ...metadata, ...options };
 
-    optionalMetadataKeys.forEach(k => {
-        if (options[k] !== undefined && options[k] !== null) {
-            metadata[k] = options[k];
+        if (options.name) {
+            metadata.name = options.name;
+            metadata.isNameOverridden = true;
         }
-    });
-
-    if (options['predicate']) {
-        metadata['predicate'] = options['predicate'];
-    } else if (options['type']) {
-        metadata.type = options['type'];
     }
 
-    return metadata as JsonPropertyMetadata;
+    return metadata;
 };
-
-export const JsonProperty =
-    (options?: JsonPropertyOptions): Function =>
-    (target: Object | Function, key: string, index: number): void => {
-        if (key === undefined && target['prototype']) {
-            const type: Function = Reflection.getParamTypes(target)[index];
-            const keys = extractPropertiesFromConstructor(target['prototype'].constructor);
-            key = keys.get(index) as string;
-            target = target['prototype'];
-            Reflection.setType(type, target, key);
-        }
-
-        const metadata = Reflection.getJsonPropertiesMetadata(target) ?? {};
-        metadata[key] = buildJsonPropertyMetadata(key, options);
-        Reflection.setJsonPropertiesMetadata(metadata, target);
-    };
