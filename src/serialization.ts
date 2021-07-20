@@ -38,7 +38,12 @@ export const deserialize = <T>(json: any, type: new (...params: Array<any>) => T
         instanceMap = mergeJsonPropertiesMetadata(...baseClassMetadataMaps, instanceMap);
     }
 
+    if (!instanceMap) {
+        return instance;
+    }
+
     Object.keys(instanceMap).forEach(key => {
+        instanceMap = instanceMap ?? {};
         const property = convertDataToProperty(
             instance,
             key,
@@ -81,12 +86,16 @@ export const serialize = (instance: any, removeUndefined: boolean = true): any =
         instanceMap = mergeJsonPropertiesMetadata(...baseClassMetadataMaps, instanceMap);
     }
 
+    if (!instanceMap) {
+        return instance;
+    }
+
     const json: any = {};
     const instanceKeys = Object.keys(instance);
 
     Object.keys(instanceMap).forEach(key => {
         if (instanceKeys.includes(key)) {
-            const metadata = instanceMap[key];
+            const metadata = (instanceMap ?? {})[key];
             const beforeSerialize: IOProto | undefined = metadata.beforeSerialize;
             const afterSerialize: IOProto | undefined = metadata.afterSerialize;
 
@@ -104,7 +113,6 @@ export const serialize = (instance: any, removeUndefined: boolean = true): any =
             }
 
             instance[key] = initialValue || instance[key];
-
             if (isArray(metadata.name)) {
                 metadata.name.forEach((name: string) => {
                     if (!removeUndefined || (removeUndefined && data[name] !== undefined)) {
@@ -136,8 +144,8 @@ const convertPropertyToData = (
     const property: any = instance[key];
     const type: any = Reflection.getType(instance, key);
     const isArrayProperty = type?.name.toLocaleLowerCase() === 'array';
-    const predicate = metadata['predicate'];
-    const propertyType: any = metadata['type'] || type;
+    const predicate = metadata.predicate;
+    const propertyType: any = metadata.type || type;
     const isJsonObjectProperty = isJsonObject(propertyType);
 
     if (property && (isJsonObjectProperty || predicate)) {
@@ -194,10 +202,10 @@ const convertDataToProperty = (
     const type: any = Reflection.getType(instance, key);
     const isArrayProperty = type?.name.toLowerCase() === 'array';
     const isDictionary = metadata.isDictionary;
-    const predicate = metadata['predicate'];
+    const predicate = metadata.predicate;
     const beforeDeserialize: IOProto | undefined = metadata.beforeDeserialize;
     const afterDeserialize: IOProto | undefined = metadata.afterDeserialize;
-    let propertyType: any = metadata['type'] || type;
+    let propertyType: any = metadata.type || type;
     const isJsonObjectProperty = isJsonObject(propertyType);
     let result: any;
 
@@ -328,13 +336,26 @@ const castSimpleData = (
 };
 
 const getClassesJsonPropertiesMetadata = (
-    classNames: Array<string>,
+    classNames: Array<string> | undefined,
     instance: any
-): Array<JsonPropertiesMetadata> =>
-    classNames.map(className => Reflection.getJsonPropertiesMetadata(instance, className));
+): Array<JsonPropertiesMetadata> => {
+    if (!classNames) {
+        return [];
+    }
+
+    return classNames.reduce((result, className) => {
+        const metadata = Reflection.getJsonPropertiesMetadata(instance, className);
+
+        if (metadata) {
+            result.push(metadata);
+        }
+
+        return result;
+    }, [] as Array<JsonPropertiesMetadata>);
+};
 
 const mergeJsonPropertiesMetadata = (
-    ...metadataMaps: Array<JsonPropertiesMetadata>
+    ...metadataMaps: Array<JsonPropertiesMetadata | undefined>
 ): JsonPropertiesMetadata => {
     const jsonPropertiesMetadata: JsonPropertiesMetadata = {};
 

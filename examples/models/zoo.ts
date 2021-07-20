@@ -19,6 +19,13 @@ const arrayToCoordinates = (array: Array<number>) => ({
     z: array[2]
 });
 
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+function phoneNumberType(property: any) {
+    if (property && property.value !== undefined) {
+        return PhoneNumber;
+    }
+}
+
 @JsonObject()
 export class Zoo {
     @JsonProperty()
@@ -37,23 +44,17 @@ export class Zoo {
     id: number;
     @JsonProperty()
     name: string;
-    @JsonProperty({ name: 'Animals', predicate: snakeOrPanther })
+    @JsonProperty({ name: 'Animals', type: snakeOrPanther })
     animals: Array<Animal>;
-    @JsonProperty({ predicate: snakeOrPanther })
+    @JsonProperty({ type: snakeOrPanther })
     mascot: Panther | Snake;
     @JsonProperty({ isDictionary: true, type: UnknownAnimal })
     unknownAnimals: { [id: string]: UnknownAnimal };
     @JsonProperty({
         isDictionary: true,
-        predicate: property => {
-            if (property && property.value !== undefined) {
-                return PhoneNumber;
-            }
-        }
+        type: phoneNumberType
     })
     phoneBook: { [id: string]: PhoneNumber | string };
 
     isOpen = true;
-
-    constructor() {}
 }
