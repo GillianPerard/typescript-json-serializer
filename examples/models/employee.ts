@@ -10,7 +10,7 @@ export class Employee extends Human {
     @JsonProperty({ required: true }) email: string;
 
     @JsonProperty({
-        predicate: property => {
+        type: property => {
             if (property && property.value !== undefined) {
                 return PhoneNumber;
             }

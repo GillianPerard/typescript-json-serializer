@@ -1,4 +1,4 @@
-import { isObject, isString } from './helpers';
+import { isObject, isPredicate, isString } from './helpers';
 import { Reflection } from './reflection';
 
 export type IOProto = (property: any, currentInstance?: any) => any;
@@ -18,26 +18,18 @@ export interface JsonPropertiesMetadata {
 }
 
 export type JsonPropertyMetadata =
-    | ({
+    | {
+          isNameOverridden?: boolean;
           name: string | Array<string>;
           type?: Function;
-          isNameOverridden?: boolean;
-      } & JsonPropertyBaseMetadata)
-    | ({
-          name: string | Array<string>;
           predicate?: PredicateProto;
-          isNameOverridden?: boolean;
-      } & JsonPropertyBaseMetadata);
+      } & JsonPropertyBaseMetadata;
 
 type JsonPropertyOptions =
-    | ({
+    | {
           name?: string | Array<string>;
-          type?: Function;
-      } & JsonPropertyBaseMetadata)
-    | ({
-          name?: string | Array<string>;
-          predicate?: PredicateProto;
-      } & JsonPropertyBaseMetadata);
+          type?: Function | PredicateProto;
+      } & JsonPropertyBaseMetadata;
 
 export const JsonProperty =
     (options?: string | JsonPropertyOptions): Function =>
@@ -109,6 +101,11 @@ const buildJsonPropertyMetadata = (
         if (options.name) {
             metadata.name = options.name;
             metadata.isNameOverridden = true;
+        }
+
+        if (isPredicate(options.type)) {
+            metadata.type = undefined;
+            metadata.predicate = options.type;
         }
     }
 
