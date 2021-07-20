@@ -9,6 +9,53 @@ import { Organization } from '../examples/models/organization';
 import { Panther } from '../examples/models/panther';
 import { Zoo } from '../examples/models/zoo';
 import { Employee } from '../examples/models/employee';
+import { Reflection } from '../src/reflection';
+
+describe('Reflection', () => {
+    const unknownTarget: any = undefined;
+
+    it('getBaseClass should return undefined if there is no target', () => {
+        expect(Reflection.getBaseClass(unknownTarget)).toBeUndefined();
+    });
+
+    it('getJsonPropertiesMetadata should return undefined if there is no target', () => {
+        expect(Reflection.getJsonPropertiesMetadata(unknownTarget)).toBeUndefined();
+    });
+
+    it('getParamTypes should return undefined if there is no target', () => {
+        expect(Reflection.getParamTypes(unknownTarget)).toBeUndefined();
+    });
+
+    it('getJsonObjectMetadata should return undefined if there is no target', () => {
+        expect(Reflection.getJsonObjectMetadata(unknownTarget)).toBeUndefined();
+    });
+
+    it('getType should return undefined if there is no target', () => {
+        expect(Reflection.getType(unknownTarget, 'test')).toBeUndefined();
+    });
+
+    it('isJsonObject should return undefined if there is no target', () => {
+        expect(Reflection.isJsonObject(unknownTarget)).toBe(false);
+    });
+
+    it('setJsonPropertiesMetadata should not define metadata if there is no target', () => {
+        const spy = jest.spyOn(Reflect, 'defineMetadata');
+        Reflection.setJsonPropertiesMetadata({}, unknownTarget);
+        expect(spy).toHaveBeenCalledTimes(0);
+    });
+
+    it('setJsonObject should not define json object if there is no target', () => {
+        const spy = jest.spyOn(Reflect, 'defineMetadata');
+        Reflection.setJsonObject({ baseClassNames: [] }, unknownTarget);
+        expect(spy).toHaveBeenCalledTimes(0);
+    });
+
+    it('setType should not define type if there is no target', () => {
+        const spy = jest.spyOn(Reflect, 'defineMetadata');
+        Reflection.setType('test', unknownTarget, 'test');
+        expect(spy).toHaveBeenCalledTimes(0);
+    });
+});
 
 describe('JsonObject', () => {
     it('should return no metadata', () => {
