@@ -52,7 +52,7 @@ describe('serialize', () => {
     });
 
     it('should have 1 childrenIdentifiers in the Great Zoo', () => {
-        const result = serialize(deserializedData, false);
+        const result = serialize(deserializedData, { undefined: false });
         const count = result.zoos
             .find((x: Zoo) => x.id === 15)
             .Animals.filter((animal: any) => animal.hasOwnProperty('childrenIdentifiers')).length;
@@ -61,7 +61,7 @@ describe('serialize', () => {
 
     it('should return empty organization if serialized organization has no property set', () => {
         const organization = new Organization();
-        expect(serialize(organization)).toEqual({});
+        expect(serialize(organization, { null: true })).toEqual({});
     });
 
     it('should return empty object for serialized empty object', () => {
@@ -74,15 +74,29 @@ describe('serialize', () => {
     zoo.id = 2;
     organizationWithUndefinedValue.zoos = [zoo];
 
-    it('should have undefined value if removeUndefined param is false', () => {
-        expect(serialize(organizationWithUndefinedValue, false)).toEqual({
+    it('should have undefined value if remove.undefined param is false', () => {
+        expect(serialize(organizationWithUndefinedValue, { undefined: false })).toEqual({
             _id: '4',
             _name: undefined,
             zoos: [{ id: 2, name: undefined }]
         });
     });
 
-    it('should not have undefined value if removeUndefined param is not set', () => {
+    const organizationWithNullAndUndefinedValue = new Organization();
+    organizationWithNullAndUndefinedValue.id = undefined;
+    organizationWithNullAndUndefinedValue.name = null;
+
+    it('should remover undefined and null value if remove params is true', () => {
+       expect(serialize(organizationWithNullAndUndefinedValue, { null: true, undefined: true })).toEqual({});
+    });
+
+    it('should remover null value if remove.null params is true', () => {
+       expect(serialize(organizationWithNullAndUndefinedValue, { null: true, undefined: false })).toEqual({
+         _id: undefined
+        });
+    });
+
+    it('should not have undefined value if remove.undefined param is not set', () => {
         expect(serialize(organizationWithUndefinedValue)).toEqual({ _id: '4', zoos: [{ id: 2 }] });
     });
 });

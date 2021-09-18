@@ -20,6 +20,10 @@ interface SerializableMetadata {
     options?: SerializableOptions;
 }
 
+interface RemoveValues {
+    undefined?: boolean;
+    null?: boolean;
+}
 interface SerializableOptions {
     formatPropertyNames: FormatPropertyNameProto;
 }
@@ -281,10 +285,10 @@ export const deserialize = <T>(json: any, type: new (...params: Array<any>) => T
  * Function to serialize a class into json
  *
  * @param {any} instance Instance of the object to deserialize
- * @param {boolean} removeUndefined Indicates if you want to keep or remove undefined values
+ * @param {RemoveValues} remove Indicates if you want to keep or remove undefined or null values
  * @returns {any} The json object
  */
-export const serialize = (instance: any, removeUndefined: boolean = true): any => {
+export const serialize = (instance: any, remove: RemoveValues = { undefined: true, null: false }): any => {
     if ([undefined, null].includes(instance) || typeof instance !== Type.Object) {
         return instance;
     }
@@ -326,7 +330,7 @@ export const serialize = (instance: any, removeUndefined: boolean = true): any =
                 instance[key] = beforeSerialize(instance[key], instance);
             }
 
-            let data = convertPropertyToData(instance, key, metadata, removeUndefined);
+            let data = convertPropertyToData(instance, key, metadata, remove);
 
             if (afterSerialize) {
                 data = afterSerialize(data, instance);
@@ -336,12 +340,18 @@ export const serialize = (instance: any, removeUndefined: boolean = true): any =
 
             if (metadata['names']) {
                 metadata['names'].forEach((name: string) => {
-                    if (!removeUndefined || (removeUndefined && data[name] !== undefined)) {
+                    if (
+                        (!remove.undefined || (remove.undefined && data[name] !== undefined)) &&
+                        (!remove.null || (remove.null && data[name] !== null))
+                    ) {
                         json[name] = data[name];
                     }
                 });
             } else {
-                if (!removeUndefined || (removeUndefined && data !== undefined)) {
+                if (
+                    (!remove.undefined || (remove.undefined && data !== undefined)) &&
+                    (!remove.null || (remove.null && data !== null))
+                ) {
                     if (!metadata['isNameOverridden'] && options?.formatPropertyNames) {
                         const name = options.formatPropertyNames(metadata['name']);
                         json[name] = data;
@@ -362,14 +372,14 @@ export const serialize = (instance: any, removeUndefined: boolean = true): any =
  * @param {Function} instance The instance containing the property to convert
  * @param {string} key The name of the property to convert
  * @param {Metadata} metadata The metadata of the property to convert
- * @param {boolean} removeUndefined Indicates if you want to keep or remove undefined value
+ * @param {RemoveValues} remove Indicates if you want to keep or remove undefined or null values
  * @returns {any} The converted property
  */
 const convertPropertyToData = (
     instance: Function,
     key: string,
     metadata: Metadata,
-    removeUndefined: boolean
+    remove: RemoveValues
 ): any => {
     const property: any = instance[key];
     const type: any = Reflect.getMetadata(designType, instance, key);
@@ -380,19 +390,19 @@ const convertPropertyToData = (
 
     if (property && (isSerializableProperty || predicate)) {
         if (isArray) {
-            return property.map((d: any) => serialize(d, removeUndefined));
+            return property.map((d: any) => serialize(d, remove));
         }
 
         if (metadata['isDictionary']) {
             const obj = {};
             Object.keys(property).forEach(k => {
-                obj[k] = serialize(property[k], removeUndefined);
+                obj[k] = serialize(property[k], remove);
             });
 
             return obj;
         }
 
-        return serialize(property, removeUndefined);
+        return serialize(property, remove);
     }
 
     if (propertyType.name.toLocaleLowerCase() === Type.Date && typeof property === Type.Object) {
