@@ -33,133 +33,309 @@ For example:
 
 **WARNING:** If you use CRA (create-react-app) please refer to the [Using with Create React App](#using-with-create-react-app) section.
 
-## Import
-
-There are two decorators and two functions that you can import inside a typescript file.
-
-```typescript
-import {
-    JsonProperty,
-    Serializable,
-    deserialize,
-    serialize
-} from 'typescript-json-serializer';
-```
-
-## Library
+## API
 
 ### Decorators
 
-```typescript
-// Serializable decorator set a class as serializable.
-// It can take options as parameter:
-// - formatPropertyNames function to format the property names
-//   provided by the json you want to serialize to match
-//   with your class property names
+**@JsonObject()**   
+Used to make a class serializable.
 
-type FormatPropertyNameProto = (propertyName: string) => string;
-type SerializableOptions = {
-    formatPropertyNames: FormatPropertyNameProto
+##### **Example**
+
+```typescript
+@JsonObject()
+class MyClass {}
+```
+
+**@JsonProperty()**  
+Used to make a class property serializable, property will be ignored if not set.
+
+##### **Parameters**
+
+**options**  
+Type: `string` | [`JsonPropertyOptions`](#jsonpropertyoptions)  
+Optional: `true`  
+Description: The option to customize the serialization/deserialization of the target property.
+
+##### **Example**
+
+```typescript
+@JsonProperty(options) myProperty: string;
+```
+
+### JsonSerializer
+
+#### Constructor
+
+```typescript
+constructor(options?: Partial<JsonSerializerOptions>) {}
+```
+
+##### **Parameters**
+
+**options**  
+Type: `Partial<`[`JsonSerializerOptions`](#jsonserializeroptions)`>`  
+Optional: `true`  
+Description: The options to customize the serializer.
+
+#### Properties
+
+**options**  
+Type: `Partial<`[`JsonSerializerOptions`](#jsonserializeroptions)`>`  
+Optional: `false`  
+Description: The options to customize the serializer.
+
+Default value:
+
+```typescript
+{
+    errorCallback: logError,
+    nullishPolicy: {
+        undefined: 'remove',
+        null: 'allow'
+    }
 }
-
-@Serializable(options?: SerializableOptions)
 ```
+
+#### Methods
+
+**deserialize()**  
+To use when you don't know if the value to deserialize is an object or an array.
 
 ```typescript
-// JsonProperty decorator set metadata to the property.
-// It can take some optional parameters like:
-// - the name of json property if diverge from the class property
-//   (this value override the `formatPropertyNames` option from
-//   `Serializable` decorator)
-// - the type of the property (if needed)
-// - a predicate function that return a type (if needed)
-// - a function to transform data before serialize
-// - a function to transform data after serialize
-// - a function to transform data before deserialize
-// - a function to transform data after deserialize
-// - the names of properties to merge (the `formatPropertyNames`
-//   from `Serializable` decorator is ignored)
-// - a boolean to tell that the property is a dictionary
-// - a boolean to tell that the property is required
-//   (throw an error if undefined, null or missing)
-
-// BREAKING CHANGES: since version 3.0.0
-// - onSerialize has become afterSerialize
-// - onDeserialize has become beforeDeserialize
-// - postDeserialize has become afterDeserialize
-
-type IOProto = (property: any, currentInstance?: any) => {};
-type PredicateProto = (property: any, parentProperty?: any) => {};
-
-@JsonProperty(args?:
-    | string
-    | {
-        name?: string,
-        type?: Function,
-        beforeSerialize?: IOProto,
-        afterSerialize?: IOProto,
-        beforeDeserialize?: IOProto,
-        afterDeserialize?: IOProto,
-        isDictionary?: boolean,
-        required?: boolean
-      }
-    | {
-        name?: string,
-        predicate?: PredicateProto,
-        beforeSerialize?: IOProto,
-        afterSerialize?: IOProto,
-        beforeDeserialize?: IOProto,
-        afterDeserialize?: IOProto,
-        isDictionary?: boolean,
-        required?: boolean
-      }
-    | {
-        names?: Array<string>,
-        type?: Function,
-        beforeSerialize?: IOProto,
-        afterSerialize?: IOProto,
-        beforeDeserialize?: IOProto,
-        afterDeserialize?: IOProto,
-        required?: boolean
-      }
-    | {
-        names?: Array<string>,
-        predicate?: PredicateProto,
-        beforeSerialize?: IOProto,
-        afterSerialize?: IOProto,
-        beforeDeserialize?: IOProto,
-        afterDeserialize?: IOProto,
-        required?: boolean
-    })
+deserialize<T extends object>(
+    value: string | object | Array<object>,
+    type: Type<T>
+): T | Array<T|Nullish> | Nullish
 ```
 
-### Functions
+##### **Parameters**
+
+**value**  
+Type: `string` | `object` | `Array<object>`  
+Optional: `false`  
+Description: The value to deserialize.
+
+**type**  
+Type: [`Type<T>`](#typet)  
+Optional: `false`  
+Description: The constructor class to deserialize into.
+
+##### **Return**
+
+`T` or `Array<T|`[`Nullish`](#nullish)`>` or [`Nullish`](#nullish)
+
+---
+
+**deserializeObject()**  
+To use when the value to deserialize is an object.
 
 ```typescript
-// serialize function transform typescript class into json.
-// It takes two parameters:
-// - a instance of the class to serialize
-// - a boolean to remove undefined property (default true)
-
-serialize(instance: any, removeUndefined: boolean = true): any
+deserializeObject<T extends object>(
+    obj: string | object,
+    type: Type<T>
+): T | Nullish
 ```
+
+##### **Parameters**
+
+**obj**  
+Type: `string` | `object`  
+Optional: `false`  
+Description: The object to deserialize.
+
+**type**  
+Type: [`Type<T>`](#typet)  
+Optional: `false`  
+Description: The constructor class to deserialize into.
+
+##### **Return**
+
+`T` or [`Nullish`](#nullish)
+
+---
+
+**deserializeObjectArray()**  
+To use when the value to deserialize is an array.
 
 ```typescript
-// deserialize function transform json into typescript class.
-// It takes two parameters:
-// - json data
-// - the class you want to deserialize into
-
-deserialize<T>(json: any, type: new (...params) => T): T
+deserializeObjectArray<T extends object>(
+    array: string | Array<any>,
+    type: Type<T>
+): Array<T|Nullish> | Nullish
 ```
 
-## Example
+##### **Parameters**
+
+**array**  
+Type: `string` | `Array<any>`  
+Optional: `false`  
+Description: The object to deserialize.
+
+**type**  
+Type: [`Type<T>`](#typet)  
+Optional: `false`  
+Description: The constructor class to deserialize into.
+
+##### **Return**
+
+`Array<T|`[`Nullish`](#nullish)`>` or [`Nullish`](#nullish)
+
+---
+
+**serialize()**  
+To use when you don't know if the value to serialize is an object or an array
+
+```typescript
+serialize(value: object | Array<object>): object | Array<object|Nullish> | Nullish
+```
+
+##### **Parameters**
+
+**value**  
+Type: `object` | `Array<object>`  
+Optional: `false`  
+Description: The object or the array of objects to serialize.
+
+##### **Return**
+
+`object` or `Array<object|`[`Nullish`](#nullish)`>` or [`Nullish`](#nullish)
+
+---
+
+**serializeObject()**  
+To use when the value to serialize is an object.
+
+```typescript
+serializeObject(instance: object): object | Nullish
+```
+
+##### **Parameters**
+
+**instance**  
+Type: `object`  
+Optional: `false`  
+Description: The object to serialize.
+
+##### **Return**
+
+`object` or [`Nullish`](#nullish)
+
+---
+
+**serializeObjectArray()**  
+To use when the value to serialize is an array of objects.
+
+```typescript
+serializeObjectArray(array: Array<object>): Array<object|Nullish> | Nullish
+```
+
+##### **Parameters**
+
+**array**  
+Type: `Array<object>`  
+Optional: `false`  
+Description: The array of objects to serialize.
+
+##### **Return**
+
+`Array<object|`[`Nullish`](#nullish)`>` or [`Nullish`](#nullish)
+
+### Definitions
+
+#### **Types**
+
+##### **JsonPropertyOptions**
+
+```typescript
+name?: string | Array<string>;
+type?: Function | PredicateProto;
+isDictionary?: boolean;
+required?: boolean;
+beforeSerialize?: IOProto;
+afterSerialize?: IOProto;
+beforeDeserialize?: IOProto;
+afterDeserialize?: IOProto;
+```
+
+#### **JsonSerializerOptions**
+
+```typescript
+errorCallback?: ErrorCallback = logError;
+nullishPolicy: NullishPolicy = {
+    undefined: 'remove',
+    null: 'allow'
+};
+formatPropertyName?: FormatPropertyNameProto;
+```
+
+#### **NullishPolicy**
+
+```typescript
+undefined: Policy;
+null: Policy;
+```
+
+#### **Value types**
+
+##### **Nullish**
+
+```typescript
+null | undefined
+```
+
+##### **Policy**
+
+```typescript
+'allow' | 'disallow' | 'remove'
+```
+
+#### **Functions types**
+
+##### **ErrorCallback**
+
+```typescript
+(message: string) => void
+```
+
+The library provide two built-in methods:
+
+- `logError` that logs the error.
+- `throwError` that throws the error.
+
+##### **FormatPropertyNameProto**
+
+```typescript
+(propertyName: string) => string;
+```
+
+##### **IOProto**
+
+```typescript
+(property: any, currentInstance?: any) => any
+```
+
+##### **PredicateProto**
+
+```typescript
+(property: any, parentProperty?: any) => any
+```
+
+##### **Type\<T>**
+
+```typescript
+new (...args: Array<any>) => T;
+```
+
+Note: represent a `constructor`.
+
+## Examples
 
 ### Classes
 
 ```typescript
 // Import decorators from library
-import { Serializable, JsonProperty } from 'typescript-json-serializer';
+import { JsonObject, JsonProperty } from 'typescript-json-serializer';
 
 // Enums
 export enum Gender {
@@ -175,10 +351,10 @@ export enum Status {
     Dead = 'Dead'
 }
 
-// Create a serializable class: LivingBeing
+// Create a JsonObject class: LivingBeing
 
-// Serializable decorator
-@Serializable()
+// JsonObject decorator
+@JsonObject()
 export class LivingBeing {
 
     /** The living being id (PK) */
@@ -186,9 +362,9 @@ export class LivingBeing {
 }
 
 
-// Create a serializable class that extends LivingBeing: Human
+// Create a JsonObject class that extends LivingBeing: Human
 
-@Serializable()
+@JsonObject()
 export class Human extends LivingBeing {
     constructor(
         // This comment works
@@ -207,18 +383,18 @@ export class Human extends LivingBeing {
 }
 
 
-// Create a serializable class: PhoneNumber
+// Create a JsonObject class: PhoneNumber
 
-@Serializable()
+@JsonObject()
 export class PhoneNumber {
     @JsonProperty() countryCode: string;
     @JsonProperty() value: string;
 }
 
 
-// Create a serializable class that extends Human: Employee
+// Create a JsonObject class that extends Human: Employee
 
-@Serializable()
+@JsonObject()
 export class Employee extends Human {
     /** The employee's email */
     @JsonProperty({required: true}) email: string;
@@ -226,7 +402,7 @@ export class Employee extends Human {
     /** Predicate function to determine if the property type
       * is PhoneNumber or a primitive type */
     @JsonProperty({
-        predicate: property => {
+        type: property => {
             if (property && property.value !== undefined) {
                 return PhoneNumber;
             }
@@ -247,9 +423,9 @@ export class Employee extends Human {
 }
 
 
-// Create a serializable class: Animal
+// Create a JsonObject class: Animal
 
-@Serializable()
+@JsonObject()
 export class Animal {
 
     @JsonProperty() id: number;
@@ -272,9 +448,9 @@ export class Animal {
 }
 
 
-// Create a serializable class that extends Animal (which extends LivingBeing): Panther
+// Create a JsonObject class that extends Animal (which extends LivingBeing): Panther
 
-@Serializable()
+@JsonObject()
 export class Panther extends Animal {
 
     @JsonProperty() color: string;
@@ -291,10 +467,10 @@ export class Panther extends Animal {
 }
 
 
-// Create a serializable class that extends Animal
+// Create a JsonObject class that extends Animal
 // (which extends LivingBeing): Snake
 
-@Serializable()
+@JsonObject()
 export class Snake extends Animal {
 
     @JsonProperty() isPoisonous: boolean;
@@ -306,10 +482,10 @@ export class Snake extends Animal {
 }
 
 
-// Create a serializable empty class that extends Animal
+// Create a JsonObject empty class that extends Animal
 // (which extends LivingBeing): UnknownAnimal
 
-@Serializable()
+@JsonObject()
 export class UnknownAnimal extends Animal {
     public constructor(name: string) {
         super(name);
@@ -317,7 +493,7 @@ export class UnknownAnimal extends Animal {
 }
 
 
-// Create a serializable class: Zoo
+// Create a JsonObject class: Zoo
 
 // Function to transform coordinates into an array
 const coordinatesToArray = (coordinates: {
@@ -349,7 +525,7 @@ const snakeOrPanther = animal => {
         : Panther;
 };
 
-@Serializable()
+@JsonObject()
 export class Zoo {
 
     // Here you do not need to specify the type
@@ -378,12 +554,12 @@ export class Zoo {
     // specify the name of the json property
     // and use the predicate function to cast the deserialized
     // object into the correct child class
-    @JsonProperty({ name: 'Animals', predicate: snakeOrPanther })
+    @JsonProperty({ name: 'Animals', type: snakeOrPanther })
     animals: Array<Animal>;
 
     // Property that can be Panther or Snake type
     // Use again the predicate function
-    @JsonProperty({ predicate: snakeOrPanther })
+    @JsonProperty({ type: snakeOrPanther })
     mascot: Panther | Snake;
 
     // Dictionary of empty child classes
@@ -393,7 +569,7 @@ export class Zoo {
     // Dictionary of PhoneNumber or string
     @JsonProperty({
         isDictionary: true,
-        predicate: property => {
+        type: property => {
             if (property && property.value !== undefined) {
                 return PhoneNumber;
             }
@@ -406,22 +582,14 @@ export class Zoo {
     public isFree: boolean = true;
 
     public constructor() { }
-
 }
 
 
-// Create a serializable class that extends Society: Organization
+// Create a JsonObject class that extends Society: Organization
 
-const prefixWithUnderscore = (propertyName: string) => `_${propertyName}`
-
-// Instead of defining the JsonProperty name for each property
-// just use a function to do it for all of them.
-// Warning: The properties of the base class will be formatted as well
-@Serializable({ formatPropertyNames: prefixWithUnderscore })
+@JsonObject()
 export class Organization extends Society {
-    // Override `formatPropertyNames`
-    @JsonProperty({ name: 'zoos', type: Zoo }) zoos: Array<Zoo>;
-
+    @JsonProperty({ type: Zoo }) zoos: Array<Zoo>;
     @JsonProperty({ isDictionary: true })
     zoosName: { [id: string]: string };
 
@@ -432,18 +600,18 @@ export class Organization extends Society {
     // in this one when using `deserialize` and split back
     // when using `serialize`
     @JsonProperty({
-        names: [
-            '_mainShareholder',
-            '_secondaryShareholder',
-            '_thirdShareholder'
+        name: [
+            'mainShareholder',
+            'secondaryShareholder',
+            'thirdShareholder'
         ],
         type: Human,
         beforeDeserialize: value => Object.values(value),
         afterSerialize: value => {
             return {
-                _mainShareholder: value[0],
-                _secondaryShareholder: value[1],
-                _thirdShareholder: value[2]
+                mainShareholder: value[0],
+                secondaryShareholder: value[1],
+                thirdShareholder: value[2]
             };
         }
     })
@@ -451,9 +619,9 @@ export class Organization extends Society {
 }
 
 
-// Create a serializable class: Society
+// Create a JsonObject class: Society
 
-@Serializable()
+@JsonObject()
 export class Organization {
     @JsonProperty() id: string;
     @JsonProperty() name: string;
@@ -465,9 +633,9 @@ export class Organization {
 ```typescript
 // data.ts
 export const data: any = {
-    _id: '1',
-    _name: 'Zoos Organization',
-    _zoosName: {
+    id: '1',
+    name: 'Zoos Organization',
+    zoosName: {
         '15': 'The Greatest Zoo',
         '16': 'Zoo Zoo'
     },
@@ -608,32 +776,47 @@ export const data: any = {
             unknownAnimals: {}
         }
     ],
-    _mainShareholder: {
+    mainShareholder: {
         humanId: 100,
         name: 'Elon Musk',
         birthDate: '1971-06-28T22:00:00.000Z',
         gender: 1
     },
-    _secondaryShareholder: null
+    secondaryShareholder: null
 };
 ```
 
 ### Serialize & Deserialize
 
 ```typescript
-// Import functions from library
-import { deserialize, serialize } from 'typescript-json-serializer';
+import { JsonSerializer, throwError } from 'typescript-json-serializer';
 
 import { json } from '../json/data';
 import { Organization } from '../models/organization';
 
-// deserialize
-const organization = deserialize<Organization>(json, Organization);
+// Instantiate a default serializer
+const defaultSerializer = new JsonSerializer();
 
-// serialize
-const data = serialize(organization);
-// or
-const data = serialize(organization, false);
+// Or you can instantiate a serializer with your custom options
+const customSerializer = new JsonSerializer({
+    // Throw errors instead of logging
+    errorCallback: throwError,
+
+    // Allow all nullish values
+    nullishPolicy: {
+        undefined: 'allow',
+        null: 'allow'
+    };
+
+    // e.g. if all the properties in the json object are prefixed by '_'
+    formatPropertyName: (propertyName: string) => `_${propertyName}`;
+})
+
+// Deserialize
+const organization = defaultSerializer.deserialize(json, Organization);
+
+// Serialize
+const data = defaultSerializer.serialize(organization);
 ```
 
 ## Using with Create React App
@@ -653,7 +836,7 @@ yarn add -D customize-cra react-app-rewired
 Replace the scripts using `react-scripts` in the `package.json` file by `react-app-rewired`:
 
 ```json
-// example
+// Example
 {
     ...
     "scripts": {
@@ -675,7 +858,9 @@ npm install -D @babel/plugin-proposal-decorators \
 @babel/preset-typescript \
 babel-plugin-parameter-decorator \
 babel-plugin-transform-typescript-metadata
+
 # or
+
 yarn add -D @babel/plugin-proposal-decorators \
 @babel/preset-typescript \
 babel-plugin-parameter-decorator \
