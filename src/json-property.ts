@@ -53,9 +53,20 @@ const extractPropertiesFromConstructor = (ctor: object): Map<number, string> => 
     const ctorWithoutComments = ctorWithoutClassBody.replace(/(\/\*[\s\S]*?\*\/|\/\/.*$)/gm, '');
     const ctorOnSingleLine = ctorWithoutComments.replace(/[\r\t\n\v\f ]/g, '');
 
+    const ctorLength = ctorOnSingleLine.length;
+    let char: string | undefined;
+
+    // When using React in production, 'this' in the constructor
+    // is replaced by a char and appears at the end of it.
+    if (ctorOnSingleLine[ctorLength - 2] === ',') {
+        char = ctorOnSingleLine[ctorLength - 1];
+    }
+
     // Parse function body
     const constructorParamPattern = /(?:.*(?:constructor|function).*?(?=\())(?:\()(.+?(?=\)))/m;
-    const propertyPattern = /(?:this\.)([^,;\n}]+)/gm;
+    const propertyPattern = char
+        ? new RegExp(`(?:(this|${char}|\\(${char}=t.call\\(this(,.)*\\)\\))\\.)([^,;\n}]+)`, 'gm')
+        : new RegExp(`(?:(this)\\.)([^,;\n}]+)`, 'gm');
     const properties = new Map<number, string>();
     const paramsExecArray = constructorParamPattern.exec(ctorOnSingleLine);
 
@@ -68,7 +79,8 @@ const extractPropertiesFromConstructor = (ctor: object): Map<number, string> => 
     // Get properties
     let match: RegExpExecArray | null;
     while ((match = propertyPattern.exec(ctorOnSingleLine))) {
-        const matchResult = match[1].split('=');
+        const matchIndex = match.length - 1;
+        const matchResult = match[matchIndex].split('=');
         const index = params.findIndex(param => param === matchResult[1]);
 
         if (index > -1) {
@@ -104,7 +116,7 @@ const buildJsonPropertyMetadata = (
         }
 
         if (isPredicate(options.type)) {
-            metadata.type = undefined;
+            delete metadata.type;
             metadata.predicate = options.type;
         }
     }
