@@ -8,13 +8,13 @@
     "types": "dist/index.d.ts",
     "scripts": {
         "build": "rollup -c",
-        "cover": "jest --coverage",
+        "cover": "rimraf coverage && jest --coverage",
         "lint": "eslint . --ext .ts --fix",
         "lint:ci": "eslint . --ext .ts",
         "postbuild": "npm run types",
         "prebuild": "rimraf dist",
         "test": "jest",
-        "test:ci": "jest --reporters=default --reporters=jest-junit --coverage --coverageReporters=lcov --coverageReporters=text-lcov",
+        "test:ci": "jest --coverage",
         "types": "tsc src/index.ts -d --emitDeclarationOnly --declarationDir dist"
     },
     "repository": {

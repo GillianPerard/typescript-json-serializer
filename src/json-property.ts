@@ -104,7 +104,7 @@ const buildJsonPropertyMetadata = (
         }
 
         if (isPredicate(options.type)) {
-            metadata.type = undefined;
+            delete metadata.type;
             metadata.predicate = options.type;
         }
     }
