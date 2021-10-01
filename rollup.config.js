@@ -22,7 +22,7 @@ export default [
         ],
         plugins: [
             resolve(),
-            typescript({ sourceMap: false }),
+            typescript({ tsconfig: './tsconfig.build.json' }),
             commonjs({
                 exclude: 'node_modules',
                 ignoreGlobal: true
