@@ -4,6 +4,7 @@
         "outDir": "./dist",
         "sourceMap": false,
         "declaration": true,
+        "declarationDir": ".",
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
@@ -16,5 +17,14 @@
         "strict": true,
         "noImplicitAny": false,
         "strictPropertyInitialization": false
-    }
+    },
+    "include": [
+        "src",
+        "spec",
+        "examples"
+    ],
+    "exclude": [
+        "dist",
+        "node_modules"
+    ]
 }
