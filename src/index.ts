@@ -241,7 +241,7 @@ export const deserialize = <T>(json: any, type: new (...params: Array<any>) => T
         json = JSON.parse(json);
     }
 
-    if (primitives.includes(typeof json) && options?.primitive) {
+    if (primitives.includes(typeof json as Type) && options?.primitive) {
         return new type(json);
     }
 
@@ -308,7 +308,7 @@ export const serialize = (instance: any, removeUndefined: boolean = true): any =
     ) {
         const primitive = instance.valueOf();
 
-        if (primitives.includes(typeof primitive)) {
+        if (primitives.includes(typeof primitive as Type)) {
             return instance.valueOf();
         }
     }

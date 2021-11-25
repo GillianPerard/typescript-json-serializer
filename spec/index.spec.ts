@@ -10,6 +10,7 @@ import { Panther } from '../examples/models/panther';
 import { Zoo } from '../examples/models/zoo';
 import { Employee } from '../examples/models/employee';
 import { Primitive } from '../examples/models/primitive';
+import { Token } from '../examples/models/token';
 
 describe('Serializable', () => {
     it('should return no metadata', () => {
@@ -91,6 +92,13 @@ describe('serialize', () => {
         expect(serialize(new Primitive('id-123'))).toBe('id-123');
         expect(serialize(new Primitive(123))).toBe(123);
         expect(serialize(new Primitive(true))).toBe(true);
+
+        const token = new Token('Bearer', new Primitive('header'), new Primitive('signature'));
+        expect(serialize(token)).toEqual({
+            type: 'Bearer',
+            header: 'header',
+            signature: 'signature'
+        });
     });
 });
 
@@ -194,6 +202,16 @@ describe('deserialize', () => {
         expect(deserialize('id-123', Primitive)).toEqual(new Primitive('id-123'));
         expect(deserialize(123, Primitive)).toEqual(new Primitive(123));
         expect(deserialize(false, Primitive)).toEqual(new Primitive(false));
+
+        const token = {
+            type: 'Bearer',
+            header: 'header',
+            signature: 'signature'
+        };
+        const actual = deserialize<Token>(token, Token);
+        expect(actual instanceof Token).toBeTruthy();
+        expect(actual.header.value).toBe('header');
+        expect(actual.signature.value).toBe('signature');
     });
 });
 
