@@ -9,6 +9,7 @@ import { Organization } from '../examples/models/organization';
 import { Panther } from '../examples/models/panther';
 import { Zoo } from '../examples/models/zoo';
 import { Employee } from '../examples/models/employee';
+import { Primitive } from '../examples/models/primitive';
 
 describe('Serializable', () => {
     it('should return no metadata', () => {
@@ -84,6 +85,12 @@ describe('serialize', () => {
 
     it('should not have undefined value if removeUndefined param is not set', () => {
         expect(serialize(organizationWithUndefinedValue)).toEqual({ _id: '4', zoos: [{ id: 2 }] });
+    });
+
+    it('should return a primitive value', () => {
+        expect(serialize(new Primitive('id-123'))).toBe('id-123');
+        expect(serialize(new Primitive(123))).toBe(123);
+        expect(serialize(new Primitive(true))).toBe(true);
     });
 });
 
@@ -181,6 +188,12 @@ describe('deserialize', () => {
         zoo.phoneBook = 4;
         dZoo = deserialize(zoo, Zoo);
         expect(dZoo.phoneBook).toBeUndefined();
+    });
+
+    it('should return a class object from a primitive value', () => {
+        expect(deserialize('id-123', Primitive)).toEqual(new Primitive('id-123'));
+        expect(deserialize(123, Primitive)).toEqual(new Primitive(123));
+        expect(deserialize(false, Primitive)).toEqual(new Primitive(false));
     });
 });
 

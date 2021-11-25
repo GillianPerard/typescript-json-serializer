@@ -4,6 +4,7 @@ const apiMap = 'api:map:';
 const apiMapSerializable = `${apiMap}serializable`;
 const designType = 'design:type';
 const designParamTypes = 'design:paramtypes';
+const primitives = ['string', 'number', 'boolean'];
 
 // Enums
 enum Type {
@@ -21,7 +22,8 @@ interface SerializableMetadata {
 }
 
 interface SerializableOptions {
-    formatPropertyNames: FormatPropertyNameProto;
+    formatPropertyNames?: FormatPropertyNameProto;
+    primitive?: boolean;
 }
 
 type IOProto = (property: any, currentInstance?: any) => any;
@@ -231,14 +233,19 @@ export const deserialize = <T>(json: any, type: new (...params: Array<any>) => T
         return castSimpleData(typeof json, json);
     }
 
-    if (typeof json === Type.String) {
+    const { baseClassNames, options } =
+        (Reflect.getMetadata(apiMapSerializable, type) as SerializableMetadata) ?? {};
+
+    if (typeof json === Type.String && !options?.primitive) {
         json = JSON.parse(json);
+    }
+
+    if (primitives.includes(typeof json) && options?.primitive) {
+        return new type(json);
     }
 
     const instance: any = new type();
     const instanceName: string = instance.constructor.name;
-    const { baseClassNames, options } =
-        (Reflect.getMetadata(apiMapSerializable, type) as SerializableMetadata) ?? {};
     const apiMapInstanceName = `${apiMap}${instanceName}`;
     const hasMap = Reflect.hasMetadata(apiMapInstanceName, instance);
     let instanceMap: MetadataMap = {};
@@ -289,11 +296,24 @@ export const serialize = (instance: any, removeUndefined: boolean = true): any =
         return instance;
     }
 
-    const instanceName = instance.constructor.name;
-    const apiMapInstanceName = `${apiMap}${instanceName}`;
     const { baseClassNames, options } =
         (Reflect.getMetadata(apiMapSerializable, instance.constructor) as SerializableMetadata) ??
         {};
+
+    if (
+        options?.primitive &&
+        typeof instance === 'object' &&
+        typeof instance.valueOf === 'function'
+    ) {
+        const primitive = instance.valueOf();
+
+        if (primitives.includes(typeof primitive)) {
+            return instance.valueOf();
+        }
+    }
+
+    const instanceName = instance.constructor.name;
+    const apiMapInstanceName = `${apiMap}${instanceName}`;
     const hasBaseClasses = baseClassNames && baseClassNames.length;
 
     const hasMap = Reflect.hasMetadata(apiMapInstanceName, instance);
