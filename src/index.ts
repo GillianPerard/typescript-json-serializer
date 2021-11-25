@@ -1,11 +1,5 @@
 import 'reflect-metadata';
 
-const apiMap = 'api:map:';
-const apiMapSerializable = `${apiMap}serializable`;
-const designType = 'design:type';
-const designParamTypes = 'design:paramtypes';
-const primitives = ['string', 'number', 'boolean'];
-
 // Enums
 enum Type {
     Array = 'array',
@@ -15,6 +9,13 @@ enum Type {
     Object = 'object',
     String = 'string'
 }
+
+// Constants
+const apiMap = 'api:map:';
+const apiMapSerializable = `${apiMap}serializable`;
+const designType = 'design:type';
+const designParamTypes = 'design:paramtypes';
+const primitives = [Type.String, Type.Number, Type.Boolean];
 
 interface SerializableMetadata {
     baseClassNames: Array<string>;
