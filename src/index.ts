@@ -35,6 +35,7 @@ interface BeforeAfterProto {
 }
 type BaseMetadata = {
     required?: boolean;
+    nameNestedBy?: string;
 } & BeforeAfterProto;
 
 // Types
@@ -337,16 +338,16 @@ export const serialize = (instance: any, removeUndefined: boolean = true): any =
             if (metadata['names']) {
                 metadata['names'].forEach((name: string) => {
                     if (!removeUndefined || (removeUndefined && data[name] !== undefined)) {
-                        json[name] = data[name];
+                        setValueInJson(data[name], name, metadata.nameNestedBy);
                     }
                 });
             } else {
                 if (!removeUndefined || (removeUndefined && data !== undefined)) {
                     if (!metadata['isNameOverridden'] && options?.formatPropertyNames) {
                         const name = options.formatPropertyNames(metadata['name']);
-                        json[name] = data;
+                        setValueInJson(data, name, metadata.nameNestedBy);
                     } else {
-                        json[metadata['name']] = data;
+                        setValueInJson(data, metadata['name'], metadata.nameNestedBy);
                     }
                 }
             }
@@ -354,6 +355,29 @@ export const serialize = (instance: any, removeUndefined: boolean = true): any =
     });
 
     return json;
+
+    // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+    function setValueInJson(value: any, name: string, nameNestedBy?: string): void {
+        if (!nameNestedBy) {
+            json[name] = value;
+            return;
+        }
+
+        const nestedNames = name.split(nameNestedBy);
+
+        nestedNames.reduce((accumulator, keyName, i) => {
+            if (!accumulator[keyName]) {
+                accumulator[keyName] = {};
+            }
+
+            if (i === nestedNames.length - 1) {
+                accumulator[keyName] = value;
+                return accumulator;
+            }
+
+            return accumulator[keyName];
+        }, json);
+    }
 };
 
 /**
@@ -425,13 +449,15 @@ const convertDataToProperty = (
 
     if ('names' in metadata) {
         const object = {};
-        metadata.names.forEach((name: string) => (object[name] = json[name]));
+        metadata.names.forEach(
+            (name: string) => (object[name] = getDataByName(json, name, metadata.nameNestedBy))
+        );
         data = object;
     } else if ('name' in metadata && !metadata.isNameOverridden && formatPropertyName) {
         const name = formatPropertyName(metadata.name);
-        data = json[name];
+        data = getDataByName(json, name, metadata.nameNestedBy);
     } else {
-        data = json[metadata.name];
+        data = getDataByName(json, metadata.name, metadata.nameNestedBy);
     }
 
     if ([null, undefined].includes(data)) {
@@ -559,7 +585,8 @@ const getMetadata = (key: string, args: Args): Metadata => {
         'beforeSerialize',
         'afterSerialize',
         'beforeDeserialize',
-        'afterDeserialize'
+        'afterDeserialize',
+        'nameNestedBy'
     ];
 
     optionalArgKeys.forEach(k => {
@@ -639,4 +666,23 @@ const castSimpleData = (
         default:
             return data;
     }
+};
+
+/**
+ * Function to return the data according to the name. Support nested path
+ *
+ * @param json Json containing the values
+ * @param name Name or nested path to access the value
+ * @returns
+ */
+const getDataByName = (json: any, name: string, nameNestedBy?: string): any => {
+    if (!nameNestedBy) {
+        return json[name];
+    }
+
+    const nestedNames = name.split(nameNestedBy);
+    return nestedNames.reduce(
+        (obj, keyName) => (obj && obj[keyName] !== 'undefined' ? obj[keyName] : undefined),
+        json
+    );
 };

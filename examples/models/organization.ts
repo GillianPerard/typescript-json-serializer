@@ -21,4 +21,9 @@ export class Organization extends Society {
         })
     })
     shareholders: Array<Human | null | undefined>;
+    @JsonProperty({
+        name: '_mainShareholder.name',
+        nameNestedBy: '.'
+    })
+    mainShareholderName: string;
 }
