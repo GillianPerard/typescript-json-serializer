@@ -3,10 +3,10 @@ import { Animal } from './animal';
 
 @Serializable()
 export class Snake extends Animal {
-    @JsonProperty()
-    isPoisonous: boolean;
+    @JsonProperty() isPoisonous: boolean;
 
-    constructor(name: string) {
-        super(name);
+    constructor(args: { name: string; isPoisonous: boolean }) {
+        super(args.name);
+        this.isPoisonous = args.isPoisonous;
     }
 }

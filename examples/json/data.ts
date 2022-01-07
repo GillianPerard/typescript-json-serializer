@@ -227,11 +227,13 @@ jolene.id = data.zoos[0].Animals[1].id;
 jolene.numberOfPaws = data.zoos[0].Animals[1].numberOfPaws;
 jolene.status = Status.Alive;
 
-const ka = new Snake(data.zoos[0].Animals[2].name);
+const ka = new Snake({
+    name: data.zoos[0].Animals[2].name,
+    isPoisonous: data.zoos[0].Animals[2].isPoisonous
+});
 ka.birthDate = new Date(data.zoos[0].Animals[2].birthDate);
 ka.gender = Gender.Male;
 ka.id = data.zoos[0].Animals[2].id;
-ka.isPoisonous = data.zoos[0].Animals[2].isPoisonous;
 ka.numberOfPaws = data.zoos[0].Animals[2].numberOfPaws;
 
 const schrodinger = new Panther(data.zoos[0].Animals[3].name, data.zoos[0].Animals[3].isSpeckled);
