@@ -1,3 +1,11 @@
+<a name="3.4.5"></a>
+# 3.4.5 (2022-01-07)
+
+### Bug fixes
+
+* **deserialize:** accept object as constructor param for type ([#161](https://github.com/GillianPerard/typescript-json-serializer/issues/161)) ([4ab2170](https://github.com/GillianPerard/typescript-json-serializer/commit/4ab2170d4f3808079e573d3acbbe3f1205a577a3))
+* **deps:** bump tmpl from 1.0.4 to 1.0.5 ([05e0fc2](https://github.com/GillianPerard/typescript-json-serializer/commit/05e0fc23f5b1105a0cfa7059f44496644e2dbd5f))
+
 <a name="3.4.4"></a>
 # 3.4.4 (2021-07-10)
 
