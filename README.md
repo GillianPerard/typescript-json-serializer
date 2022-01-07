@@ -299,8 +299,9 @@ export class Snake extends Animal {
 
     @JsonProperty() isPoisonous: boolean;
 
-    public constructor(name: string) {
-        super(name);
+    public constructor(args: { name: string; isPoisonous: boolean }) {
+        super(args.name);
+        this.isPoisonous = args.isPoisonous;
     }
 
 }
