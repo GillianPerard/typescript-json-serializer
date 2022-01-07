@@ -235,7 +235,7 @@ export const deserialize = <T>(json: any, type: new (...params: Array<any>) => T
         json = JSON.parse(json);
     }
 
-    const instance: any = new type();
+    const instance: any = new type({});
     const instanceName: string = instance.constructor.name;
     const { baseClassNames, options } =
         (Reflect.getMetadata(apiMapSerializable, type) as SerializableMetadata) ?? {};
