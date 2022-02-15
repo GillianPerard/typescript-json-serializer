@@ -20,6 +20,7 @@ Check the new [README](./README.md) to understand how to use `typescript-json-se
 ### Build
 
 - replace `tsc` by `rollup` for types generation ([ca9f08](https://github.com/GillianPerard/typescript-json-serializer/commit/ca9f0829f557caeb35442abbd3169944edb71ceb))
+- bump `tmpl` from version 1.0.4 to 1.0.5
 
 ### Features
 
