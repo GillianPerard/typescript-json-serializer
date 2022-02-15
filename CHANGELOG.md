@@ -1,3 +1,38 @@
+<a name="4.0.0"></a>
+# 4.0.0 (2022-02-15)
+
+New major version comes with lot of breaking changes detailed below.  
+The purpose was to reorganize the entire project, write more tests and above all improve the usage of the library.
+
+Check the new [README](./README.md) to understand how to use `typescript-json-serializer` now.
+
+### BREAKING CHANGES
+
+- `Serializable`:
+  - the decorator was renamed to `JsonObject` to be more consistent
+  - `formatPropertyNames` option has been moved to the new `JsonSerializerOptions` class.
+- `JsonProperty`:
+  - `predicate` argument has been removed, now you can use the `type` argument
+  - `names` argument has been removed, now you can use the `name` argument
+- `serialize` function has been moved to the new `JsonSerializer` class
+- `deserialize` function has been moved to the new `JsonSerializer` class
+
+### Build
+
+- replace `tsc` by `rollup` for types generation ([ca9f08](https://github.com/GillianPerard/typescript-json-serializer/commit/ca9f0829f557caeb35442abbd3169944edb71ceb))
+
+### Features
+
+- **JsonSerializer**: new class was added to handle all the logic about serialization and deserialization ([bcc49e](https://github.com/GillianPerard/typescript-json-serializer/commit/bcc49e118e21d37f332dc6657ab94b8e25564b05))
+- **JsonSerializerOptions**: new class was added to handle all the `JsonSerializer` options as  ([bcc49e](https://github.com/GillianPerard/typescript-json-serializer/commit/bcc49e118e21d37f332dc6657ab94b8e25564b05))
+  - **errorCallback**: callback you can define to handle the errors, by default the library comes with 2 predefined callback `logError` and `throwError` but you can define your own
+  - **nullishPolicy**: object to define what is the policy when the algorithm meet a `null` or an `undefined` value, the 3 choices are `allow`, `disallow` and `remove`
+  - **formatPropertyName**: this option has been moved from `Serializable` decorator and keep the same behavior
+- **serializeObject**: new method added to `JsonSerializer` to serialize object only ([bcc49e](https://github.com/GillianPerard/typescript-json-serializer/commit/bcc49e118e21d37f332dc6657ab94b8e25564b05))
+- **serializeObjectArray**: new method added to `JsonSerializer` to serialize object object array only ([bcc49e](https://github.com/GillianPerard/typescript-json-serializer/commit/bcc49e118e21d37f332dc6657ab94b8e25564b05))
+- **deserializeObject**: new method added to `JsonSerializer` to deserialize object only ([bcc49e](https://github.com/GillianPerard/typescript-json-serializer/commit/bcc49e118e21d37f332dc6657ab94b8e25564b05))
+- **deserializeObjectArray**: new method added to `JsonSerializer` to deserialize object object array only ([bcc49e](https://github.com/GillianPerard/typescript-json-serializer/commit/bcc49e118e21d37f332dc6657ab94b8e25564b05))
+
 <a name="3.4.5"></a>
 # 3.4.5 (2022-01-07)
 
