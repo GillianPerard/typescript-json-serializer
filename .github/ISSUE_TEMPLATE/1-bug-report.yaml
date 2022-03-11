@@ -12,6 +12,7 @@ body:
           label: Version
           description: 'Which version of typescript-json-serializer you use?'
           options:
+              - 4.0.1
               - 4.0.0
               - 3.4.5
               - 3.4.4
@@ -80,7 +81,7 @@ body:
       attributes:
           label: Error
           description: Please provide the exception or error you saw
-          render: true
+          render: 'Text'
 
     - type: textarea
       id: reproduction
