@@ -1,3 +1,11 @@
+<a name="4.0.1"></a>
+# 4.0.1 (2022-03-11)
+
+### Bug fixes
+
+* **JsonSerializer:** apply properly `NullishPolicy` validation ([#167](https://github.com/GillianPerard/typescript-json-serializer/issues/161)) ([8faa6ae](https://github.com/GillianPerard/typescript-json-serializer/commit/8faa6aee2c18a5c3fb87005a0990ef0bfd7b23d2))
+* **deps:** bump `trim-off-newlines` from 1.0.1 to 1.0.3 ([8786244](https://github.com/GillianPerard/typescript-json-serializer/commit/87862441f69665dcee98896e071507bc9d7dba24))
+
 <a name="4.0.0"></a>
 # 4.0.0 (2022-02-15)
 
