@@ -134,7 +134,20 @@ export class JsonSerializer {
             return undefined;
         }
 
-        return array.map(obj => this.deserializeObject(obj, type));
+        return array.reduce((deserializedArray, obj) => {
+            const deserializedObject = this.deserializeObject(obj, type);
+
+            if (
+                !isNullish(deserializedObject) ||
+                (deserializedObject === null && this.options.nullishPolicy.null !== 'remove') ||
+                (deserializedObject === undefined &&
+                    this.options.nullishPolicy.undefined !== 'remove')
+            ) {
+                deserializedArray.push(deserializedObject);
+            }
+
+            return deserializedArray;
+        }, []);
     }
 
     serialize(value: object | Array<object>): object | Array<object> | Nullish {
@@ -219,6 +232,8 @@ export class JsonSerializer {
                         }
                     }
                 }
+            } else if (this.options.nullishPolicy.undefined !== 'remove') {
+                json[key] = undefined;
             }
         });
 
@@ -249,7 +264,19 @@ export class JsonSerializer {
             return undefined;
         }
 
-        return array.map((d: any) => this.serializeObject(d));
+        return array.reduce((serializedArray: Array<any>, d: any) => {
+            const serializeObject = this.serializeObject(d);
+
+            if (
+                !isNullish(serializeObject) ||
+                (serializeObject === null && this.options.nullishPolicy.null !== 'remove') ||
+                (serializeObject === undefined && this.options.nullishPolicy.undefined !== 'remove')
+            ) {
+                serializedArray.push(serializeObject);
+            }
+
+            return serializedArray;
+        }, []);
     }
 
     private deserializeProperty(
@@ -386,13 +413,26 @@ export class JsonSerializer {
             return undefined;
         }
 
-        return array.map((d: any) => {
+        return array.reduce((deserializedArray: Array<any>, d: any) => {
+            let deserializedValue: any;
             if (!isJsonObject(type) && !predicate) {
-                return this.deserializePrimitive(d, typeof d);
+                deserializedValue = this.deserializePrimitive(d, typeof d);
+            } else {
+                type = predicate ? predicate(d, array) : type;
+                deserializedValue = this.deserializeObject(d, type);
             }
-            type = predicate ? predicate(d, array) : type;
-            return this.deserializeObject(d, type);
-        });
+
+            if (
+                !isNullish(deserializedValue) ||
+                (deserializedValue === null && this.options.nullishPolicy.null !== 'remove') ||
+                (deserializedValue === undefined &&
+                    this.options.nullishPolicy.undefined !== 'remove')
+            ) {
+                deserializedArray.push(deserializedValue);
+            }
+
+            return deserializedArray;
+        }, []);
     }
 
     private error(message: string): void {

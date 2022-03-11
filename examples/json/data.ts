@@ -295,6 +295,6 @@ organization.zoos = [greatZoo, zooZoo];
 organization.zoosName = {};
 organization.zoosName[greatZoo.id] = greatZoo.name;
 organization.zoosName[zooZoo.id] = zooZoo.name;
-organization.shareholders = [elonMusk, null, undefined];
+organization.shareholders = [elonMusk, null];
 
 export const deserializedData = organization;
