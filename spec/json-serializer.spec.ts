@@ -277,7 +277,6 @@ describe('deserialize', () => {
 
     describe('deserializeObjectArray', () => {
         it('should return the deserialized array', () => {
-            console.log(jsonSerializer);
             expect(jsonSerializer.deserializeObjectArray(data.zoos, Zoo)).toStrictEqual(
                 deserializedData.zoos
             );
