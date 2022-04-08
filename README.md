@@ -2,7 +2,7 @@
 
 ![](https://github.com/GillianPerard/typescript-json-serializer/workflows/Build/badge.svg)
 ![npm](https://img.shields.io/npm/dt/typescript-json-serializer)
-![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/4.0.1)
+![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/4.1.0)
 [![Coverage Status](https://coveralls.io/repos/github/GillianPerard/typescript-json-serializer/badge.svg)](https://coveralls.io/github/GillianPerard/typescript-json-serializer)
 [![Known Vulnerabilities](https://snyk.io/test/github/gillianperard/typescript-json-serializer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/gillianperard/typescript-json-serializer?targetFile=package.json)
 
@@ -602,7 +602,7 @@ To use when you don't know if the value to deserialize is an object or an array.
 ```typescript
 deserialize<T extends object>(
     value: string | object | Array<object>,
-    type: Type<T>
+    type: Type<T> | T
 ): T | Array<T|Nullish> | Nullish
 ```
 
@@ -614,7 +614,7 @@ Optional: `false`
 Description: The value to deserialize.
 
 **type**  
-Type: [`Type<T>`](#typet)  
+Type: [`Type<T>`](#typet) | `T`  
 Optional: `false`  
 Description: The constructor class to deserialize into.
 
@@ -630,7 +630,7 @@ To use when the value to deserialize is an object.
 ```typescript
 deserializeObject<T extends object>(
     obj: string | object,
-    type: Type<T>
+    type: Type<T> | T
 ): T | Nullish
 ```
 
@@ -642,7 +642,7 @@ Optional: `false`
 Description: The object to deserialize.
 
 **type**  
-Type: [`Type<T>`](#typet)  
+Type: [`Type<T>`](#typet) | `T`  
 Optional: `false`  
 Description: The constructor class to deserialize into.
 
@@ -658,7 +658,7 @@ To use when the value to deserialize is an array.
 ```typescript
 deserializeObjectArray<T extends object>(
     array: string | Array<any>,
-    type: Type<T>
+    type: Type<T> | T
 ): Array<T|Nullish> | Nullish
 ```
 
@@ -670,7 +670,7 @@ Optional: `false`
 Description: The object to deserialize.
 
 **type**  
-Type: [`Type<T>`](#typet)  
+Type: [`Type<T>`](#typet) | `T`  
 Optional: `false`  
 Description: The constructor class to deserialize into.
 
