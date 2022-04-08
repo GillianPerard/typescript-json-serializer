@@ -273,6 +273,14 @@ describe('deserialize', () => {
         it('should return undefined when deserialize non object', () => {
             test(4, undefined);
         });
+
+        it('should return zoo with isOpen already set to false', () => {
+            const zoo = new Zoo();
+            zoo.isOpen = false;
+            const result = Object.assign(new Zoo(), deserializedData.zoos[0]);
+            result.isOpen = false;
+            expect(jsonSerializer.deserializeObject(data.zoos[0], zoo)).toStrictEqual(result);
+        });
     });
 
     describe('deserializeObjectArray', () => {

@@ -1,6 +1,8 @@
 import { PredicateProto } from './json-property';
 import { Reflection } from './reflection';
 
+export type Type<T> = new (...args: Array<any>) => T;
+
 export const isString = (value: unknown): value is string => typeof value === 'string';
 export const isNumber = (value: any): value is number => typeof value === 'number';
 export const isBoolean = (value: any): value is number => typeof value === 'boolean';
@@ -37,4 +39,18 @@ export const tryParse = (value: any) => {
     } catch {
         return value;
     }
+};
+
+export const hasConstructor = <T = any>(f: unknown): f is Type<T> => {
+    if (typeof f !== 'function') {
+        return false;
+    }
+
+    try {
+        Reflect.construct(String, [], f);
+    } catch (e) {
+        return false;
+    }
+
+    return true;
 };
