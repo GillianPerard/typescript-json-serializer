@@ -1,4 +1,5 @@
 import {
+    hasConstructor,
     isArray,
     isDateObject,
     isDateValue,
@@ -7,13 +8,13 @@ import {
     isNumber,
     isObject,
     isString,
-    tryParse
+    tryParse,
+    Type
 } from './helpers';
 import { JsonPropertiesMetadata, JsonPropertyMetadata, PredicateProto } from './json-property';
 import { FormatPropertyNameProto, JsonSerializerOptions } from './json-serializer-options';
 import { Reflection } from './reflection';
 
-type Type<T> = new (...args: Array<any>) => T;
 type Nullish = null | undefined;
 interface Dictionary<T = any> {
     [key: string]: T;
@@ -28,7 +29,7 @@ export class JsonSerializer {
 
     deserialize<T extends object>(
         value: string | object | Array<object>,
-        type: Type<T>
+        type: Type<T> | T
     ): T | Array<T | Nullish> | Nullish {
         if (isString(value)) {
             value = tryParse(value);
@@ -49,7 +50,7 @@ export class JsonSerializer {
         return undefined;
     }
 
-    deserializeObject<T extends object>(obj: string | object, type: Type<T>): T | Nullish {
+    deserializeObject<T extends object>(obj: string | object, type: Type<T> | T): T | Nullish {
         if (obj === null) {
             if (this.options.nullishPolicy.null === 'disallow') {
                 this.error('Fail to deserialize: null is not assignable to type Object.');
@@ -77,7 +78,7 @@ export class JsonSerializer {
             return undefined;
         }
 
-        const instance: T = new type({});
+        const instance: T = hasConstructor(type) ? new type({}) : type;
         const jsonPropertiesMetadata = this.getJsonPropertiesMetadata(instance);
 
         if (!jsonPropertiesMetadata) {
@@ -105,7 +106,7 @@ export class JsonSerializer {
 
     deserializeObjectArray<T extends object>(
         array: string | Array<any>,
-        type: new (...args: Array<any>) => T
+        type: Type<T> | T
     ): Array<T | Nullish> | Nullish {
         if (array === null) {
             if (this.options.nullishPolicy.null === 'disallow') {
