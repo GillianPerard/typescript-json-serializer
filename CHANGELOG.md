@@ -1,4 +1,10 @@
+<a name="4.1.1"></a>
+# 4.1.1 (2022-04-12)
 
+### Bug fixes
+
+* **deps:** bump minimist from 1.2.5 to 1.2.6 ([345349c](https://github.com/GillianPerard/typescript-json-serializer/commit/345349c151726270307da84c297be76588719232))
+* **deps:** bump ansi-regex from 4.1.0 to 4.1.1 ([d8c5310](https://github.com/GillianPerard/typescript-json-serializer/commit/d8c5310b17a8458cd283f7ea1b66419b9b59cb80))
 
 <a name="4.1.0"></a>
 # 4.1.0 (2022-04-08)
