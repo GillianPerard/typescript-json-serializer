@@ -2,7 +2,7 @@
 
 ![](https://github.com/GillianPerard/typescript-json-serializer/workflows/Build/badge.svg)
 ![npm](https://img.shields.io/npm/dt/typescript-json-serializer)
-![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/4.1.1)
+![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/4.2.0)
 [![Coverage Status](https://coveralls.io/repos/github/GillianPerard/typescript-json-serializer/badge.svg)](https://coveralls.io/github/GillianPerard/typescript-json-serializer)
 [![Known Vulnerabilities](https://snyk.io/test/github/gillianperard/typescript-json-serializer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/gillianperard/typescript-json-serializer?targetFile=package.json)
 
