@@ -1,3 +1,11 @@
+
+<a name="4.2.0"></a>
+# 4.2.0 (2022-05-20)
+
+### Features
+
+* **index:** export `isNullish` function ([#176](https://github.com/GillianPerard/typescript-json-serializer/issues/176)) ([efa82c3](https://github.com/GillianPerard/typescript-json-serializer/commit/efa82c30f8eb4522f6ab55933f62f0e01a23f35d))
+
 <a name="4.1.1"></a>
 # 4.1.1 (2022-04-12)
 
