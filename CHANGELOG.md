@@ -1,3 +1,15 @@
+<a name="4.3.0"></a>
+# 4.3.0 (2022-08-17)
+
+### Features
+
+* **JsonSerializer:** add support for `Map` and `Set` types ([#181](https://github.com/GillianPerard/typescript-json-serializer/pull/181)) ([5a5ee26](https://github.com/GillianPerard/typescript-json-serializer/commit/5a5ee2641d171d7484602c71d3465c5fdb17ec89))
+
+(special thanks to [@THUzxj](https://github.com/THUzxj))
+
+### Bug fixes
+
+* **deps:** bump terser from 5.7.1 to 5.14.2 ([#179](https://github.com/GillianPerard/typescript-json-serializer/pull/179)) ([861f182](https://github.com/GillianPerard/typescript-json-serializer/commit/861f182c8472a09097f6a2004dfda46f129bea3d))
 
 <a name="4.2.0"></a>
 # 4.2.0 (2022-05-20)
