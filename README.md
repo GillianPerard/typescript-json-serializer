@@ -2,7 +2,7 @@
 
 ![](https://github.com/GillianPerard/typescript-json-serializer/workflows/Build/badge.svg)
 ![npm](https://img.shields.io/npm/dt/typescript-json-serializer)
-![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/4.2.0)
+![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/4.3.0)
 [![Coverage Status](https://coveralls.io/repos/github/GillianPerard/typescript-json-serializer/badge.svg)](https://coveralls.io/github/GillianPerard/typescript-json-serializer)
 [![Known Vulnerabilities](https://snyk.io/test/github/gillianperard/typescript-json-serializer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/gillianperard/typescript-json-serializer?targetFile=package.json)
 
@@ -287,9 +287,9 @@ export class Zoo {
     })
     coordinates: { x: number; y: number; z: number };
 
-    // Array of none-basic type elements
+    // Set of none-basic type elements
     @JsonProperty({ type: Employee })
-    employees: Array<Employee>;
+    employees: Set<Employee>;
 
     @JsonProperty() id: number;
     @JsonProperty() name: string;
@@ -306,9 +306,9 @@ export class Zoo {
     @JsonProperty({ type: snakeOrPanther })
     mascot: Panther | Snake;
 
-    // Dictionary of empty child classes
-    @JsonProperty({ isDictionary: true, type: UnknownAnimal })
-    unknownAnimals: { [id: string]: UnknownAnimal };
+    // Map of empty child classes
+    @JsonProperty({ type: UnknownAnimal })
+    unknownAnimals: Map<string, UnknownAnimal>;
 
     // Dictionary of PhoneNumber or string
     @JsonProperty({
