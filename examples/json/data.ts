@@ -254,11 +254,11 @@ greatZoo.coordinates = {
     z: data.zoos[0].coordinates[2]
 };
 greatZoo.country = data.zoos[0].country;
-greatZoo.employees = [bob, mikasa, red, fried];
+greatZoo.employees = new Set([bob, mikasa, red, fried]);
 greatZoo.id = data.zoos[0].id;
 greatZoo.mascot = bagheera;
 greatZoo.name = data.zoos[0].name;
-greatZoo.unknownAnimals = { '1': unknownAnimal };
+greatZoo.unknownAnimals = new Map([['1', unknownAnimal]]);
 greatZoo.phoneBook = {
     '1': new PhoneNumber(data.zoos[0].phoneBook['1'].value),
     '2': new PhoneNumber(data.zoos[0].phoneBook['2'].value),
@@ -275,11 +275,11 @@ zooZoo.coordinates = {
     z: data.zoos[1].coordinates[2]
 };
 zooZoo.country = data.zoos[1].country;
-zooZoo.employees = [];
+zooZoo.employees = new Set([]);
 zooZoo.id = data.zoos[1].id;
 zooZoo.mascot = data.zoos[1].mascot;
 zooZoo.name = data.zoos[1].name;
-zooZoo.unknownAnimals = {};
+zooZoo.unknownAnimals = new Map();
 
 const elonMusk = new Human(
     data.mainShareholder.name,

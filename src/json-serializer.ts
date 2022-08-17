@@ -297,7 +297,10 @@ export class JsonSerializer {
         }
 
         const type = Reflection.getType(instance, propertyKey);
-        const isArrayProperty = type?.name?.toLowerCase() === 'array';
+        const typeName = type?.name?.toLowerCase();
+        const isArrayProperty = typeName === 'array';
+        const isSetProperty = typeName === 'set';
+        const isMapProperty = typeName === 'map';
         let propertyType = metadata.type || type;
 
         if (metadata.beforeDeserialize) {
@@ -307,10 +310,18 @@ export class JsonSerializer {
         let property: any;
         const predicate = metadata.predicate;
 
-        if (metadata.isDictionary) {
+        if (metadata.isDictionary || isMapProperty) {
             property = this.deserializeDictionary(dataSource, propertyType, predicate);
-        } else if (isArrayProperty) {
+
+            if (isMapProperty) {
+                property = new Map(Object.entries(property));
+            }
+        } else if (isArrayProperty || isSetProperty) {
             property = this.deserializeArray(dataSource, propertyType, predicate);
+
+            if (isSetProperty) {
+                property = new Set(property);
+            }
         } else if (
             (!isJsonObject(propertyType) && !predicate) ||
             (predicate && !predicate(dataSource, obj))
@@ -550,18 +561,40 @@ export class JsonSerializer {
     private serializeProperty(instance: object, key: string, metadata: JsonPropertyMetadata): any {
         const property = instance[key];
         const type = Reflection.getType(instance, key);
-        const isArrayProperty = type?.name?.toLocaleLowerCase() === 'array';
+        const typeName = type?.name?.toLowerCase();
+        const isArrayProperty = typeName === 'array';
+        const isSetProperty = typeName === 'set';
+        const isMapProperty = typeName === 'map';
         const predicate = metadata.predicate;
         const propertyType = metadata.type || type;
         const isJsonObjectProperty = isJsonObject(propertyType);
 
         if (property && (isJsonObjectProperty || predicate)) {
-            if (isArrayProperty) {
-                return this.serializeObjectArray(property);
+            if (isArrayProperty || isSetProperty) {
+                const array = isSetProperty ? Array.from(property) : property;
+                return this.serializeObjectArray(array);
             }
 
-            if (metadata.isDictionary) {
-                return this.serializeDictionary(property);
+            if (metadata.isDictionary || isMapProperty) {
+                if (!isMapProperty) {
+                    return this.serializeDictionary(property);
+                }
+
+                const obj = {};
+                property.forEach((value, mapKey) => {
+                    if (isString(mapKey)) {
+                        obj[mapKey] = value;
+                    } else {
+                        this.error(
+                            `Fail to serialize: type of '${typeof mapKey}' is not assignable to type 'string'.\nReceived: ${JSON.stringify(
+                                mapKey
+                            )}.`
+                        );
+                    }
+                });
+
+                console.log(obj);
+                return this.serializeDictionary(obj);
             }
 
             return this.serializeObject(property);
