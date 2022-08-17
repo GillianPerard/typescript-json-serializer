@@ -1,4 +1,4 @@
-import { JsonProperty, JsonObject } from '../../src';
+import { JsonObject, JsonProperty } from '../../src';
 
 import { Animal } from './animal';
 import { Employee } from './employee';
@@ -39,7 +39,7 @@ export class Zoo {
     @JsonProperty()
     description: string;
     @JsonProperty({ type: Employee })
-    employees: Array<Employee>;
+    employees: Set<Employee>;
     @JsonProperty()
     id: number;
     @JsonProperty()
@@ -48,8 +48,8 @@ export class Zoo {
     animals: Array<Animal>;
     @JsonProperty({ type: snakeOrPanther })
     mascot: Panther | Snake;
-    @JsonProperty({ isDictionary: true, type: UnknownAnimal })
-    unknownAnimals: { [id: string]: UnknownAnimal };
+    @JsonProperty({ type: UnknownAnimal })
+    unknownAnimals: Map<string, UnknownAnimal>;
     @JsonProperty({
         isDictionary: true,
         type: phoneNumberType
