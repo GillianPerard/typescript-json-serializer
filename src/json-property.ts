@@ -3,9 +3,10 @@ import { Reflection } from './reflection';
 
 export type IOProto = (property: any, currentInstance?: any) => any;
 export type PredicateProto = (property: any, parentProperty?: any) => any;
+export type DataStructure = 'array' | 'dictionary' | 'map' | 'set';
 
 export interface JsonPropertyBaseMetadata {
-    isDictionary?: boolean;
+    dataStructure?: DataStructure;
     required?: boolean;
     beforeSerialize?: IOProto;
     afterSerialize?: IOProto;
