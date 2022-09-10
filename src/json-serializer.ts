@@ -4,9 +4,11 @@ import {
     isDateObject,
     isDateValue,
     isJsonObject,
+    isMap,
     isNullish,
     isNumber,
     isObject,
+    isSet,
     isString,
     tryParse,
     Type
@@ -297,10 +299,8 @@ export class JsonSerializer {
         }
 
         const type = Reflection.getType(instance, propertyKey);
-        const typeName = type?.name?.toLowerCase();
-        const isArrayProperty = typeName === 'array';
-        const isSetProperty = typeName === 'set';
-        const isMapProperty = typeName === 'map';
+        const { isArrayProperty, isSetProperty, isMapProperty, isDictionaryProperty } =
+            this.getDataStructureInformation(type, instance[propertyKey], metadata);
         let propertyType = metadata.type || type;
 
         if (metadata.beforeDeserialize) {
@@ -310,7 +310,7 @@ export class JsonSerializer {
         let property: any;
         const predicate = metadata.predicate;
 
-        if (metadata.isDictionary || isMapProperty) {
+        if (isDictionaryProperty || isMapProperty) {
             property = this.deserializeDictionary(dataSource, propertyType, predicate);
 
             if (isMapProperty) {
@@ -489,6 +489,46 @@ export class JsonSerializer {
         return json[name];
     }
 
+    private getDataStructureInformation(
+        type: any,
+        property: any,
+        metadata: JsonPropertyMetadata
+    ): {
+        isArrayProperty: boolean;
+        isDictionaryProperty: boolean;
+        isMapProperty: boolean;
+        isSetProperty: boolean;
+    } {
+        if (metadata.dataStructure) {
+            return {
+                isArrayProperty: metadata.dataStructure === 'array' ?? false,
+                isDictionaryProperty: metadata.dataStructure === 'dictionary' ?? false,
+                isMapProperty: metadata.dataStructure === 'map' ?? false,
+                isSetProperty: metadata.dataStructure === 'set' ?? false
+            };
+        }
+
+        const typeName = type?.name?.toLowerCase();
+
+        /**
+         * When a property is set as possibly undefined the type change
+         * to object even if it is an array, a set or a map.
+         */
+        return typeName === 'object'
+            ? {
+                  isArrayProperty: isArray(property),
+                  isDictionaryProperty: false,
+                  isMapProperty: isMap(property),
+                  isSetProperty: isSet(property)
+              }
+            : {
+                  isArrayProperty: typeName === 'array',
+                  isDictionaryProperty: false,
+                  isMapProperty: typeName === 'map',
+                  isSetProperty: typeName === 'set'
+              };
+    }
+
     private getJsonPropertiesMetadata(instance: any): JsonPropertiesMetadata | undefined {
         const { baseClassNames } = Reflection.getJsonObjectMetadata(instance.constructor) ?? {};
         const instanceMap = Reflection.getJsonPropertiesMetadata(instance);
@@ -561,10 +601,9 @@ export class JsonSerializer {
     private serializeProperty(instance: object, key: string, metadata: JsonPropertyMetadata): any {
         const property = instance[key];
         const type = Reflection.getType(instance, key);
-        const typeName = type?.name?.toLowerCase();
-        const isArrayProperty = typeName === 'array';
-        const isSetProperty = typeName === 'set';
-        const isMapProperty = typeName === 'map';
+        const { isArrayProperty, isDictionaryProperty, isMapProperty, isSetProperty } =
+            this.getDataStructureInformation(type, property, metadata);
+
         const predicate = metadata.predicate;
         const propertyType = metadata.type || type;
         const isJsonObjectProperty = isJsonObject(propertyType);
@@ -575,7 +614,7 @@ export class JsonSerializer {
                 return this.serializeObjectArray(array);
             }
 
-            if (metadata.isDictionary || isMapProperty) {
+            if (isDictionaryProperty || isMapProperty) {
                 if (!isMapProperty) {
                     return this.serializeDictionary(property);
                 }
@@ -593,7 +632,6 @@ export class JsonSerializer {
                     }
                 });
 
-                console.log(obj);
                 return this.serializeDictionary(obj);
             }
 

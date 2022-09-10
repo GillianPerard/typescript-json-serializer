@@ -38,8 +38,8 @@ export class Zoo {
     coordinates: { x: number; y: number; z: number };
     @JsonProperty()
     description: string;
-    @JsonProperty({ type: Employee })
-    employees: Set<Employee>;
+    @JsonProperty({ type: Employee, dataStructure: 'set' })
+    employees: Set<Employee> | undefined;
     @JsonProperty()
     id: number;
     @JsonProperty()
@@ -51,7 +51,7 @@ export class Zoo {
     @JsonProperty({ type: UnknownAnimal })
     unknownAnimals: Map<string, UnknownAnimal>;
     @JsonProperty({
-        isDictionary: true,
+        dataStructure: 'dictionary',
         type: phoneNumberType
     })
     phoneBook: { [id: string]: PhoneNumber | string };

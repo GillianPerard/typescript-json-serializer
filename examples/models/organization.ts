@@ -1,4 +1,4 @@
-import { JsonProperty, JsonObject } from '../../src';
+import { JsonObject, JsonProperty } from '../../src';
 import { Human } from './human';
 import { Society } from './society';
 import { Zoo } from './zoo';
@@ -6,7 +6,7 @@ import { Zoo } from './zoo';
 @JsonObject()
 export class Organization extends Society {
     @JsonProperty({ name: 'zoos', type: Zoo }) zoos: Array<Zoo>;
-    @JsonProperty({ isDictionary: true })
+    @JsonProperty({ dataStructure: 'dictionary' })
     zoosName: { [id: string]: string };
     @JsonProperty({
         name: ['mainShareholder', 'secondaryShareholder', 'thirdShareholder'],
