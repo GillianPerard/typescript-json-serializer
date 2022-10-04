@@ -148,7 +148,7 @@ describe('JsonSerializerOptions', () => {
                     Animals: [
                         {
                             birthDate: undefined,
-                            childrenIds: undefined,
+                            childrenIdentifiers: undefined,
                             color: undefined,
                             gender: undefined,
                             isSpeckled: false,

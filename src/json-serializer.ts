@@ -90,13 +90,7 @@ export class JsonSerializer {
         Object.keys(jsonPropertiesMetadata).forEach(key => {
             const metadata = jsonPropertiesMetadata[key];
             const property = this.deserializeProperty(instance, key, obj as object, metadata);
-
-            if (metadata.required && isNullish(property)) {
-                const instanceName = instance['constructor'].name;
-                this.error(
-                    `Property '${key}' is required in ${instanceName} ${JSON.stringify(obj)}.`
-                );
-            }
+            this.checkRequiredProperty(metadata, instance, key, property, obj, false);
 
             if (this.isAllowedProperty(property)) {
                 instance[key] = property;
@@ -198,9 +192,9 @@ export class JsonSerializer {
         const instanceKeys = Object.keys(instance);
 
         Object.keys(jsonPropertiesMetadata).forEach(key => {
-            if (instanceKeys.includes(key)) {
-                const metadata = jsonPropertiesMetadata[key];
+            const metadata = jsonPropertiesMetadata[key];
 
+            if (instanceKeys.includes(key)) {
                 let initialValue: any;
 
                 if (metadata.beforeSerialize) {
@@ -223,6 +217,8 @@ export class JsonSerializer {
                         }
                     });
                 } else {
+                    this.checkRequiredProperty(metadata, instance, key, property, instance);
+
                     if (this.isAllowedProperty(property)) {
                         if (
                             !metadata.isNameOverridden &&
@@ -235,8 +231,20 @@ export class JsonSerializer {
                         }
                     }
                 }
-            } else if (this.options.nullishPolicy.undefined !== 'remove') {
-                json[key] = undefined;
+            } else {
+                if (isArray(metadata.name)) {
+                    metadata.name.forEach(name => {
+                        if (this.isAllowedProperty(undefined)) {
+                            json[name] = undefined;
+                        }
+                    });
+                } else {
+                    this.checkRequiredProperty(metadata, instance, key, undefined, instance);
+
+                    if (this.isAllowedProperty(undefined)) {
+                        json[metadata.name] = undefined;
+                    }
+                }
             }
         });
 
@@ -280,6 +288,24 @@ export class JsonSerializer {
 
             return serializedArray;
         }, []);
+    }
+
+    private checkRequiredProperty(
+        metadata: JsonPropertyMetadata,
+        instance: object,
+        key: string,
+        property: any,
+        obj: any,
+        isSerialization = true
+    ): void {
+        if (metadata.required && isNullish(property)) {
+            const instanceName = instance['constructor'].name;
+            this.error(
+                `Fail to ${
+                    isSerialization ? 'serialize' : 'deserialize'
+                }: Property '${key}' is required in ${instanceName} ${JSON.stringify(obj)}.`
+            );
+        }
     }
 
     private deserializeProperty(

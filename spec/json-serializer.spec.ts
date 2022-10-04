@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { JsonSerializer, JsonSerializerOptions, logError, throwError } from '../src';
-import { data, deserializedData, Animal, Organization, Zoo, Employee, Gender } from '../examples';
+import { Animal, data, deserializedData, Employee, Gender, Organization, Zoo } from '../examples';
 
 describe('constructor', () => {
     it('should have default options', () => {
@@ -39,7 +39,7 @@ describe('serialize', () => {
     let jsonSerializer: JsonSerializer;
 
     beforeEach(() => {
-        jsonSerializer = new JsonSerializer({ errorCallback: logError });
+        jsonSerializer = new JsonSerializer({ errorCallback: throwError });
     });
 
     describe('serialize', () => {
@@ -58,6 +58,7 @@ describe('serialize', () => {
         });
 
         it('should return undefined if param is not an array nor an object', () => {
+            jsonSerializer.options.errorCallback = logError;
             console.error = jest.fn();
             const value = 4 as any;
             const fn = () => jsonSerializer.serialize(value);
@@ -81,9 +82,47 @@ describe('serialize', () => {
         it('should return empty object for serialized empty object', () => {
             expect(jsonSerializer.serializeObject({})).toStrictEqual({});
         });
+
+        it('should throw an error if required property is missing', () => {
+            const fn = () => jsonSerializer.serializeObject(fried);
+            const fried = new Employee('Fried Richter', 4, 1, new Date('1994-04-01T22:00:00.000Z'));
+            expect(fn).toThrowError(
+                `Fail to serialize: Property 'email' is required in Employee {"name":"Fried Richter","id":4,"gender":1,"birthDate":"1994-04-01T22:00:00.000Z"}.`
+            );
+        });
+
+        it('should throw an error if required property is null', () => {
+            const fn = () => jsonSerializer.serializeObject(fried);
+            const fried = new Employee('Fried Richter', 4, 1, new Date('1994-04-01T22:00:00.000Z'));
+            fried.email = null as any;
+            expect(fn).toThrowError(
+                `Fail to serialize: Property 'email' is required in Employee {"name":"Fried Richter","id":4,"gender":1,"birthDate":"1994-04-01T22:00:00.000Z","email":null}.`
+            );
+        });
+
+        it('should throw an error if required property is undefined', () => {
+            const fn = () => jsonSerializer.serializeObject(fried);
+            const fried = new Employee('Fried Richter', 4, 1, new Date('1994-04-01T22:00:00.000Z'));
+            fried.email = undefined as any;
+            expect(fn).toThrowError(
+                `Fail to serialize: Property 'email' is required in Employee {"name":"Fried Richter","id":4,"gender":1,"birthDate":"1994-04-01T22:00:00.000Z"}.`
+            );
+        });
+
+        it('should throw an error if extended required property is missing', () => {
+            const fn = () => jsonSerializer.serializeObject(fried);
+            const fried = new Employee('Fried Richter', 4, 1, new Date('1994-04-01T22:00:00.000Z'));
+            fried.email = 'fried.richter@tgzoo.fr';
+            delete (fried as any).id;
+            expect(fn).toThrowError(
+                `Fail to serialize: Property 'id' is required in Employee {"name":"Fried Richter","gender":1,"birthDate":"1994-04-01T22:00:00.000Z","email":"fried.richter@tgzoo.fr"}.`
+            );
+        });
     });
 
     describe('serializeObjectArray', () => {
+        beforeEach(() => (jsonSerializer.options.errorCallback = logError));
+
         it('should return the serialized array of data', () => {
             expect(
                 jsonSerializer.serializeObjectArray([deserializedData, deserializedData])
@@ -153,60 +192,6 @@ describe('deserialize', () => {
             const object = jsonSerializer.deserialize({ name: 'My beautiful animal' }, Animal);
             const isAnimal = object instanceof Animal;
             expect(isAnimal).toBeTruthy();
-        });
-
-        it('should throw an error if required property is missing', () => {
-            const fn = () => jsonSerializer.deserialize(fried, Employee);
-            const fried = {
-                employeeId: 4,
-                name: 'Fried Richter',
-                birthDate: '1994-04-01T22:00:00.000Z',
-                gender: 1
-            };
-            expect(fn).toThrowError(
-                `Property 'email' is required in Employee {"employeeId":4,"name":"Fried Richter","birthDate":"1994-04-01T22:00:00.000Z","gender":1}.`
-            );
-        });
-
-        it('should throw an error if required property is null', () => {
-            const fn = () => jsonSerializer.deserialize(fried, Employee);
-            const fried = {
-                employeeId: 4,
-                name: 'Fried Richter',
-                birthDate: '1994-04-01T22:00:00.000Z',
-                email: null,
-                gender: 1
-            };
-            expect(fn).toThrowError(
-                `Property 'email' is required in Employee {"employeeId":4,"name":"Fried Richter","birthDate":"1994-04-01T22:00:00.000Z","email":null,"gender":1}.`
-            );
-        });
-
-        it('should throw an error if required property is undefined', () => {
-            const fn = () => jsonSerializer.deserialize(fried, Employee);
-            const fried = {
-                employeeId: 4,
-                name: 'Fried Richter',
-                birthDate: '1994-04-01T22:00:00.000Z',
-                email: undefined,
-                gender: 1
-            };
-            expect(fn).toThrowError(
-                `Property 'email' is required in Employee {"employeeId":4,"name":"Fried Richter","birthDate":"1994-04-01T22:00:00.000Z","gender":1}.`
-            );
-        });
-
-        it('should throw an error if extended required property is missing', () => {
-            const fn = () => jsonSerializer.deserialize(fried, Employee);
-            const fried = {
-                name: 'Fried Richter',
-                birthDate: '1994-04-01T22:00:00.000Z',
-                gender: 1,
-                email: 'fried.richter@tgzoo.fr'
-            };
-            expect(fn).toThrowError(
-                `Property 'id' is required in Employee {"name":"Fried Richter","birthDate":"1994-04-01T22:00:00.000Z","gender":1,"email":"fried.richter@tgzoo.fr"}.`
-            );
         });
 
         it('should return undefined property when dictionary is invalid', () => {
@@ -280,6 +265,60 @@ describe('deserialize', () => {
             const result = Object.assign(new Zoo(), deserializedData.zoos[0]);
             result.isOpen = false;
             expect(jsonSerializer.deserializeObject(data.zoos[0], zoo)).toStrictEqual(result);
+        });
+
+        it('should throw an error if required property is missing', () => {
+            const fn = () => jsonSerializer.deserialize(fried, Employee);
+            const fried = {
+                employeeId: 4,
+                name: 'Fried Richter',
+                birthDate: '1994-04-01T22:00:00.000Z',
+                gender: 1
+            };
+            expect(fn).toThrowError(
+                `Fail to deserialize: Property 'email' is required in Employee {"employeeId":4,"name":"Fried Richter","birthDate":"1994-04-01T22:00:00.000Z","gender":1}.`
+            );
+        });
+
+        it('should throw an error if required property is null', () => {
+            const fn = () => jsonSerializer.deserialize(fried, Employee);
+            const fried = {
+                employeeId: 4,
+                name: 'Fried Richter',
+                birthDate: '1994-04-01T22:00:00.000Z',
+                email: null,
+                gender: 1
+            };
+            expect(fn).toThrowError(
+                `Fail to deserialize: Property 'email' is required in Employee {"employeeId":4,"name":"Fried Richter","birthDate":"1994-04-01T22:00:00.000Z","email":null,"gender":1}.`
+            );
+        });
+
+        it('should throw an error if required property is undefined', () => {
+            const fn = () => jsonSerializer.deserialize(fried, Employee);
+            const fried = {
+                employeeId: 4,
+                name: 'Fried Richter',
+                birthDate: '1994-04-01T22:00:00.000Z',
+                email: undefined,
+                gender: 1
+            };
+            expect(fn).toThrowError(
+                `Fail to deserialize: Property 'email' is required in Employee {"employeeId":4,"name":"Fried Richter","birthDate":"1994-04-01T22:00:00.000Z","gender":1}.`
+            );
+        });
+
+        it('should throw an error if extended required property is missing', () => {
+            const fn = () => jsonSerializer.deserialize(fried, Employee);
+            const fried = {
+                name: 'Fried Richter',
+                birthDate: '1994-04-01T22:00:00.000Z',
+                gender: 1,
+                email: 'fried.richter@tgzoo.fr'
+            };
+            expect(fn).toThrowError(
+                `Fail to deserialize: Property 'id' is required in Employee {"name":"Fried Richter","birthDate":"1994-04-01T22:00:00.000Z","gender":1,"email":"fried.richter@tgzoo.fr"}.`
+            );
         });
     });
 
