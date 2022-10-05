@@ -2,7 +2,7 @@
 
 ![](https://github.com/GillianPerard/typescript-json-serializer/workflows/Build/badge.svg)
 ![npm](https://img.shields.io/npm/dt/typescript-json-serializer)
-![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/4.3.0)
+![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/5.0.0)
 [![Coverage Status](https://coveralls.io/repos/github/GillianPerard/typescript-json-serializer/badge.svg)](https://coveralls.io/github/GillianPerard/typescript-json-serializer)
 [![Known Vulnerabilities](https://snyk.io/test/github/gillianperard/typescript-json-serializer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/gillianperard/typescript-json-serializer?targetFile=package.json)
 
@@ -287,9 +287,9 @@ export class Zoo {
     })
     coordinates: { x: number; y: number; z: number };
 
-    // Set of none-basic type elements
-    @JsonProperty({ type: Employee })
-    employees: Set<Employee>;
+    // Possibly undefined Set of none-basic type elements
+    @JsonProperty({ type: Employee, dataStructure: 'set' })
+    employees: Set<Employee> | undefined;
 
     @JsonProperty() id: number;
     @JsonProperty() name: string;
@@ -312,7 +312,7 @@ export class Zoo {
 
     // Dictionary of PhoneNumber or string
     @JsonProperty({
-        isDictionary: true,
+        dataStructure: 'dictionary',
         type: property => {
             if (property && property.value !== undefined) {
                 return PhoneNumber;
@@ -328,13 +328,39 @@ export class Zoo {
     public constructor() { }
 }
 
+// Create a JsonObject generic class: Value
+
+@JsonObject()
+export class Value<R> {
+    @JsonProperty() value: R;
+
+    constructor(value: R) {
+        this.value = value;
+    }
+}
+
+// Create a JsonObject class: Item
+
+@JsonObject()
+export class Item {
+    @JsonProperty({ name: 'name' })
+    private readonly _name: string;
+
+    @JsonProperty({ name: 'version' })
+    private readonly _version: number;
+
+    constructor(name: string, version: number) {
+        this._name = name;
+        this._version = version;
+    }
+}
 
 // Create a JsonObject class that extends Society: Organization
 
 @JsonObject()
 export class Organization extends Society {
     @JsonProperty({ type: Zoo }) zoos: Array<Zoo>;
-    @JsonProperty({ isDictionary: true })
+    @JsonProperty({ dataStructure: 'dictionary' })
     zoosName: { [id: string]: string };
 
     // To merge multiple properties in a single one
@@ -360,13 +386,14 @@ export class Organization extends Society {
         }
     })
     shareholders: Array<Human>;
+    miscellaneous: Value<Item>;
 }
 
 
 // Create a JsonObject class: Society
 
 @JsonObject()
-export class Organization {
+export class Society {
     @JsonProperty() id: string;
     @JsonProperty() name: string;
 }
@@ -526,7 +553,13 @@ export const data: any = {
         birthDate: '1971-06-28T22:00:00.000Z',
         gender: 1
     },
-    secondaryShareholder: null
+    secondaryShareholder: null,
+    miscellaneous: {
+        value: {
+            name: 'Item A',
+            version: 1
+        }
+    }
 };
 ```
 
@@ -747,7 +780,7 @@ Description: The array of objects to serialize.
 ```typescript
 name?: string | Array<string>;
 type?: Function | PredicateProto;
-isDictionary?: boolean;
+dataStructure?: DataStructure;
 required?: boolean;
 beforeSerialize?: IOProto;
 afterSerialize?: IOProto;
@@ -774,6 +807,12 @@ null: Policy;
 ```
 
 #### **Value types**
+
+##### **DataStructure**
+
+```typescript
+'array' | 'dictionary' | 'map' | 'set'
+```
 
 ##### **Nullish**
 
