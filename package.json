@@ -1,6 +1,6 @@
 {
     "name": "typescript-json-serializer",
-    "version": "4.3.0",
+    "version": "5.0.0",
     "description": "Typescript library to serialize classes into json and deserialize json into classes.",
     "source": "src/index.ts",
     "main": "dist/index.cjs.js",
@@ -12,7 +12,7 @@
         "lint": "eslint . --ext .ts --fix",
         "lint:ci": "eslint . --ext .ts",
         "prebuild": "rimraf dist",
-        "test": "jest",
+        "test": "jest --verbose",
         "test:ci": "jest --coverage"
     },
     "repository": {
