@@ -1,3 +1,21 @@
+<a name="5.0.0"></a>
+# 5.0.0 (2022-10-08)
+
+Check the new [README](./README.md) to understand how to use `typescript-json-serializer` now.
+
+### BREAKING CHANGES
+
+- `JsonProperty`:
+  - `isDictionary` argument has been removed, now you can use the `dataStructure` argument
+
+### Features
+
+- **JsonProperty**: `dataStructure` argument has been added to manage `array`, `dictionary`, `map` and `set` ([#185](https://github.com/GillianPerard/typescript-json-serializer/issues/185))([ace015f](https://github.com/GillianPerard/typescript-json-serializer/commit/ace015f9a7f263fd07100e7f2ad8d2119c18a1c2))
+
+### Fixes
+
+- **SerializeObject**: check required properties ([#187](https://github.com/GillianPerard/typescript-json-serializer/issues/187))([136ed86](https://github.com/GillianPerard/typescript-json-serializer/commit/136ed8685c2d94a89acd4b7f76fcf6a80fdea179))
+
 <a name="4.3.0"></a>
 # 4.3.0 (2022-08-17)
 
