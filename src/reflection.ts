@@ -7,9 +7,10 @@ export class Reflection {
     static apiMapJsonObject = `${Reflection.apiMap}jsonObject`;
     static designType = 'design:type';
     static designParamTypes = 'design:paramtypes';
+    static apiMapJsonObjectChildClass = `${Reflection.apiMap}jsonObjectChildClass:`;
 
-    static getBaseClass(target: object): { name: string } | undefined {
-        return target ? (Reflect.getPrototypeOf(target) as { name: string }) : undefined;
+    static getBaseClass(target: object): Function | undefined {
+        return target ? (Reflect.getPrototypeOf(target) as Function) : undefined;
     }
 
     static getJsonPropertiesMetadata(
@@ -38,6 +39,12 @@ export class Reflection {
         return target ? Reflect.getMetadata(Reflection.designType, target, key) : undefined;
     }
 
+    static getJsonObjectChildClass(target: Function): any | undefined {
+        return target
+            ? Reflect.getMetadata(`${Reflection.apiMapJsonObjectChildClass}${target.name}`, target)
+            : undefined;
+    }
+
     static isJsonObject(type: object): boolean {
         return type ? Reflect.hasOwnMetadata(Reflection.apiMapJsonObject, type) : false;
     }
@@ -51,7 +58,7 @@ export class Reflection {
         Reflect.defineMetadata(key, value, target);
     }
 
-    static setJsonObject(value: JsonObjectMetadata, target: object): void {
+    static setJsonObjectMetadata(value: JsonObjectMetadata, target: object): void {
         if (!target) {
             return;
         }
@@ -65,5 +72,17 @@ export class Reflection {
         }
 
         Reflect.defineMetadata(Reflection.designType, type, target, key);
+    }
+
+    static setJsonObjectChildClass(value: object, target: Function): void {
+        if (!target) {
+            return;
+        }
+
+        Reflect.defineMetadata(
+            `${Reflection.apiMapJsonObjectChildClass}${target.name}`,
+            value,
+            target
+        );
     }
 }

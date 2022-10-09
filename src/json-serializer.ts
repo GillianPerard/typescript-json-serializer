@@ -14,7 +14,12 @@ import {
     Type
 } from './helpers';
 import { JsonPropertiesMetadata, JsonPropertyMetadata, PredicateProto } from './json-property';
-import { FormatPropertyNameProto, JsonSerializerOptions } from './json-serializer-options';
+import { getBaseClasses, JsonObjectMetadata } from './json-object';
+import {
+    FormatPropertyNameProto,
+    JsonSerializerOptions,
+    logError
+} from './json-serializer-options';
 import { Reflection } from './reflection';
 
 type Nullish = null | undefined;
@@ -23,6 +28,8 @@ interface Dictionary<T = any> {
 }
 
 export class JsonSerializer {
+    static classPropertyName = '__class__';
+
     public options = new JsonSerializerOptions();
 
     constructor(options?: Partial<JsonSerializerOptions>) {
@@ -73,11 +80,17 @@ export class JsonSerializer {
 
         if (!isObject(obj)) {
             this.error(
-                `Fail to deserialize: type '${typeof obj}' is not assignable to type 'Object'.\nReceived: ${JSON.stringify(
+                `Fail to deserialize: type '${typeof obj}' is not assignable to type Object.\nReceived: ${JSON.stringify(
                     obj
                 )}`
             );
             return undefined;
+        }
+
+        const { autoPredicate } = this.getJsonObjectMetadata(type) ?? {};
+        if (autoPredicate) {
+            const children = Reflection.getJsonObjectChildClass(type as Function);
+            type = children.find(child => child.name === obj[JsonSerializer.classPropertyName]);
         }
 
         const instance: T = hasConstructor(type) ? new type({}) : type;
@@ -247,6 +260,18 @@ export class JsonSerializer {
                 }
             }
         });
+
+        const { autoPredicate } = this.getJsonObjectMetadata(instance.constructor) ?? {};
+        if (autoPredicate) {
+            if (instance.hasOwnProperty(JsonSerializer.classPropertyName)) {
+                logError(
+                    `There is already a property named '${
+                        JsonSerializer.classPropertyName
+                    }' in ${JSON.stringify(instance)}, conflict with auto primitive`
+                );
+            }
+            json[JsonSerializer.classPropertyName] = instance.constructor.name;
+        }
 
         return json;
     }
@@ -604,6 +629,22 @@ export class JsonSerializer {
         });
 
         return jsonPropertiesMetadata;
+    }
+
+    private getJsonObjectMetadata(instance: any): JsonObjectMetadata | undefined {
+        // check autoPredicate field of every base class' metadata
+        const baseClasses = getBaseClasses(instance);
+        const baseAutoPredicate = baseClasses
+            .map(baseClass => {
+                const { autoPredicate } = Reflection.getJsonObjectMetadata(baseClass) ?? {};
+                return autoPredicate;
+            })
+            .reduce((previous, current) => previous || current, undefined);
+        const jsonObjectMetadata = Reflection.getJsonObjectMetadata(instance);
+        return {
+            baseClassNames: baseClasses.map(baseClass => baseClass.name),
+            autoPredicate: baseAutoPredicate || jsonObjectMetadata?.autoPredicate
+        };
     }
 
     private serializeDictionary(dict: Dictionary): Dictionary | undefined {
