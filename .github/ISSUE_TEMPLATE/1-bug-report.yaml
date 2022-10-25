@@ -12,6 +12,7 @@ body:
           label: Version
           description: 'Which version of typescript-json-serializer you use?'
           options:
+              - 5.1.0
               - 5.0.0
               - 4.3.0
               - 4.2.0
