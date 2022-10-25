@@ -114,8 +114,8 @@ export class Human extends LivingBeing {
         // Override LivingBeing id property name
         // and set required to true
         @JsonProperty({name: 'humanId', required: true})
-        public name: string,
         public id: number,
+        @JsonProperty() public name: string,
         @JsonProperty() public gender: Gender,
         /** This comment works */
         @JsonProperty() public readonly birthDate: Date
