@@ -2,7 +2,7 @@
 
 ![](https://github.com/GillianPerard/typescript-json-serializer/workflows/Build/badge.svg)
 ![npm](https://img.shields.io/npm/dt/typescript-json-serializer)
-![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/5.0.0)
+![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/5.1.0)
 [![Coverage Status](https://coveralls.io/repos/github/GillianPerard/typescript-json-serializer/badge.svg)](https://coveralls.io/github/GillianPerard/typescript-json-serializer)
 [![Known Vulnerabilities](https://snyk.io/test/github/gillianperard/typescript-json-serializer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/gillianperard/typescript-json-serializer?targetFile=package.json)
 
@@ -60,6 +60,9 @@ const customSerializer = new JsonSerializer({
         undefined: 'allow',
         null: 'allow'
     };
+
+    // Disallow additional properties (non JsonProperty)
+    additionalPropertiesPolicy: 'disallow'
 
     // e.g. if all the properties in the json object are prefixed by '_'
     formatPropertyName: (propertyName: string) => `_${propertyName}`;
@@ -623,7 +626,8 @@ Default value:
     nullishPolicy: {
         undefined: 'remove',
         null: 'allow'
-    }
+    },
+    additionalPropertiesPolicy: 'remove'
 }
 ```
 
@@ -796,6 +800,7 @@ nullishPolicy: NullishPolicy = {
     undefined: 'remove',
     null: 'allow'
 };
+additionalPropertiesPolicy: Policy = 'remove';
 formatPropertyName?: FormatPropertyNameProto;
 ```
 
