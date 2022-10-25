@@ -1,3 +1,10 @@
+<a name="5.1.0"></a>
+# 5.1.0 (2022-11-01)
+
+### Features
+
+- **JsonObjectOptions**: `additionalPropertiesPolicy` option has been added to define what is the policy when the algorithm meet an additional property, the 3 choices are `allow`, `disallow` and `remove` ([#186](https://github.com/GillianPerard/typescript-json-serializer/issues/186)) ([07284ef](https://github.com/GillianPerard/typescript-json-serializer/commit/07284efd384efc1f87649fabc1bf17ef9dea48c2))
+
 <a name="5.0.0"></a>
 # 5.0.0 (2022-10-08)
 
@@ -10,11 +17,11 @@ Check the new [README](./README.md) to understand how to use `typescript-json-se
 
 ### Features
 
-- **JsonProperty**: `dataStructure` argument has been added to manage `array`, `dictionary`, `map` and `set` ([#185](https://github.com/GillianPerard/typescript-json-serializer/issues/185))([ace015f](https://github.com/GillianPerard/typescript-json-serializer/commit/ace015f9a7f263fd07100e7f2ad8d2119c18a1c2))
+- **JsonProperty**: `dataStructure` argument has been added to manage `array`, `dictionary`, `map` and `set` ([#185](https://github.com/GillianPerard/typescript-json-serializer/issues/185)) ([ace015f](https://github.com/GillianPerard/typescript-json-serializer/commit/ace015f9a7f263fd07100e7f2ad8d2119c18a1c2))
 
 ### Fixes
 
-- **SerializeObject**: check required properties ([#187](https://github.com/GillianPerard/typescript-json-serializer/issues/187))([136ed86](https://github.com/GillianPerard/typescript-json-serializer/commit/136ed8685c2d94a89acd4b7f76fcf6a80fdea179))
+- **SerializeObject**: check required properties ([#187](https://github.com/GillianPerard/typescript-json-serializer/issues/187)) ([136ed86](https://github.com/GillianPerard/typescript-json-serializer/commit/136ed8685c2d94a89acd4b7f76fcf6a80fdea179))
 
 <a name="4.3.0"></a>
 # 4.3.0 (2022-08-17)
