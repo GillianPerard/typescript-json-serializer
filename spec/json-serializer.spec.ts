@@ -1,6 +1,19 @@
 import 'reflect-metadata';
-import { JsonSerializer, JsonSerializerOptions, logError, throwError } from '../src';
 import { Animal, data, deserializedData, Employee, Gender, Organization, Zoo } from '../examples';
+import {
+    JsonObject,
+    JsonProperty,
+    JsonSerializer,
+    JsonSerializerOptions,
+    logError,
+    throwError
+} from '../src';
+
+@JsonObject()
+class WithAdditionalProperties {
+    @JsonProperty() id: string;
+    name: string;
+}
 
 describe('constructor', () => {
     it('should have default options', () => {
@@ -10,7 +23,8 @@ describe('constructor', () => {
             nullishPolicy: {
                 undefined: 'remove',
                 null: 'allow'
-            }
+            },
+            additionalPropertiesPolicy: 'remove'
         };
         expect(jsonSerializer.options).toStrictEqual(options);
     });
@@ -18,6 +32,7 @@ describe('constructor', () => {
     it('should override default options when pass new in param', () => {
         const options: Partial<JsonSerializerOptions> = {
             errorCallback: undefined,
+            additionalPropertiesPolicy: 'disallow',
             formatPropertyName: (name: string) => `_${name}`
         };
         const overriddenOptions: JsonSerializerOptions = {
@@ -26,6 +41,7 @@ describe('constructor', () => {
                 undefined: 'remove',
                 null: 'allow'
             },
+            additionalPropertiesPolicy: 'disallow',
             formatPropertyName: (name: string) => `_${name}`
         };
         const jsonSerializer = new JsonSerializer(options);
@@ -394,5 +410,76 @@ describe('formatPropertyName', () => {
 
     it('should serialize with underscore', () => {
         expect(jsonSerializer.serializeObject(employee)).toStrictEqual(jsonEmployee);
+    });
+});
+
+describe('allowedAdditionalProperties', () => {
+    let jsonSerializer: JsonSerializer;
+    let obj: any;
+    let instance: WithAdditionalProperties;
+
+    beforeEach(() => {
+        jsonSerializer = new JsonSerializer({ errorCallback: throwError });
+        obj = {
+            id: 'bb34c00b-af82-4c27-98c2-766c738796b8'
+        };
+        instance = new WithAdditionalProperties();
+        instance.id = 'bb34c00b-af82-4c27-98c2-766c738796b8';
+    });
+
+    describe('deserialize', () => {
+        beforeEach(() => {
+            obj.name = 'test';
+            obj.age = 20;
+        });
+
+        it('should remove additional properties', () => {
+            expect(jsonSerializer.deserialize(obj, WithAdditionalProperties)).toStrictEqual(
+                instance
+            );
+        });
+
+        it('should keep additional properties', () => {
+            jsonSerializer.options.additionalPropertiesPolicy = 'allow';
+            instance.name = 'test';
+            (instance as any).age = 20;
+            expect(jsonSerializer.deserialize(obj, WithAdditionalProperties)).toStrictEqual(
+                instance
+            );
+        });
+
+        it('should throw an error additional properties', () => {
+            jsonSerializer.options.additionalPropertiesPolicy = 'disallow';
+            const fn = () => jsonSerializer.deserialize(obj, WithAdditionalProperties);
+            expect(fn).toThrowError(
+                'Additional properties detected in {"id":"bb34c00b-af82-4c27-98c2-766c738796b8","name":"test","age":20}: name,age.'
+            );
+        });
+    });
+
+    describe('serialize', () => {
+        beforeEach(() => {
+            instance.name = 'test';
+            (instance as any).age = 20;
+        });
+
+        it('should remove additional properties', () => {
+            expect(jsonSerializer.serialize(instance)).toStrictEqual(obj);
+        });
+
+        it('should keep additional properties', () => {
+            jsonSerializer.options.additionalPropertiesPolicy = 'allow';
+            obj.name = 'test';
+            obj.age = 20;
+            expect(jsonSerializer.serialize(instance)).toStrictEqual(obj);
+        });
+
+        it('should throw an error additional properties', () => {
+            jsonSerializer.options.additionalPropertiesPolicy = 'disallow';
+            const fn = () => jsonSerializer.serialize(instance);
+            expect(fn).toThrowError(
+                'Additional properties detected in {"id":"bb34c00b-af82-4c27-98c2-766c738796b8","name":"test","age":20}: name,age.'
+            );
+        });
     });
 });
