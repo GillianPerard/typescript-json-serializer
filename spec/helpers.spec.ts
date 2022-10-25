@@ -1,12 +1,13 @@
 import {
-    isNumber,
-    isString,
-    isBoolean,
-    isObject,
+    difference,
     isArray,
+    isBoolean,
     isDateObject,
     isDateValue,
     isNullish,
+    isNumber,
+    isObject,
+    isString,
     tryParse
 } from '../src/helpers';
 
@@ -90,6 +91,28 @@ describe('Helpers', () => {
             values.slice(1).forEach(value => {
                 expect(tryParse(value)).toStrictEqual(value);
             });
+        });
+    });
+
+    describe('difference', () => {
+        it('should return empty array for two empty arrays', () => {
+            const diff = difference([], []);
+            expect(diff).toStrictEqual([]);
+        });
+
+        it('should return one element if the first array contains one and the other is empty', () => {
+            const diff = difference(['test'], []);
+            expect(diff).toStrictEqual(['test']);
+        });
+
+        it('should return empty array if the first array is empty and the second contains one', () => {
+            const diff = difference([], ['test']);
+            expect(diff).toStrictEqual([]);
+        });
+
+        it('should return two elements', () => {
+            const diff = difference(['test2', 'test', 'test3'], ['test']);
+            expect(diff).toStrictEqual(['test2', 'test3']);
         });
     });
 });

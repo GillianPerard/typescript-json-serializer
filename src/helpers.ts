@@ -65,3 +65,6 @@ export const tryParse = (value: any) => {
         return value;
     }
 };
+
+export const difference = (arr1: Array<string>, arr2: Array<string>): Array<string> =>
+    arr1.filter(element1 => !arr2.some(element2 => element1 === element2));
