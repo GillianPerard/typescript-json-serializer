@@ -8,6 +8,7 @@ export class JsonSerializerOptions {
         undefined: 'remove',
         null: 'allow'
     };
+    additionalPropertiesPolicy: Policy = 'remove';
     formatPropertyName?: FormatPropertyNameProto;
 }
 

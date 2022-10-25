@@ -1,4 +1,5 @@
 import {
+    difference,
     hasConstructor,
     isArray,
     isDateObject,
@@ -87,7 +88,9 @@ export class JsonSerializer {
             return instance;
         }
 
-        Object.keys(jsonPropertiesMetadata).forEach(key => {
+        const jsonPropertiesMetadataKeys = Object.keys(jsonPropertiesMetadata);
+
+        jsonPropertiesMetadataKeys.forEach(key => {
             const metadata = jsonPropertiesMetadata[key];
             const property = this.deserializeProperty(instance, key, obj as object, metadata);
             this.checkRequiredProperty(metadata, instance, key, property, obj, false);
@@ -96,6 +99,24 @@ export class JsonSerializer {
                 instance[key] = property;
             }
         });
+
+        if (this.options.additionalPropertiesPolicy === 'remove') {
+            return instance;
+        }
+
+        const additionalProperties = difference(Object.keys(obj), jsonPropertiesMetadataKeys);
+
+        if (!additionalProperties.length) {
+            return instance;
+        }
+
+        if (this.options.additionalPropertiesPolicy === 'disallow') {
+            this.error(
+                `Additional properties detected in ${JSON.stringify(obj)}: ${additionalProperties}.`
+            );
+        } else if (this.options.additionalPropertiesPolicy === 'allow') {
+            additionalProperties.forEach(key => (instance[key] = obj[key]));
+        }
 
         return instance;
     }
@@ -190,8 +211,9 @@ export class JsonSerializer {
 
         const json = {};
         const instanceKeys = Object.keys(instance);
+        const jsonPropertiesMetadataKeys = Object.keys(jsonPropertiesMetadata);
 
-        Object.keys(jsonPropertiesMetadata).forEach(key => {
+        jsonPropertiesMetadataKeys.forEach(key => {
             const metadata = jsonPropertiesMetadata[key];
 
             if (instanceKeys.includes(key)) {
@@ -247,6 +269,26 @@ export class JsonSerializer {
                 }
             }
         });
+
+        if (this.options.additionalPropertiesPolicy === 'remove') {
+            return json;
+        }
+
+        const additionalProperties = difference(instanceKeys, jsonPropertiesMetadataKeys);
+
+        if (!additionalProperties.length) {
+            return json;
+        }
+
+        if (this.options.additionalPropertiesPolicy === 'disallow') {
+            this.error(
+                `Additional properties detected in ${JSON.stringify(
+                    instance
+                )}: ${additionalProperties}.`
+            );
+        } else if (this.options.additionalPropertiesPolicy === 'allow') {
+            additionalProperties.forEach(key => (json[key] = instance[key]));
+        }
 
         return json;
     }
