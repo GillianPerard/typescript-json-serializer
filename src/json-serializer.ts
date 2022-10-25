@@ -92,7 +92,7 @@ export class JsonSerializer {
             const property = this.deserializeProperty(instance, key, obj as object, metadata);
             this.checkRequiredProperty(metadata, instance, key, property, obj, false);
 
-            if (this.isAllowedProperty(property)) {
+            if (this.isAllowedProperty(key, property)) {
                 instance[key] = property;
             }
         });
@@ -212,14 +212,14 @@ export class JsonSerializer {
 
                 if (isArray(metadata.name)) {
                     metadata.name.forEach((name: string) => {
-                        if (this.isAllowedProperty(property[name])) {
+                        if (this.isAllowedProperty(name, property[name])) {
                             json[name] = property[name];
                         }
                     });
                 } else {
                     this.checkRequiredProperty(metadata, instance, key, property, instance);
 
-                    if (this.isAllowedProperty(property)) {
+                    if (this.isAllowedProperty(key, property)) {
                         if (
                             !metadata.isNameOverridden &&
                             this.options.formatPropertyName !== undefined
@@ -234,14 +234,14 @@ export class JsonSerializer {
             } else {
                 if (isArray(metadata.name)) {
                     metadata.name.forEach(name => {
-                        if (this.isAllowedProperty(undefined)) {
+                        if (this.isAllowedProperty(name, undefined)) {
                             json[name] = undefined;
                         }
                     });
                 } else {
                     this.checkRequiredProperty(metadata, instance, key, undefined, instance);
 
-                    if (this.isAllowedProperty(undefined)) {
+                    if (this.isAllowedProperty(key, undefined)) {
                         json[metadata.name] = undefined;
                     }
                 }
@@ -574,12 +574,12 @@ export class JsonSerializer {
         return instanceMap;
     }
 
-    private isAllowedProperty(property: any): boolean {
-        if (isNullish(property)) {
-            if (this.options.nullishPolicy[`${property}`] === 'disallow') {
-                this.error(`Disallowed ${property} value detected.`);
+    private isAllowedProperty(name: string, value: any): boolean {
+        if (isNullish(value)) {
+            if (this.options.nullishPolicy[`${value}`] === 'disallow') {
+                this.error(`Disallowed ${value} value detected: ${name}.`);
                 return false;
-            } else if (this.options.nullishPolicy[`${property}`] === 'remove') {
+            } else if (this.options.nullishPolicy[`${value}`] === 'remove') {
                 return false;
             }
         }
