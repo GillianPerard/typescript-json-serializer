@@ -105,8 +105,17 @@ export class JsonSerializer {
             const property = this.deserializeProperty(instance, key, obj as object, metadata);
             this.checkRequiredProperty(metadata, instance, key, property, obj, false);
 
-            if (this.isAllowedProperty(key, property)) {
-                instance[key] = property;
+            let value = instance[key];
+
+            if (
+                property !== value &&
+                ((property === null && value === undefined) || !isNullish(property))
+            ) {
+                value = property;
+            }
+
+            if (this.isAllowedProperty(key, value)) {
+                instance[key] = value;
             }
         });
 
@@ -350,7 +359,7 @@ export class JsonSerializer {
         obj: any,
         isSerialization = true
     ): void {
-        if (metadata.required && isNullish(property)) {
+        if (metadata.required && isNullish(property) && isNullish(instance[key])) {
             const instanceName = instance['constructor'].name;
             this.error(
                 `Fail to ${

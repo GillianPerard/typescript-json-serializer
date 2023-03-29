@@ -87,12 +87,12 @@ describe('serialize', () => {
     describe('serializeObject', () => {
         it('should return the serialized data', () => {
             const s = jsonSerializer.serializeObject(deserializedData);
-            expect(s).toStrictEqual(data);
+            expect(s).toStrictEqual({ ...data, id: '4' });
         });
 
-        it('should return empty organization if serialized organization has no property set', () => {
+        it('should return organization with id if serialized organization has no property set', () => {
             const organization = new Organization();
-            expect(jsonSerializer.serializeObject(organization)).toStrictEqual({});
+            expect(jsonSerializer.serializeObject(organization)).toStrictEqual({ id: '4' });
         });
 
         it('should return empty object for serialized empty object', () => {
@@ -140,9 +140,11 @@ describe('serialize', () => {
         beforeEach(() => (jsonSerializer.options.errorCallback = logError));
 
         it('should return the serialized array of data', () => {
+            const d = { ...data, id: '4' };
+
             expect(
                 jsonSerializer.serializeObjectArray([deserializedData, deserializedData])
-            ).toStrictEqual([data, data]);
+            ).toStrictEqual([d, d]);
         });
 
         const test = (array: any, expected: any) => {

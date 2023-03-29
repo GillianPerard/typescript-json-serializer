@@ -10,7 +10,6 @@ import { Zoo } from '../models/zoo';
 import { PhoneNumber } from '../models/phone-number';
 
 export const data: any = {
-    id: '1',
     name: 'Zoos Organization',
     zoos: [
         {
@@ -288,7 +287,7 @@ const elonMusk = new Human(
 );
 
 const organization = new Organization();
-organization.id = data.id;
+organization.id = '4';
 organization.name = data.name;
 organization.zoos = [greatZoo, zooZoo];
 organization.zoosName = {};
