@@ -1,3 +1,19 @@
+<a name="6.0.0"></a>
+# 6.0.0 (2023-03-29)
+
+Check the new [README](./README.md) to understand how to use `typescript-json-serializer` now.
+
+### BREAKING CHANGES
+
+- `JsonObject`: empty object `{}` is no longer passed to the constructor on deserialize. This list of default params must be pass to the `JsonObject` thanks to the new `constructorParams` property of the `JsonObjectOptions` if the class contains a constructor with params used in the constructor body.
+
+### Fixes
+
+- **deps:** bump json5 from 2.2.0 to 2.2.3 ([#196](https://github.com/GillianPerard/typescript-json-serializer/pull/196)) ([63d941d](https://github.com/GillianPerard/typescript-json-serializer/commit/63d941dcf2e77cd8749471a03bea097bd773acd7))
+- **JsonObject**: `JsonObjectOptions` has been added to manage default constructor params values ([#200](https://github.com/GillianPerard/typescript-json-serializer/issues/200)) ([8f9eba8](https://github.com/GillianPerard/typescript-json-serializer/commit/8f9eba8a9b74beff602a7e30fe28b2c936c4643f))
+- **JsonSerializer**: take in account the default value of properties when it checks if the value is `required` ([#201](https://github.com/GillianPerard/typescript-json-serializer/issues/201)) ([136ed86](https://github.com/GillianPerard/typescript-json-serializer/commit/136ed8685c2d94a89acd4b7f76fcf6a80fdea179))
+
+
 <a name="5.1.0"></a>
 # 5.1.0 (2022-11-01)
 
