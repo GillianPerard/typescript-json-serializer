@@ -35,7 +35,7 @@ describe('Reflection', () => {
 
     it('setJsonObject should not define json object if there is no target', () => {
         const spy = jest.spyOn(Reflect, 'defineMetadata');
-        Reflection.setJsonObject({ baseClassNames: [] }, unknownTarget);
+        Reflection.setJsonObject({ baseClassNames: [], constructorParams: [] }, unknownTarget);
         expect(spy).not.toHaveBeenCalled();
     });
 

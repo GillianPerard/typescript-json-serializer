@@ -81,7 +81,17 @@ export class JsonSerializer {
             return undefined;
         }
 
-        const instance: T = hasConstructor(type) ? new type({}) : type;
+        let instance: T;
+
+        if (hasConstructor(type)) {
+            const tmpInstance = Object.create(type.prototype);
+            const jsonObjectMetadata = Reflection.getJsonObjectMetadata(tmpInstance.constructor);
+            const constructorParams = jsonObjectMetadata?.constructorParams ?? [];
+            instance = new type(...constructorParams);
+        } else {
+            instance = type;
+        }
+
         const jsonPropertiesMetadata = this.getJsonPropertiesMetadata(instance);
 
         if (!jsonPropertiesMetadata) {

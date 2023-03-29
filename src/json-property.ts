@@ -18,19 +18,17 @@ export interface JsonPropertiesMetadata {
     [id: string]: JsonPropertyMetadata;
 }
 
-export type JsonPropertyMetadata =
-    | {
-          isNameOverridden?: boolean;
-          name: string | Array<string>;
-          type?: Function;
-          predicate?: PredicateProto;
-      } & JsonPropertyBaseMetadata;
+export interface JsonPropertyMetadata extends JsonPropertyBaseMetadata {
+    isNameOverridden?: boolean;
+    name: string | Array<string>;
+    type?: Function;
+    predicate?: PredicateProto;
+}
 
-type JsonPropertyOptions =
-    | {
-          name?: string | Array<string>;
-          type?: Function | PredicateProto;
-      } & JsonPropertyBaseMetadata;
+export interface JsonPropertyOptions extends JsonPropertyBaseMetadata {
+    name?: string | Array<string>;
+    type?: Function | PredicateProto;
+}
 
 export const JsonProperty =
     (options?: string | JsonPropertyOptions): Function =>
