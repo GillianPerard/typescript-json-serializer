@@ -1,4 +1,4 @@
-import { JsonProperty, JsonObject } from '../../src';
+import { JsonObject, JsonProperty } from '../../src';
 
 import { Gender } from './gender';
 import { LivingBeing } from './living-being';
@@ -7,7 +7,7 @@ import { Status } from './status';
 @JsonObject()
 export class Animal extends LivingBeing {
     @JsonProperty()
-    name: string;
+    name: string | undefined;
     @JsonProperty()
     birthDate: Date;
     @JsonProperty()
@@ -19,7 +19,7 @@ export class Animal extends LivingBeing {
     @JsonProperty()
     status: Status;
 
-    constructor(name: string) {
+    constructor(name: string | undefined) {
         super();
         this.name = name;
     }

@@ -74,7 +74,6 @@ export const data: any = {
                 },
                 {
                     id: 2,
-                    name: 'Jolene',
                     birthDate: '2017-03-10T22:00:00.000Z',
                     numberOfPaws: 4,
                     gender: 0,

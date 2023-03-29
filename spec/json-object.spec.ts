@@ -1,4 +1,4 @@
-import { Animal, Dummy, Panther, Zoo } from '../examples';
+import { Animal, Dummy, Panther, Snake, Zoo } from '../examples';
 
 describe('JsonObject', () => {
     it('should return no metadata', () => {
@@ -10,20 +10,33 @@ describe('JsonObject', () => {
         const hasMetadata = Reflect.hasOwnMetadata('api:map:jsonObject', Zoo);
         const metadata = Reflect.getOwnMetadata('api:map:jsonObject', Zoo);
         expect(hasMetadata).toBe(true);
-        expect(metadata).toEqual({ baseClassNames: [] });
+        expect(metadata).toEqual({ baseClassNames: [], constructorParams: [] });
     });
 
     it('should return metadata with 1 base class name', () => {
         const hasMetadata = Reflect.hasOwnMetadata('api:map:jsonObject', Animal);
         const metadata = Reflect.getOwnMetadata('api:map:jsonObject', Animal);
         expect(hasMetadata).toBe(true);
-        expect(metadata).toEqual({ baseClassNames: ['LivingBeing'] });
+        expect(metadata).toEqual({ baseClassNames: ['LivingBeing'], constructorParams: [] });
     });
 
     it('should return metadata with 2 base class names', () => {
         const hasMetadata = Reflect.hasOwnMetadata('api:map:jsonObject', Panther);
         const metadata = Reflect.getOwnMetadata('api:map:jsonObject', Panther);
         expect(hasMetadata).toBe(true);
-        expect(metadata).toEqual({ baseClassNames: ['LivingBeing', 'Animal'] });
+        expect(metadata).toEqual({
+            baseClassNames: ['LivingBeing', 'Animal'],
+            constructorParams: []
+        });
+    });
+
+    it('should return metadata with 2 base class names and 1 constructor param', () => {
+        const hasMetadata = Reflect.hasOwnMetadata('api:map:jsonObject', Snake);
+        const metadata = Reflect.getOwnMetadata('api:map:jsonObject', Snake);
+        expect(hasMetadata).toBe(true);
+        expect(metadata).toEqual({
+            baseClassNames: ['LivingBeing', 'Animal'],
+            constructorParams: [{}]
+        });
     });
 });
