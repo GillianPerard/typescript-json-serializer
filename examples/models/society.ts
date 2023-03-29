@@ -1,7 +1,7 @@
-import { JsonProperty, JsonObject } from '../../src';
+import { JsonObject, JsonProperty } from '../../src';
 
 @JsonObject()
 export class Society {
-    @JsonProperty() id: string;
+    @JsonProperty({ required: true }) id = '4';
     @JsonProperty() name: string;
 }
