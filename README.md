@@ -2,7 +2,7 @@
 
 ![](https://github.com/GillianPerard/typescript-json-serializer/workflows/Build/badge.svg)
 ![npm](https://img.shields.io/npm/dt/typescript-json-serializer)
-![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/5.1.0)
+![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/6.0.0)
 [![Coverage Status](https://coveralls.io/repos/github/GillianPerard/typescript-json-serializer/badge.svg)](https://coveralls.io/github/GillianPerard/typescript-json-serializer)
 [![Known Vulnerabilities](https://snyk.io/test/github/gillianperard/typescript-json-serializer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/gillianperard/typescript-json-serializer?targetFile=package.json)
 
@@ -59,13 +59,13 @@ const customSerializer = new JsonSerializer({
     nullishPolicy: {
         undefined: 'allow',
         null: 'allow'
-    };
+    },
 
     // Disallow additional properties (non JsonProperty)
-    additionalPropertiesPolicy: 'disallow'
+    additionalPropertiesPolicy: 'disallow',
 
     // e.g. if all the properties in the json object are prefixed by '_'
-    formatPropertyName: (propertyName: string) => `_${propertyName}`;
+    formatPropertyName: (propertyName: string) => `_${propertyName}`,
 })
 
 // Deserialize
@@ -169,13 +169,11 @@ export class Employee extends Human {
 }
 
 
-// Create a JsonObject class: Animal
+// Create a JsonObject class that extends LivingBeing: Animal
 
 @JsonObject()
-export class Animal {
-
-    @JsonProperty() id: number;
-    @JsonProperty() name: string;
+export class Animal extends LivingBeing {
+    @JsonProperty() name: string | undefined;
     @JsonProperty() birthDate: Date;
     @JsonProperty() numberOfPaws: number;
     @JsonProperty() gender: Gender;
@@ -187,7 +185,8 @@ export class Animal {
     @JsonProperty('childrenIdentifiers')
     childrenIds: Array<number>;
 
-    constructor(name: string) {
+    constructor(name: string | undefined) {
+        super();
         this.name = name;
     }
 
@@ -204,7 +203,7 @@ export class Panther extends Animal {
     // JsonProperty directly inside the constructor
     // for property parameters
     public constructor(
-        name: string,
+        name: string | undefined,
         @JsonProperty() public isSpeckled: boolean
     ) {
         super(name);
@@ -213,15 +212,19 @@ export class Panther extends Animal {
 }
 
 
-// Create a JsonObject class that extends Animal
-// (which extends LivingBeing): Snake
+// Create a JsonObject class that extends Animal (which extends LivingBeing): Snake
 
-@JsonObject()
+// When the library instatiates a class during deserilization it does not know the constructor params value
+// so you need to specify them.
+// To ways are available
+// - by passing default value to those params in the constructor
+// - by passing the `constructorParams` options to `JsonObject` (see below); it allows to keep clean constructor
+@JsonObject({ constructorParams: [{}] })
 export class Snake extends Animal {
 
     @JsonProperty() isPoisonous: boolean;
 
-    public constructor(args: { name: string; isPoisonous: boolean }) {
+    public constructor(args: { name: string | undefined; isPoisonous: boolean }) {
         super(args.name);
         this.isPoisonous = args.isPoisonous;
     }
@@ -229,8 +232,7 @@ export class Snake extends Animal {
 }
 
 
-// Create a JsonObject empty class that extends Animal
-// (which extends LivingBeing): UnknownAnimal
+// Create a JsonObject empty class that extends Animal (which extends LivingBeing): UnknownAnimal
 
 @JsonObject()
 export class UnknownAnimal extends Animal {
@@ -397,7 +399,9 @@ export class Organization extends Society {
 
 @JsonObject()
 export class Society {
-    @JsonProperty() id: string;
+    // Here note the `required` option with the default value `'4'` 
+    // it will not throw because the default value will be set instead of `undefined`
+    @JsonProperty({ required: true }) id: string = '4';
     @JsonProperty() name: string;
 }
 ```
@@ -407,7 +411,6 @@ export class Society {
 ```typescript
 // data.ts
 export const data: any = {
-    id: '1',
     name: 'Zoos Organization',
     zoosName: {
         '15': 'The Greatest Zoo',
@@ -475,7 +478,6 @@ export const data: any = {
                 },
                 {
                     id: 2,
-                    name: 'Jolene',
                     birthDate: '2017-03-10T22:00:00.000Z',
                     numberOfPaws: 4,
                     gender: 0,
@@ -573,10 +575,17 @@ export const data: any = {
 **@JsonObject()**   
 Used to make a class serializable.
 
+##### **Parameters**
+
+**options**  
+Type: [`JsonObjectOptions`](#jsonobjectoptions)  
+Optional: `true`  
+Description: The option to customize the serialization/deserialization of the target class.
+
 ##### **Example**
 
 ```typescript
-@JsonObject()
+@JsonObject(options)
 class MyClass {}
 ```
 
@@ -779,6 +788,12 @@ Description: The array of objects to serialize.
 
 #### **Types**
 
+##### **JsonObjectOptions**
+
+```typescript
+constructorParams?: Array<unknown>;
+```
+
 ##### **JsonPropertyOptions**
 
 ```typescript
@@ -831,7 +846,7 @@ null | undefined
 'allow' | 'disallow' | 'remove'
 ```
 
-#### **Functions types**
+#### **Function types**
 
 ##### **ErrorCallback**
 
