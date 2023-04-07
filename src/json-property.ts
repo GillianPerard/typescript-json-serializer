@@ -22,29 +22,31 @@ export interface JsonPropertyMetadata extends JsonPropertyBaseMetadata {
     isNameOverridden?: boolean;
     name: string | Array<string>;
     type?: Function;
+    defaultValue?: any;
     predicate?: PredicateProto;
 }
 
 export interface JsonPropertyOptions extends JsonPropertyBaseMetadata {
     name?: string | Array<string>;
     type?: Function | PredicateProto;
+    defaultValue?: any;
 }
 
 export const JsonProperty =
     (options?: string | JsonPropertyOptions): Function =>
-    (target: object | Function, key: string, index: number): void => {
-        if (key === undefined && target['prototype']) {
-            const type: Function = Reflection.getParamTypes(target)[index];
-            const keys = extractPropertiesFromConstructor(target['prototype'].constructor);
-            key = keys.get(index) as string;
-            target = target['prototype'];
-            Reflection.setType(type, target, key);
-        }
+        (target: object | Function, key: string, index: number): void => {
+            if (key === undefined && target['prototype']) {
+                const type: Function = Reflection.getParamTypes(target)[index];
+                const keys = extractPropertiesFromConstructor(target['prototype'].constructor);
+                key = keys.get(index) as string;
+                target = target['prototype'];
+                Reflection.setType(type, target, key);
+            }
 
-        const metadata = Reflection.getJsonPropertiesMetadata(target) ?? {};
-        metadata[key] = buildJsonPropertyMetadata(key, options);
-        Reflection.setJsonPropertiesMetadata(metadata, target);
-    };
+            const metadata = Reflection.getJsonPropertiesMetadata(target) ?? {};
+            metadata[key] = buildJsonPropertyMetadata(key, options);
+            Reflection.setJsonPropertiesMetadata(metadata, target);
+        };
 
 const extractPropertiesFromConstructor = (ctor: object): Map<number, string> => {
     // Clean constructor

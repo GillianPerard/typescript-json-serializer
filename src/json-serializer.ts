@@ -114,7 +114,7 @@ export class JsonSerializer {
                 value = property;
             }
 
-            if (this.isAllowedProperty(key, value)) {
+            if (this.isAllowedProperty(key, value, metadata)) {
                 instance[key] = value;
             }
         });
@@ -260,7 +260,7 @@ export class JsonSerializer {
                 } else {
                     this.checkRequiredProperty(metadata, instance, key, property, instance);
 
-                    if (this.isAllowedProperty(key, property)) {
+                    if (this.isAllowedProperty(key, property, metadata)) {
                         if (
                             !metadata.isNameOverridden &&
                             this.options.formatPropertyName !== undefined
@@ -282,7 +282,7 @@ export class JsonSerializer {
                 } else {
                     this.checkRequiredProperty(metadata, instance, key, undefined, instance);
 
-                    if (this.isAllowedProperty(key, undefined)) {
+                    if (this.isAllowedProperty(key, undefined, metadata)) {
                         json[metadata.name] = undefined;
                     }
                 }
@@ -362,8 +362,7 @@ export class JsonSerializer {
         if (metadata.required && isNullish(property) && isNullish(instance[key])) {
             const instanceName = instance['constructor'].name;
             this.error(
-                `Fail to ${
-                    isSerialization ? 'serialize' : 'deserialize'
+                `Fail to ${isSerialization ? 'serialize' : 'deserialize'
                 }: Property '${key}' is required in ${instanceName} ${JSON.stringify(obj)}.`
             );
         }
@@ -603,17 +602,17 @@ export class JsonSerializer {
          */
         return typeName === 'object'
             ? {
-                  isArrayProperty: isArray(property),
-                  isDictionaryProperty: false,
-                  isMapProperty: isMap(property),
-                  isSetProperty: isSet(property)
-              }
+                isArrayProperty: isArray(property),
+                isDictionaryProperty: false,
+                isMapProperty: isMap(property),
+                isSetProperty: isSet(property)
+            }
             : {
-                  isArrayProperty: typeName === 'array',
-                  isDictionaryProperty: false,
-                  isMapProperty: typeName === 'map',
-                  isSetProperty: typeName === 'set'
-              };
+                isArrayProperty: typeName === 'array',
+                isDictionaryProperty: false,
+                isMapProperty: typeName === 'map',
+                isSetProperty: typeName === 'set'
+            };
     }
 
     private getJsonPropertiesMetadata(instance: any): JsonPropertiesMetadata | undefined {
@@ -635,7 +634,7 @@ export class JsonSerializer {
         return instanceMap;
     }
 
-    private isAllowedProperty(name: string, value: any): boolean {
+    private isAllowedProperty(name: string, value: any, metadata?: JsonPropertyMetadata): boolean {
         if (isNullish(value)) {
             if (this.options.nullishPolicy[`${value}`] === 'disallow') {
                 this.error(`Disallowed ${value} value detected: ${name}.`);
@@ -644,6 +643,9 @@ export class JsonSerializer {
                 return false;
             }
         }
+
+        if (metadata && !isNullish(metadata.defaultValue) && value === metadata.defaultValue)
+            return false;
 
         return true;
     }
