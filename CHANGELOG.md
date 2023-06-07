@@ -1,3 +1,11 @@
+<a name="6.0.1"></a>
+# 6.0.1 (2023-06-07)
+
+### Fixes
+
+- **deps:** bump minimatch from 3.0.4 to 3.1.2 ([#203](https://github.com/GillianPerard/typescript-json-serializer/pull/203)) ([108de56](https://github.com/GillianPerard/typescript-json-serializer/commit/108de560788ed22340649dd97fa47b2f9416a047))
+- **JsonSerializer**: deserialize and serialize dictionary (map) having array as value ([#208](https://github.com/GillianPerard/typescript-json-serializer/issues/208)) ([1c41836](https://github.com/GillianPerard/typescript-json-serializer/commit/1c41836e2644d963675ae38db6a01454597683b0))
+
 <a name="6.0.0"></a>
 # 6.0.0 (2023-03-29)
 
