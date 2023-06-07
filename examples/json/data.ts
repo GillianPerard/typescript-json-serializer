@@ -115,13 +115,9 @@ export const data: any = {
                 }
             },
             phoneBook: {
-                '1': {
-                    value: '111-111-1111'
-                },
-                '2': {
-                    value: '222-222-2222'
-                },
-                '3': '333-333-3333'
+                '1': [{ value: '111-111-1111' }, { value: '444-444-4444' }],
+                '2': [{ value: '222-222-2222' }],
+                '3': ['333-333-3333']
             }
         },
         {
@@ -256,12 +252,18 @@ greatZoo.employees = new Set([bob, mikasa, red, fried]);
 greatZoo.id = data.zoos[0].id;
 greatZoo.mascot = bagheera;
 greatZoo.name = data.zoos[0].name;
-greatZoo.unknownAnimals = new Map([['1', unknownAnimal]]);
-greatZoo.phoneBook = {
-    '1': new PhoneNumber(data.zoos[0].phoneBook['1'].value),
-    '2': new PhoneNumber(data.zoos[0].phoneBook['2'].value),
-    '3': data.zoos[0].phoneBook['3']
-};
+greatZoo.unknownAnimals = { '1': unknownAnimal };
+greatZoo.phoneBook = new Map([
+    [
+        '1',
+        [
+            new PhoneNumber(data.zoos[0].phoneBook['1'][0].value),
+            new PhoneNumber(data.zoos[0].phoneBook['1'][1].value)
+        ]
+    ],
+    ['2', [new PhoneNumber(data.zoos[0].phoneBook['2'][0].value)]],
+    ['3', [data.zoos[0].phoneBook['3'][0]]]
+]);
 
 const zooZoo = new Zoo();
 zooZoo.animals = [];
@@ -277,7 +279,7 @@ zooZoo.employees = new Set([]);
 zooZoo.id = data.zoos[1].id;
 zooZoo.mascot = data.zoos[1].mascot;
 zooZoo.name = data.zoos[1].name;
-zooZoo.unknownAnimals = new Map();
+zooZoo.unknownAnimals = {};
 
 const elonMusk = new Human(
     data.mainShareholder.name,

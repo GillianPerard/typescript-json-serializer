@@ -490,16 +490,30 @@ export class JsonSerializer {
         const obj = {};
 
         Object.keys(dict).forEach(k => {
-            const predicateType = predicate ? predicate(dict[k], dict) : undefined;
-
-            if (!isJsonObject(type) && !predicateType) {
-                obj[k] = this.deserializePrimitive(dict[k], typeof dict[k]);
-            } else {
-                obj[k] = this.deserializeObject(dict[k], predicateType || type);
-            }
+            const property = dict[k];
+            obj[k] = isArray(property)
+                ? property.map(element =>
+                      this.deserializeDictionaryProperty(dict, element, type, predicate)
+                  )
+                : this.deserializeDictionaryProperty(dict, property, type, predicate);
         });
 
         return obj;
+    }
+
+    private deserializeDictionaryProperty(
+        dict: Dictionary,
+        property: any,
+        type: any,
+        predicate?: PredicateProto
+    ) {
+        const predicateType = predicate ? predicate(property, dict) : undefined;
+
+        if (!isJsonObject(type) && !predicateType) {
+            return this.deserializePrimitive(property, typeof property);
+        }
+
+        return this.deserializeObject(property, predicateType || type);
     }
 
     private deserializeArray(array: Array<any>, type: any, predicate?: PredicateProto) {
@@ -677,12 +691,14 @@ export class JsonSerializer {
             return undefined;
         }
 
-        const obj = {};
-        Object.keys(dict).forEach(k => {
-            obj[k] = this.serializeObject(dict[k]);
-        });
+        return Object.keys(dict).reduce<Dictionary>((acc, k) => {
+            const property = dict[k];
+            acc[k] = isArray(property)
+                ? this.serializeObjectArray(property)
+                : this.serializeObject(property);
 
-        return obj;
+            return acc;
+        }, {});
     }
 
     private serializeProperty(instance: object, key: string, metadata: JsonPropertyMetadata): any {
