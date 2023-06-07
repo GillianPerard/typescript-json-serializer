@@ -2,7 +2,7 @@
 
 ![](https://github.com/GillianPerard/typescript-json-serializer/workflows/Build/badge.svg)
 ![npm](https://img.shields.io/npm/dt/typescript-json-serializer)
-![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/6.0.0)
+![npm bundle size (version)](https://img.shields.io/bundlephobia/minzip/typescript-json-serializer/6.0.1)
 [![Coverage Status](https://coveralls.io/repos/github/GillianPerard/typescript-json-serializer/badge.svg)](https://coveralls.io/github/GillianPerard/typescript-json-serializer)
 [![Known Vulnerabilities](https://snyk.io/test/github/gillianperard/typescript-json-serializer/badge.svg?targetFile=package.json)](https://snyk.io/test/github/gillianperard/typescript-json-serializer?targetFile=package.json)
 
@@ -311,20 +311,19 @@ export class Zoo {
     @JsonProperty({ type: snakeOrPanther })
     mascot: Panther | Snake;
 
-    // Map of empty child classes
-    @JsonProperty({ type: UnknownAnimal })
-    unknownAnimals: Map<string, UnknownAnimal>;
+    // Dictionary of empty child classes
+    @JsonProperty({ dataStructure: 'dictionary', type: UnknownAnimal })
+    unknownAnimals: { [id: string]: UnknownAnimal };
 
-    // Dictionary of PhoneNumber or string
+    // Map of array of PhoneNumber or string
     @JsonProperty({
-        dataStructure: 'dictionary',
         type: property => {
-            if (property && property.value !== undefined) {
+            if (property?.value !== undefined) {
                 return PhoneNumber;
             }
         }
     })
-    phoneBook: { [id: string]: PhoneNumber | string };
+    phoneBook: Map<string, Array<PhoneNumber | string>>;
 
     // Property which will be not serialized and deserialized
     // but event accessible and editable from Zoo class.
@@ -520,13 +519,12 @@ export const data: any = {
                 }
             },
             phoneBook: {
-                '1': {
-                    value: '111-111-1111'
-                },
-                '2': {
-                    value: '222-222-2222'
-                },
-                '3': '333-333-3333'
+                '1': [
+                    { value: '111-111-1111' },
+                    { value: '444-444-4444' }
+                ],
+                '2': [{ value: '222-222-2222' }],
+                '3': ['333-333-3333']
             }
         },
         {
