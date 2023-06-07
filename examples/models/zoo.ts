@@ -48,13 +48,10 @@ export class Zoo {
     animals: Array<Animal>;
     @JsonProperty({ type: snakeOrPanther })
     mascot: Panther | Snake;
-    @JsonProperty({ type: UnknownAnimal })
-    unknownAnimals: Map<string, UnknownAnimal>;
-    @JsonProperty({
-        dataStructure: 'dictionary',
-        type: phoneNumberType
-    })
-    phoneBook: { [id: string]: PhoneNumber | string };
+    @JsonProperty({ dataStructure: 'dictionary', type: UnknownAnimal })
+    unknownAnimals: { [id: string]: UnknownAnimal };
+    @JsonProperty({ type: phoneNumberType })
+    phoneBook: Map<string, Array<PhoneNumber | string>>;
 
     isOpen = true;
 }
